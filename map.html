@@ -161,16 +161,15 @@ const map = L.map('map', {
   maxBoundsViscosity: 0.85
 });
 
-// ══ ТАЙЛЫ — правильный URL из скрипта ══
+// ══ ТАЙЛЫ через Cloudflare прокси ══
 L.tileLayer(
-  'https://maps.izurvive.com/maps/ChernarusPlus-Sat/1.26.0/tiles/{z}/{x}/{y}.jpg',
+  'https://dayz-map-proxy.alexan3747.workers.dev/maps/ChernarusPlus-Sat/1.26.0/tiles/{z}/{x}/{y}.jpg',
   {
     tileSize: TILE_PX,
     minZoom: 1,
     maxZoom: 7,
     noWrap: true,
     keepBuffer: 2,
-    crossOrigin: true
   }
 ).addTo(map);
 
