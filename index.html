@@ -327,7 +327,7 @@ section{padding:5rem 2rem;position:relative;}
 }
 .tt img { width:192px; height:192px; object-fit:contain; image-rendering:pixelated; }
 .tt span { font-size:10px; color:#8899aa; text-align:center; font-family:'Share Tech Mono',monospace; word-break:break-word; }
-[data-cls] { cursor:help; border-bottom:1px dashed rgba(204,31,31,0.45); }
+[data-cls] { cursor:help; }
 
 
 
@@ -406,22 +406,26 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 
 /* OVERLAY */
 .mobile-nav-overlay {
-  display:none;
   position:fixed; inset:0; z-index:498;
   background:rgba(0,0,0,0.6);
   backdrop-filter:blur(3px);
-  opacity:0; transition:opacity 0.3s;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
 }
-.mobile-nav-overlay.show { opacity:1; }
+.mobile-nav-overlay.show {
+  opacity:1;
+  pointer-events:all;
+}
 
 /* DRAWER */
 .mobile-nav {
-  display:none;
   position:fixed; top:60px; left:0; right:0; z-index:499;
   background:rgba(10,8,8,0.98);
   border-bottom:1px solid rgba(204,31,31,0.2);
   transform:translateY(-8px);
   opacity:0;
+  pointer-events:none;
   transition:transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
   max-height:calc(100vh - 60px);
   overflow-y:auto;
@@ -429,6 +433,7 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 .mobile-nav.show {
   transform:translateY(0);
   opacity:1;
+  pointer-events:all;
 }
 .mobile-nav-inner {
   padding:1rem 1.2rem 1.5rem;
@@ -472,7 +477,6 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 
 @media(max-width:750px) {
   .burger { display:flex; }
-  .mobile-nav, .mobile-nav-overlay { display:block; }
   /* hide desktop links on mobile */
   .topbar-links .tl,
   .topbar-links .server-addr,
