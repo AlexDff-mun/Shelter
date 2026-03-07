@@ -166,43 +166,29 @@ const SAFEZONES = [
 ];
 
 // ══ КАРТА ══
-// iZurvive тайлы Chernarus+ (загружаются браузером, не сервером)
-// Tile CRS: zoom 0-7, tile 256px, map 15360x15360m
-// На zoom=7: 128x128 тайлов, каждый 120x120m
-const TILE_SIZE = 256;
-const MAX_NATIVE_ZOOM = 7;
-const MAP_M = 15360; // метров
-
-// Custom CRS: 1 тайловый пиксель = MAP_M/256/2^MAX_NATIVE_ZOOM метров
-const scale = (TILE_SIZE * Math.pow(2, MAX_NATIVE_ZOOM)) / MAP_M;
-
+const MAP_M = 15360;
 const CRS = L.extend({}, L.CRS.Simple, {
-  transformation: new L.Transformation(scale, 0, -scale, MAP_M * scale),
+  transformation: new L.Transformation(1, 0, -1, MAP_M),
   infinite: false
 });
 
 const map = L.map('map', {
   crs: CRS,
-  minZoom: 1,
-  maxZoom: MAX_NATIVE_ZOOM,
-  zoomSnap: 0.5,
+  minZoom: -3,
+  maxZoom: 2,
+  zoomSnap: 0.25,
   zoomControl: true,
   attributionControl: false,
-  maxBounds: [[0,0],[MAP_M,MAP_M]],
-  maxBoundsViscosity: 0.9
+  maxBounds: [[-500,-500],[MAP_M+500,MAP_M+500]],
+  maxBoundsViscosity: 0.8
 });
 
-// iZurvive тайлы
-L.tileLayer('https://tiles.izurvive.com/ChernarusPlus/{z}/{x}/{y}.png', {
-  tileSize: TILE_SIZE,
-  minZoom: 1,
-  maxZoom: MAX_NATIVE_ZOOM,
-  noWrap: true,
-  errorTileUrl: ''
+// Локальная карта Chernarus+ (images/map_chernarus.jpg в репо)
+L.imageOverlay('images/map_chernarus.jpg', [[0,0],[MAP_M,MAP_M]], {
+  opacity: 0.9
 }).addTo(map);
 
-// Начальный вид — центр карты
-map.setView([MAP_M/2, MAP_M/2], 3);
+map.setView([MAP_M/2, MAP_M/2], -1);
 
 // ══ КОНВЕРТАЦИЯ ══
 // DayZ X,Z → Leaflet LatLng (lat=Z, lng=X)
