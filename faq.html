@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQ — Shelter PVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#cc1f1f; --red-dark:#8b1010; --ember:#e05a1a;
+  --khaki:#b7a98d; --khaki-dark:#7a6a53;
+  --bg:#080707; --bg2:#0f0d0d; --bg3:#161212;
+  --text:#d4c9b5; --text-dim:#6a6058; --rad:#7ec8a0;
+  --mono:'Share Tech Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Exo 2',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  height:56px;
+  background:rgba(8,7,7,0.92);
+  border-bottom:1px solid rgba(204,31,31,0.15);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;
+  gap:1rem;
+}
+.topbar-logo{
+  display:flex;align-items:center;gap:0.7rem;
+  text-decoration:none;
+}
+.topbar-logo img{height:32px;width:32px;object-fit:contain;}
+.topbar-logo-text{
+  font-family:'Oswald',sans-serif;
+  font-size:1rem;font-weight:600;
+  letter-spacing:0.12em;color:var(--text);
+}
+.topbar-logo-text span{color:var(--red);}
+.topbar-back{
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.15em;color:var(--text-dim);
+  text-decoration:none;
+  display:flex;align-items:center;gap:0.4rem;
+  transition:color 0.2s;
+}
+.topbar-back:hover{color:var(--red);}
+
+/* ── HERO ── */
+.faq-hero{
+  position:relative;
+  padding:5rem 2rem 3rem;
+  text-align:center;
+  overflow:hidden;
+}
+.faq-hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%, rgba(204,31,31,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+.faq-hero-label{
+  font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.3em;color:var(--red);
+  text-transform:uppercase;margin-bottom:1rem;
+  opacity:0;animation:fadeUp 0.6s 0.1s ease forwards;
+}
+.faq-hero h1{
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(2.5rem,6vw,4.5rem);
+  font-weight:700;letter-spacing:0.04em;
+  line-height:1;margin-bottom:1rem;
+  opacity:0;animation:fadeUp 0.6s 0.2s ease forwards;
+}
+.faq-hero h1 span{color:var(--red);}
+.faq-hero p{
+  color:var(--text-dim);font-size:0.9rem;
+  max-width:480px;margin:0 auto;line-height:1.7;
+  opacity:0;animation:fadeUp 0.6s 0.3s ease forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ── SEARCH ── */
+.faq-search-wrap{
+  max-width:540px;margin:2.5rem auto 0;
+  position:relative;
+  opacity:0;animation:fadeUp 0.6s 0.4s ease forwards;
+}
+.faq-search{
+  width:100%;padding:0.8rem 1rem 0.8rem 3rem;
+  background:var(--bg2);
+  border:1px solid rgba(204,31,31,0.2);
+  color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.9rem;
+  outline:none;transition:border-color 0.2s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.faq-search:focus{border-color:rgba(204,31,31,0.5);}
+.faq-search::placeholder{color:var(--text-dim);}
+.faq-search-icon{
+  position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+  color:var(--text-dim);pointer-events:none;font-size:0.9rem;
+}
+
+/* ── LAYOUT ── */
+.faq-container{
+  max-width:860px;margin:0 auto;
+  padding:2rem 1.5rem 6rem;
+}
+
+/* ── CATEGORY TABS ── */
+.faq-cats{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:2.5rem;
+  opacity:0;animation:fadeUp 0.6s 0.5s ease forwards;
+}
+.faq-cat{
+  font-family:var(--mono);font-size:0.62rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  padding:0.45rem 1rem;cursor:pointer;
+  background:transparent;
+  border:1px solid rgba(204,31,31,0.2);
+  color:var(--text-dim);
+  transition:all 0.2s;white-space:nowrap;
+  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.faq-cat:hover{border-color:rgba(204,31,31,0.4);color:var(--text);}
+.faq-cat.active{
+  background:rgba(204,31,31,0.12);
+  border-color:var(--red);color:var(--red);
+}
+
+/* ── CATEGORY HEADER ── */
+.faq-group{margin-bottom:2rem;}
+.faq-group-title{
+  font-family:'Oswald',sans-serif;
+  font-size:0.7rem;font-weight:400;
+  letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--red);opacity:0.7;
+  padding:0 0 0.6rem;
+  border-bottom:1px solid rgba(204,31,31,0.1);
+  margin-bottom:0.5rem;
+  display:flex;align-items:center;gap:0.6rem;
+}
+.faq-group-title::before{
+  content:'';display:inline-block;
+  width:16px;height:1px;background:var(--red);
+}
+
+/* ── ACCORDION ITEM ── */
+.faq-item{
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  overflow:hidden;
+}
+.faq-item.hidden{display:none;}
+.faq-q{
+  width:100%;text-align:left;
+  background:transparent;border:none;
+  padding:1.1rem 0;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;cursor:pointer;
+  transition:background 0.15s;
+}
+.faq-q:hover .faq-q-text{color:var(--text);}
+.faq-q-text{
+  font-family:'Rajdhani',sans-serif;
+  font-size:1.05rem;font-weight:600;
+  letter-spacing:0.02em;
+  color:var(--khaki);
+  transition:color 0.2s;
+  line-height:1.4;text-align:left;
+}
+.faq-item.open .faq-q-text{color:var(--text);}
+.faq-q-icon{
+  flex-shrink:0;
+  width:22px;height:22px;
+  border:1px solid rgba(204,31,31,0.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--red);font-size:0.75rem;
+  transition:transform 0.3s, background 0.2s;
+  clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%);
+}
+.faq-item.open .faq-q-icon{
+  transform:rotate(45deg);
+  background:rgba(204,31,31,0.15);
+}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.faq-item.open .faq-a{max-height:600px;}
+.faq-a-inner{
+  padding:0 0 1.4rem;
+  color:var(--text-dim);font-size:0.9rem;line-height:1.8;
+}
+.faq-a-inner strong{color:var(--khaki);}
+.faq-a-inner a{color:var(--red);text-decoration:none;}
+.faq-a-inner a:hover{text-decoration:underline;}
+.faq-a-inner code{
+  font-family:var(--mono);font-size:0.82rem;
+  background:var(--bg3);padding:0.15em 0.5em;
+  border:1px solid rgba(204,31,31,0.2);color:var(--rad);
+}
+.faq-a-inner .tip{
+  margin-top:0.8rem;
+  padding:0.7rem 1rem;
+  background:rgba(126,200,160,0.05);
+  border-left:2px solid var(--rad);
+  color:var(--rad);font-size:0.82rem;
+}
+.faq-a-inner .warn{
+  margin-top:0.8rem;
+  padding:0.7rem 1rem;
+  background:rgba(204,31,31,0.05);
+  border-left:2px solid var(--red);
+  color:var(--khaki);font-size:0.82rem;
+}
+
+/* ── NO RESULTS ── */
+/* ── STEP GUIDE ── */
+.faq-steps{
+  display:flex;flex-direction:column;gap:1.2rem;
+  margin-top:1rem;
+}
+.faq-step{
+  display:grid;grid-template-columns:28px 1fr;gap:0.8rem;
+  align-items:start;
+}
+.faq-step-num{
+  width:22px;height:22px;flex-shrink:0;
+  background:rgba(204,31,31,0.15);
+  border:1px solid rgba(204,31,31,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:0.65rem;color:var(--red);
+  clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%);
+}
+.faq-step-body p{
+  font-size:0.88rem;color:var(--text-dim);line-height:1.7;margin-bottom:0.5rem;
+}
+.faq-step-body strong{color:var(--khaki);}
+.faq-step-img{
+  display:block;width:100%;max-width:480px;
+  border:1px solid rgba(204,31,31,0.15);
+  margin-top:0.6rem;cursor:zoom-in;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.faq-step-img:hover{border-color:rgba(204,31,31,0.4);transform:scale(1.01);}
+
+/* ── LIGHTBOX ── */
+.lightbox{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.92);
+  display:flex;align-items:center;justify-content:center;
+  cursor:zoom-out;opacity:0;pointer-events:none;
+  transition:opacity 0.25s;
+}
+.lightbox.show{opacity:1;pointer-events:all;}
+.lightbox img{max-width:90vw;max-height:90vh;border:1px solid rgba(204,31,31,0.3);}
+
+.faq-empty{
+  text-align:center;padding:4rem 0;
+  color:var(--text-dim);font-family:var(--mono);
+  font-size:0.75rem;letter-spacing:0.15em;display:none;
+}
+
+/* ── FOOTER ── */
+.faq-footer{
+  text-align:center;
+  padding:2rem;
+  border-top:1px solid rgba(204,31,31,0.08);
+  color:var(--text-dim);font-size:0.8rem;
+}
+.faq-footer a{color:var(--red);text-decoration:none;}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .faq-hero{padding:3.5rem 1.2rem 2rem;}
+  .faq-container{padding:1.5rem 1rem 4rem;}
+  .faq-q-text{font-size:0.95rem;}
+  .topbar{padding:0 1rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/SHL_PVE.png" alt="Shelter PVE">
+    <span class="topbar-logo-text">SHELTER <span>PVE</span></span>
+  </a>
+  <a href="index.html" class="topbar-back">← НА ГЛАВНУЮ</a>
+</header>
+
+<!-- HERO -->
+<div class="faq-hero">
+  <div class="faq-hero-label">База знаний</div>
+  <h1>Часто задаваемые<br><span>вопросы</span></h1>
+  <p>Всё что нужно знать новичку и опытному игроку — собрано здесь</p>
+  <div class="faq-search-wrap">
+    <span class="faq-search-icon">🔍</span>
+    <input class="faq-search" type="text" placeholder="Поиск по вопросам..." id="faq-search" autocomplete="off">
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="faq-container">
+
+  <!-- CATEGORY TABS -->
+  <div class="faq-cats" id="faq-cats">
+    <button class="faq-cat active" data-cat="all">Все</button>
+    <button class="faq-cat" data-cat="start">🚀 Начало игры</button>
+    <button class="faq-cat" data-cat="rules">📋 Правила</button>
+    <button class="faq-cat" data-cat="server">⚙️ Сервер</button>
+    <button class="faq-cat" data-cat="donate">💰 Донат</button>
+    <button class="faq-cat" data-cat="bugs">🐛 Баги и тикеты</button>
+  </div>
+
+  <div id="faq-list">
+
+  <!-- ── НАЧАЛО ИГРЫ ── -->
+  <div class="faq-group" data-group="start">
+    <div class="faq-group-title">🚀 Начало игры</div>
+
+    <div class="faq-item" data-cat="start">
+      <button class="faq-q"><span class="faq-q-text">Как подключиться к серверу?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Запусти DayZ → нажми <strong>«Найти серверы»</strong> → вкладка <strong>«Community»</strong> → в поиске введи <code>Shelter</code> или IP адрес напрямую.<br><br>
+        IP сервера: <code>217.168.247.192:2312</code>
+        <div class="tip">Добавь сервер в избранное чтобы быстро заходить каждый раз.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="start">
+      <button class="faq-q"><span class="faq-q-text">Это PVE — значит меня не могут убить?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Верно. На Shelter PVE <strong>убийство игроков запрещено</strong> и технически заблокировано. Опасность представляют только зомби, животные и радиация.
+        <div class="tip">Можно помогать другим игрокам, строить совместные базы и торговать — это основа нашего сервера.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="start">
+      <button class="faq-q"><span class="faq-q-text">Где лучше начинать — на севере или на юге?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Новичкам рекомендуем <strong>юг Chernarus</strong> — побережье, небольшие города, меньше опасности. На севере лут лучше, но зомби агрессивнее и радиационные зоны ближе.
+        <div class="tip">Первые вещи ищи в жилых домах и сараях. Военный лут — только когда уже хорошо экипирован.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="start">
+      <button class="faq-q"><span class="faq-q-text">Есть ли трейдер на сервере?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Да, на сервере есть трейд-зоны где можно купить и продать предметы за игровую валюту. Расположение трейдеров смотри на карте Chernarus в разделе карты.
+        <div class="warn">В трейд-зоне нельзя оставлять транспорт без присмотра — его эвакуируют через 4 часа со штрафом.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="start">
+      <button class="faq-q"><span class="faq-q-text">Можно ли строить базу где угодно?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        В целом да, но есть ограничения: нельзя строить <strong>на дорогах</strong>, <strong>у трейдеров</strong>, <strong>в радиационных зонах</strong> и в местах спавна лута. Подробности — в правилах сервера.
+      </div></div>
+    </div>
+
+  </div><!-- /group start -->
+
+  <!-- ── ПРАВИЛА ── -->
+  <div class="faq-group" data-group="rules">
+    <div class="faq-group-title">📋 Правила</div>
+
+    <div class="faq-item" data-cat="rules">
+      <button class="faq-q"><span class="faq-q-text">Что будет если я нарушу правила?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        В зависимости от нарушения: <strong>предупреждение (варн)</strong>, <strong>временный бан</strong> или <strong>перманентный бан</strong>. Серьёзные нарушения (читы, PVP, воровство) — сразу перманент.
+        <div class="warn">Незнание правил не освобождает от ответственности. Обязательно ознакомься с <a href="index.html#rules">правилами сервера</a>.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="rules">
+      <button class="faq-q"><span class="faq-q-text">Можно ли взять чужие вещи из незапертого транспорта?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>Нет.</strong> Любое воровство запрещено вне зависимости от того, закрыт транспорт или нет. Это нарушение правил PVE и повлечёт перманентный бан.
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="rules">
+      <button class="faq-q"><span class="faq-q-text">Я случайно задел другого игрока — это бан?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Случайный урон рассматривается индивидуально. Если это очевидная случайность — скорее всего обойдётся предупреждением. Главное — <strong>сообщи в тикет сам</strong>, это покажет твою добросовестность.
+        <div class="tip">Открыть тикет прямо из игры: <code>Ctrl+9</code></div>
+      </div></div>
+    </div>
+
+  </div><!-- /group rules -->
+
+  <!-- ── СЕРВЕР ── -->
+  <div class="faq-group" data-group="server">
+    <div class="faq-group-title">⚙️ Сервер</div>
+
+    <div class="faq-item" data-cat="server">
+      <button class="faq-q"><span class="faq-q-text">Когда происходит рестарт сервера?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Сервер перезапускается <strong>каждые 3 часа</strong> начиная с 00:00 по московскому времени: 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 / 18:00 / 21:00.
+        <div class="tip">Таймер до следующего рестарта всегда виден на главной странице сайта.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="server">
+      <button class="faq-q"><span class="faq-q-text">Когда будет следующий вайп?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Дата вайпа объявляется заранее в <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord сервере</a> и в <a href="https://t.me/ShelterPVE" target="_blank">Telegram канале</a>. Следи за анонсами.
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="server">
+      <button class="faq-q"><span class="faq-q-text">Сервер лагает / я не могу зайти</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Попробуй: <br>
+        1. Подожди 2-3 минуты — возможно идёт рестарт<br>
+        2. Проверь Discord — там анонсы о технических работах<br>
+        3. Попробуй переподключиться через прямой IP: <code>217.168.247.192:2312</code>
+        <div class="tip">Если проблема повторяется — создай тикет в Discord или напиши в <code>#техподдержка</code>.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="server">
+      <button class="faq-q"><span class="faq-q-text">Какие моды установлены на сервере?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Полный список модов доступен на странице сервера на <a href="https://wargm.ru/server/66288" target="_blank">WARGM</a>. При первом подключении DayZ автоматически скачает все необходимые моды через Steam Workshop.
+      </div></div>
+    </div>
+
+  </div><!-- /group server -->
+
+  <!-- ── ДОНАТ ── -->
+  <div class="faq-group" data-group="donate">
+    <div class="faq-group-title">💰 Донат</div>
+
+    <div class="faq-item" data-cat="donate">
+      <button class="faq-q"><span class="faq-q-text">Донат даёт преимущество в игре?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>Нет.</strong> Все предметы из доната доступны игровым путём. Донат — это поддержка сервера и косметические или удобные плюшки, но не pay-to-win.
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="donate">
+      <button class="faq-q"><span class="faq-q-text">Как задонатить и где это сделать?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Только через официальный магазин: <a href="https://shelter-games.ru/products" target="_blank">shelter-games.ru</a>. Не платите сторонним лицам — это мошенники.
+        <div class="warn">Все пожертвования добровольны и не подлежат возврату.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="donate">
+      <button class="faq-q"><span class="faq-q-text">Мне не пришли вещи после доната</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Создай тикет в <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> с подтверждением оплаты (скриншот чека). Администрация разберётся.
+        <div class="warn">Товары, полученные за донат, не подлежат восстановлению после вайпа или потери по вине игрока.</div>
+      </div></div>
+    </div>
+
+  </div><!-- /group donate -->
+
+  <!-- ── БАГИ И ТИКЕТЫ ── -->
+  <div class="faq-group" data-group="bugs">
+    <div class="faq-group-title">🐛 Баги и тикеты</div>
+
+    <div class="faq-item" data-cat="bugs">
+      <button class="faq-q"><span class="faq-q-text">Как создать тикет (обращение к администрации)?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Тикет — это обращение по техническим вопросам: пропали вещи, баг, вопрос по донату.
+        <div class="faq-steps">
+          <div class="faq-step">
+            <div class="faq-step-num">1</div>
+            <div class="faq-step-body">
+              <p>Нажми <code>Ctrl+9</code> в игре → перейди в раздел <strong>«Система тикетов»</strong></p>
+              <img class="faq-step-img" src="images/faq/ticket-step1.png" alt="Система тикетов" loading="lazy">
+            </div>
+          </div>
+          <div class="faq-step">
+            <div class="faq-step-num">2</div>
+            <div class="faq-step-body">
+              <p>Поставь галочки напротив каждого пункта, нажми <strong>«Открыть»</strong> и опиши проблему в чате.</p>
+            </div>
+          </div>
+        </div>
+        <div class="tip">Администратор ответит в тикете. Неактивный тикет закрывается через сутки.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="bugs">
+      <button class="faq-q"><span class="faq-q-text">Как пожаловаться на другого игрока (репорт)?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Репорт — жалоба на конкретного игрока, нарушившего правила.
+        <div class="faq-steps">
+          <div class="faq-step">
+            <div class="faq-step-num">1</div>
+            <div class="faq-step-body">
+              <p>Нажми <code>Ctrl+9</code> → перейди в раздел <strong>«Отправить жалобу»</strong></p>
+            </div>
+          </div>
+          <div class="faq-step">
+            <div class="faq-step-num">2</div>
+            <div class="faq-step-body">
+              <p>Стрелками выбери никнейм нарушителя, опиши ситуацию и нажми <strong>«Пожаловаться»</strong></p>
+              <img class="faq-step-img" src="images/faq/ticket-step2.png" alt="Отправить жалобу" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="warn">Жалобы рассматриваются только при наличии видеозаписи нарушения.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="bugs">
+      <button class="faq-q"><span class="faq-q-text">Нашёл баг — что делать?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>Незамедлительно сообщи администрации</strong> через тикет или Discord. Не используй баг в своих целях — это повлечёт перманентный бан.
+        <div class="tip">За своевременное сообщение о баге администрация может поощрить игрока.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="bugs">
+      <button class="faq-q"><span class="faq-q-text">У меня пропал транспорт / вещи из-за бага</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Заявки на восстановление принимаются <strong>только в день происшествия</strong> и только при наличии видеозаписи. Создай тикет через <code>Ctrl+9</code> или обратись в Discord.
+        <div class="warn">Без видеодоказательства администрация вправе отказать в рассмотрении.</div>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-cat="bugs">
+      <button class="faq-q"><span class="faq-q-text">Как долго ждать ответа на тикет?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner">
+        Администратор не обязан отвечать мгновенно. Неактивный тикет закрывается через <strong>сутки</strong>. Если срочно — напиши в Discord.
+        <div class="warn">Агрессия и хамство в тикетах могут повлечь блокировку.</div>
+      </div></div>
+    </div>
+
+  </div><!-- /group bugs -->
+
+  </div><!-- /#faq-list -->
+
+  <div class="faq-empty" id="faq-empty">Ничего не найдено 🔍</div>
+
+</div><!-- /.faq-container -->
+
+<div class="faq-footer">
+  Остались вопросы? — <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> · <a href="https://t.me/ShelterPVE" target="_blank">Telegram</a> · <a href="index.html">На главную</a>
+</div>
+
+<script>
+// ── ACCORDION ──
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    // Toggle clicked
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// ── CATEGORY FILTER ──
+document.querySelectorAll('.faq-cat').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.faq-cat').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    filterFaq(cat, document.getElementById('faq-search').value);
+  });
+});
+
+// ── SEARCH ──
+document.getElementById('faq-search').addEventListener('input', e => {
+  const activeCat = document.querySelector('.faq-cat.active').dataset.cat;
+  filterFaq(activeCat, e.target.value);
+});
+
+function filterFaq(cat, query) {
+  const q = query.toLowerCase().trim();
+  let visible = 0;
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const itemCat = item.dataset.cat;
+    const text = item.querySelector('.faq-q-text').textContent.toLowerCase()
+                + item.querySelector('.faq-a-inner').textContent.toLowerCase();
+    const catMatch = cat === 'all' || itemCat === cat;
+    const queryMatch = !q || text.includes(q);
+    const show = catMatch && queryMatch;
+    item.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  // Show/hide group headers
+  document.querySelectorAll('.faq-group').forEach(group => {
+    const hasVisible = [...group.querySelectorAll('.faq-item')].some(i => !i.classList.contains('hidden'));
+    group.style.display = hasVisible ? '' : 'none';
+  });
+
+  document.getElementById('faq-empty').style.display = visible === 0 ? 'block' : 'none';
+}
+
+// ── LIGHTBOX ──
+const lb = document.createElement('div');
+lb.className = 'lightbox';
+lb.innerHTML = '<img id="lb-img" src="" alt="">';
+document.body.appendChild(lb);
+document.querySelectorAll('.faq-step-img').forEach(img => {
+  img.addEventListener('click', () => {
+    document.getElementById('lb-img').src = img.src;
+    lb.classList.add('show');
+  });
+});
+lb.addEventListener('click', () => lb.classList.remove('show'));
+document.addEventListener('keydown', e => { if(e.key==='Escape') lb.classList.remove('show'); });
+
+// ── OPEN FIRST ITEM BY DEFAULT ──
+const first = document.querySelector('.faq-item');
+if (first) first.classList.add('open');
+</script>
+</body>
+</html>
