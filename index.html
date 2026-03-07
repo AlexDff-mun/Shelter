@@ -257,6 +257,172 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 .fu.vis{ opacity:1; transform:translateY(0); }
 @media(max-width:600px){section{padding:3.5rem 1.2rem;} .events-grid,.pillars-grid{grid-template-columns:1fr;} .topbar-links .server-addr,.topbar-links .tl:not(.primary){display:none;}}
 
+/* ══════════════════════════════════════
+   MOBILE NAV — BURGER + DRAWER
+══════════════════════════════════════ */
+.burger {
+  display:none;
+  flex-direction:column; justify-content:center; align-items:center;
+  gap:5px; width:40px; height:40px;
+  background:rgba(204,31,31,0.08);
+  border:1px solid rgba(204,31,31,0.25);
+  cursor:pointer; padding:0;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  transition:background 0.2s;
+  flex-shrink:0;
+}
+.burger span {
+  display:block; width:20px; height:2px;
+  background:var(--khaki);
+  transition:transform 0.3s, opacity 0.3s, width 0.3s;
+  transform-origin:center;
+}
+.burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity:0; width:0; }
+.burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+.burger:hover { background:rgba(204,31,31,0.15); }
+
+/* OVERLAY */
+.mobile-nav-overlay {
+  display:none;
+  position:fixed; inset:0; z-index:498;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(3px);
+  opacity:0; transition:opacity 0.3s;
+}
+.mobile-nav-overlay.show { opacity:1; }
+
+/* DRAWER */
+.mobile-nav {
+  display:none;
+  position:fixed; top:60px; left:0; right:0; z-index:499;
+  background:rgba(10,8,8,0.98);
+  border-bottom:1px solid rgba(204,31,31,0.2);
+  transform:translateY(-8px);
+  opacity:0;
+  transition:transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+  max-height:calc(100vh - 60px);
+  overflow-y:auto;
+}
+.mobile-nav.show {
+  transform:translateY(0);
+  opacity:1;
+}
+.mobile-nav-inner {
+  padding:1rem 1.2rem 1.5rem;
+  display:flex; flex-direction:column; gap:2px;
+}
+.mobile-nav-status {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.6rem 0.8rem 0.8rem;
+  border-bottom:1px solid rgba(204,31,31,0.1);
+  margin-bottom:0.5rem;
+}
+.mobile-ip {
+  font-family:var(--mono); font-size:0.65rem;
+  color:var(--text-dim); letter-spacing:0.05em;
+}
+.mob-link {
+  display:block; padding:0.85rem 0.8rem;
+  font-family:'Oswald',sans-serif; font-size:0.9rem;
+  font-weight:400; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--khaki-dark); text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  transition:color 0.2s, padding-left 0.2s;
+}
+.mob-link:hover, .mob-link:active { color:var(--text); padding-left:1.2rem; }
+.mob-faq { color:var(--rad) !important; }
+.mob-social { font-size:0.8rem; color:var(--text-dim); }
+.mob-divider {
+  height:1px; background:rgba(204,31,31,0.1);
+  margin:0.4rem 0;
+}
+.mob-connect {
+  display:block; margin-top:0.8rem; padding:0.9rem;
+  background:var(--red); color:#fff; text-align:center;
+  font-family:'Oswald',sans-serif; font-size:0.9rem;
+  font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
+  text-decoration:none;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:background 0.2s;
+}
+.mob-connect:hover { background:var(--red-dark); }
+
+@media(max-width:750px) {
+  .burger { display:flex; }
+  .mobile-nav, .mobile-nav-overlay { display:block; }
+  /* hide desktop links on mobile */
+  .topbar-links .tl,
+  .topbar-links .server-addr,
+  .topbar-links .pc-topbar { display:none !important; }
+}
+
+/* ══════════════════════════════════════
+   MOBILE LAYOUT FIXES
+══════════════════════════════════════ */
+@media(max-width:600px) {
+  /* HERO */
+  .hero { min-height:90vh; padding-top:60px; }
+  .hero-content { padding:0 1.2rem; text-align:center; }
+  .hero-cta { flex-direction:column; align-items:center; gap:0.8rem; }
+  .hero-cta .btn { width:100%; max-width:280px; justify-content:center; }
+
+  /* SOCIALS BAR */
+  .socials-bar { padding:0.8rem 1rem; }
+  .socials-inner { gap:0.5rem; }
+  .social-link { padding:0.5rem 0.8rem; font-size:0.7rem; }
+  .copy-ip-btn, .restart-timer { font-size:0.65rem; padding:0.45rem 0.8rem; }
+
+  /* TEAM — 2 колонки на мобиле */
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap:1rem;
+  }
+  .team-card { padding:1.2rem 0.8rem 1rem; }
+  .team-avatar { width:56px; height:56px; font-size:1.4rem; }
+  .team-name { font-size:0.82rem; }
+  .team-role { font-size:0.55rem; }
+  .team-discord { font-size:0.58rem; }
+
+  /* RULES TABS — скролл по горизонтали */
+  .rules-tabs {
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:0;
+    gap:0;
+  }
+  .rules-tabs::-webkit-scrollbar { display:none; }
+  .rules-tab { flex-shrink:0; font-size:0.65rem; padding:0.55rem 0.8rem; }
+
+  /* MAP */
+  #map { height:320px; }
+  .map-overlay-btn { font-size:0.6rem; padding:0.4rem 0.8rem; }
+
+  /* GALLERY */
+  .gallery-slide img { max-height:220px; object-fit:cover; }
+
+  /* CRAFT TABS */
+  .tabs { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+
+  /* SECTION TITLES */
+  .section-title { font-size:clamp(1.8rem,8vw,3rem); }
+
+  /* LOOT / FEATURES */
+  .features-grid { grid-template-columns:1fr; }
+
+  /* DANGER */
+  .danger-layout { grid-template-columns:1fr; }
+}
+
+@media(max-width:380px) {
+  /* Очень маленькие экраны — 1 колонка для команды */
+  .team-grid { grid-template-columns:1fr; max-width:220px; margin-left:auto; margin-right:auto; }
+}
+
 /* ── PLAYER COUNTER ── */
 .player-counter {
   display: inline-flex; align-items: center; gap: 0.9rem;
@@ -732,7 +898,37 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
     <a href="https://shelter-games.ru/products" target="_blank" class="tl">Магазин</a>
     <a href="https://wargm.ru/server/66288" target="_blank" class="tl primary">Подключиться</a>
   </div>
+  <!-- MOBILE BURGER -->
+  <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV DRAWER -->
+<div class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-status">
+      <div class="player-counter pc-topbar" id="counter-mobile">
+        <div class="pc-dot" id="dot-mobile"></div>
+        <div class="pc-info">
+          <div class="pc-count" id="count-mobile">–/–</div>
+          <div class="pc-label">Онлайн</div>
+        </div>
+      </div>
+      <span class="mobile-ip">217.168.247.192:2312</span>
+    </div>
+    <a href="#map-section" class="mob-link" onclick="closeNav()">Карта</a>
+    <a href="#rules" class="mob-link" onclick="closeNav()">Правила</a>
+    <a href="#team" class="mob-link" onclick="closeNav()">Команда</a>
+    <a href="faq.html" class="mob-link mob-faq">FAQ</a>
+    <div class="mob-divider"></div>
+    <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="mob-link mob-social">💬 Discord</a>
+    <a href="https://t.me/ShelterPVE" target="_blank" class="mob-link mob-social">✈️ Telegram</a>
+    <a href="https://shelter-games.ru/products" target="_blank" class="mob-link mob-social">🛒 Магазин</a>
+    <a href="https://wargm.ru/server/66288" target="_blank" class="mob-connect">⚡ Подключиться</a>
+  </div>
+</div>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeNav()"></div>
 
 <section class="hero">
   <div class="hero-parallax">
@@ -1716,17 +1912,21 @@ function setCounterUI(players, max, status) {
   const online = status === 'online';
   const dot1 = document.getElementById('dot-hero');
   const dot2 = document.getElementById('dot-topbar');
+  const dot3 = document.getElementById('dot-mobile');
   const c1   = document.getElementById('count-hero');
   const c2   = document.getElementById('count-topbar');
+  const c3   = document.getElementById('count-mobile');
 
   const cls = online ? 'pc-dot online' : 'pc-dot offline';
   if (dot1) dot1.className = cls;
   if (dot2) dot2.className = cls;
+  if (dot3) dot3.className = cls;
 
   if (c1) c1.innerHTML = online
     ? `<span>${players}</span> / ${max}`
     : `<span style="color:var(--text-dim)">Офлайн</span>`;
   if (c2) c2.textContent = online ? `${players}/${max}` : '—';
+  if (c3) c3.textContent = online ? `${players}/${max}` : '—';
 }
 
 async function fetchPlayerCount() {
@@ -1873,6 +2073,32 @@ window.copyIP = function() {
     });
   });
 })();
+
+// ── BURGER MENU ──
+const burgerBtn = document.getElementById('burger');
+const mobileNav = document.getElementById('mobile-nav');
+const mobileOverlay = document.getElementById('mobile-nav-overlay');
+function openNav() {
+  burgerBtn.classList.add('open');
+  burgerBtn.setAttribute('aria-expanded','true');
+  mobileNav.classList.add('show');
+  mobileOverlay.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeNav() {
+  burgerBtn.classList.remove('open');
+  burgerBtn.setAttribute('aria-expanded','false');
+  mobileNav.classList.remove('show');
+  mobileOverlay.classList.remove('show');
+  document.body.style.overflow='';
+}
+burgerBtn.addEventListener('click', () => {
+  burgerBtn.classList.contains('open') ? closeNav() : openNav();
+});
+document.querySelectorAll('.mob-link[href^="#"]').forEach(a => {
+  a.addEventListener('click', () => setTimeout(closeNav, 120));
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeNav(); });
 
 </script>
 <div id="ip-toast" class="ip-toast">✓ IP скопирован в буфер</div>
