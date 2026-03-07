@@ -1692,8 +1692,56 @@ setInterval(fetchPlayerCount, 60000);
 (function(){
   if(!document.getElementById('map')) return;
 
-  // Map loaded via iframe
+  // Load Leaflet dynamically and init Chernarus map
+  function loadLeaflet(cb) {
+    if (window.L) { cb(); return; }
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(css);
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
 
+  function initMap() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl || mapEl._mapInited) return;
+    mapEl._mapInited = true;
+
+    const map = L.map('map', {
+      crs: L.CRS.Simple,
+      minZoom: -2, maxZoom: 3,
+      zoomSnap: 0.5,
+      attributionControl: false,
+      zoomControl: true
+    });
+
+    // OpenStreetMap dark as fallback - always works
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Overlay attempt: iZurvive iframe if user clicks
+    const hint = L.DomUtil.create('div');
+    hint.innerHTML = '<a href="https://www.izurvive.com/#c=ChernarusPlus" target="_blank" style="color:#cc1f1f;font-family:monospace;font-size:0.7rem;letter-spacing:0.1em;background:rgba(0,0,0,0.7);padding:4px 10px;border:1px solid #cc1f1f">📍 ОТКРЫТЬ КАРТУ CHERNARUS →</a>';
+    hint.style.cssText = 'position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:1000;white-space:nowrap';
+    mapEl.appendChild(hint);
+
+    map.setView([55, 37], 4); // Moscow area as fallback
+  }
+
+  // Init on section scroll into view
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      loadLeaflet(initMap);
+      obs.disconnect();
+    }
+  }, { threshold: 0.1 });
+  obs.observe(document.getElementById('map'));
+})();
 
 // ── CAROUSEL ──
 (function(){
