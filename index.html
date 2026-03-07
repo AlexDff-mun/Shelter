@@ -1678,33 +1678,16 @@ function show(name, el) {
 <div class="divider"></div>
 
 <!-- ════════════ MAP ════════════ -->
-<section class="map-section" id="map-section">
+<section class="map-section" id="map-section" style="padding:4rem 0;text-align:center;background:var(--bg2);border-top:1px solid rgba(204,31,31,0.08);border-bottom:1px solid rgba(204,31,31,0.08);">
   <div class="container">
     <div class="sec-label fu">Навигация</div>
-    <h2 class="sec-title fu">Карта <span>Chernarus</span></h2>
-    <p class="fu" style="color:var(--khaki-dark);font-size:0.88rem;max-width:560px;line-height:1.7;margin-bottom:0.5rem">
-      Интерактивная тёмная карта — основа для навигации по серверу
+    <h2 class="sec-title fu">Карта <span>сервера</span></h2>
+    <p class="fu" style="color:var(--khaki-dark);font-size:0.88rem;max-width:480px;margin:0.5rem auto 2rem;line-height:1.7;">
+      Интерактивная карта Chernarus+ с трейдерами, сейфзонами и точками интереса сервера
     </p>
-    <div class="map-wrapper fu">
-      <div class="map-clip-outer">
-        <div class="map-clip-inner">
-          <iframe
-            src="https://www.izurvive.com/#c=ChernarusPlus"
-            class="map-iframe"
-            allowfullscreen
-            title="Карта Chernarus+"
-          ></iframe>
-        </div>
-        <!-- Overlay masks for iZurvive UI -->
-        <div class="map-mask map-mask-top"></div>
-        <div class="map-mask map-mask-right"></div>
-        <div class="map-open-btn">
-          <a href="https://www.izurvive.com/#c=ChernarusPlus" target="_blank">
-            ↗ ПОЛНАЯ КАРТА
-          </a>
-        </div>
-      </div>
-    </div>
+    <a href="map.html" class="btn btn-red fu" style="display:inline-flex;align-items:center;gap:0.6rem;font-size:0.85rem;">
+      🗺 ОТКРЫТЬ КАРТУ
+    </a>
   </div>
 </section>
 
