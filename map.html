@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Карта — Shelter PVE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --red:#cc1f1f;--khaki:#b7a98d;--khaki-dark:#7a6a53;
-  --bg:#080707;--text:#d4c9b5;--text-dim:#6a6058;--rad:#7ec8a0;
+  --red:#cc1f1f;--khaki:#b7a98d;--bg:#080707;
+  --text:#d4c9b5;--text-dim:#6a6058;--rad:#7ec8a0;
   --mono:'Share Tech Mono',monospace;
 }
 html,body{height:100%;overflow:hidden;background:var(--bg);}
@@ -30,7 +30,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 .filter-btn.active{border-color:var(--c,var(--red));color:var(--c,var(--red));background:rgba(204,31,31,0.07);}
 #map{position:fixed;top:calc(52px + 35px);left:0;right:0;bottom:0;}
 .leaflet-container{background:#06080a!important;}
-.leaflet-tile{filter:saturate(0.75) brightness(0.72) contrast(1.05);}
 .leaflet-control-zoom{border:1px solid rgba(204,31,31,0.25)!important;background:rgba(8,7,7,0.95)!important;}
 .leaflet-control-zoom a{background:rgba(8,7,7,0.95)!important;color:var(--khaki)!important;border-color:rgba(204,31,31,0.15)!important;font-family:var(--mono)!important;}
 .leaflet-control-zoom a:hover{color:var(--red)!important;background:rgba(204,31,31,0.1)!important;}
@@ -38,13 +37,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 .leaflet-popup-content-wrapper{background:rgba(8,7,7,0.97)!important;border:1px solid rgba(204,31,31,0.3)!important;border-radius:0!important;color:var(--text)!important;box-shadow:0 0 24px rgba(204,31,31,0.15)!important;}
 .leaflet-popup-tip{background:rgba(8,7,7,0.97)!important;}
 .leaflet-popup-content{margin:12px 16px!important;min-width:150px;}
-.popup-title{font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;letter-spacing:0.06em;color:var(--text);margin-bottom:3px;}
+.popup-title{font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:3px;}
 .popup-type{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;}
 .popup-sz{font-family:var(--mono);font-size:0.58rem;color:var(--rad);margin-top:3px;}
 .popup-coords{font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);border-top:1px solid rgba(255,255,255,0.05);padding-top:5px;margin-top:5px;}
 .leaflet-popup-close-button{color:var(--text-dim)!important;}
 .leaflet-popup-close-button:hover{color:var(--red)!important;}
-.legend-btn{position:fixed;bottom:1rem;right:1rem;z-index:900;font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;padding:0.4rem 0.8rem;background:rgba(8,7,7,0.92);border:1px solid rgba(204,31,31,0.2);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s;}
+.legend-btn{position:fixed;bottom:1rem;right:1rem;z-index:900;font-family:var(--mono);font-size:0.58rem;padding:0.4rem 0.8rem;background:rgba(8,7,7,0.92);border:1px solid rgba(204,31,31,0.2);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s;}
 .legend-btn:hover{color:var(--red);}
 .map-legend{position:fixed;bottom:1rem;right:1rem;z-index:901;background:rgba(8,7,7,0.96);border:1px solid rgba(204,31,31,0.2);padding:0.9rem 1.1rem;min-width:175px;display:none;cursor:pointer;}
 .map-legend.show{display:block;}
@@ -85,64 +84,43 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
   <div class="legend-item"><div class="leg-ring" style="border-color:#7ec8a0"></div>Сейфзона</div>
 </div>
 <script>
-const PROXY  = 'https://dayz-map-proxy.alexan3747.workers.dev';
-const MAP_M  = 15360; // метров по каждой оси
+// ══ DayZ Chernarus+ = 15360 × 15360 метров ══
+// Leaflet CRS.Simple: lat = Z (север), lng = X (восток)
+// Bounds: юго-запад [0,0] → северо-восток [15360,15360]
 
-// ══════════════════════════════════════════════
-//  CRS для DayZ + iZurvive тайлов
-//
-//  DayZ координаты: X = восток [0..15360]
-//                   Z = север  [0..15360]  (0 = юг, 15360 = север)
-//
-//  iZurvive тайлы: tile_x = 0 слева (запад)
-//                  tile_y = 0 сверху (СЕВЕР) ← Y перевёрнут!
-//
-//  Leaflet LatLng: lat = вверх, lng = вправо
-//  Мы кладём:  lat = Z (метры), lng = X (метры)
-//
-//  Transformation(a,b,c,d):
-//    pixel_x =  a * lng + b  =  (1/MAP_M) * X         → 0..1
-//    pixel_y =  c * lat + d  = -(1/MAP_M) * Z + 1     → 1..0  (инверсия Y!)
-//
-//  scale(zoom) = 256 * 2^zoom  (стандарт Leaflet)
-// ══════════════════════════════════════════════
-const CRS = L.extend({}, L.CRS.Simple, {
-  // 256 = размер тайла в пикселях
-  // X → pixel_x = 256 * X / MAP_M
-  // Z → pixel_y = 256 * (MAP_M - Z) / MAP_M  (Y перевёрнут у тайлов)
-  transformation: new L.Transformation(256/MAP_M, 0, -256/MAP_M, 256),
-  infinite: false,
-  wrapLng: false,
-  wrapLat: false
-});
+const MAP_M = 15360;
+const BOUNDS = [[0, 0], [MAP_M, MAP_M]];
 
 const map = L.map('map', {
-  crs: CRS,
-  minZoom: -2,
-  maxZoom: 4,
+  crs: L.CRS.Simple,
+  minZoom: -3,
+  maxZoom: 3,
   zoomSnap: 0.5,
+  zoomControl: true,
   attributionControl: false,
-  maxBounds: [[0, 0], [MAP_M, MAP_M]],
+  maxBounds: [[-500, -500], [MAP_M + 500, MAP_M + 500]],
   maxBoundsViscosity: 0.85
 });
 
-L.imageOverlay('images/map_chernarus.jpg', [[0, 0], [MAP_M, MAP_M]], {
-  opacity: 0.9
+// Карта из файла (скачанная через map_downloader.html)
+L.imageOverlay('images/map_chernarus.jpg', BOUNDS, {
+  opacity: 0.92,
+  interactive: false
 }).addTo(map);
 
-map.setView([MAP_M / 2, MAP_M / 2], 1);
+// Показать всю карту
+map.fitBounds(BOUNDS, { padding: [10, 10] });
 
 // ══ МАРКЕРЫ ══
-// LatLng(Z, X) — lat=Z (север), lng=X (восток)
 const MARKERS = [
-  { text:"Лагерь выживших",   sub:"Trader",              cat:"trader",    icon:"🏕", color:"#e0a020", x:8142.7,  z:10922.0, sz:true  },
-  { text:"Терминал",          sub:"Trader",              cat:"trader",    icon:"🔫", color:"#e0a020", x:14301.4, z:13253.1, sz:true  },
-  { text:"Егерь",             sub:"Trader",              cat:"trader",    icon:"🎣", color:"#e0a020", x:1230.3,  z:6473.0,  sz:true  },
-  { text:"Инженерный пост",   sub:"Крафт",               cat:"craft",     icon:"🔧", color:"#5b9bd5", x:3092.86, z:10827.0, sz:true  },
-  { text:"Алькатрас",         sub:"Опасная зона",        cat:"danger",    icon:"💀", color:"#cc1f1f", x:2680.0,  z:1280.0,  sz:false },
-  { text:"Радар",             sub:"Опасная зона",        cat:"danger",    icon:"📡", color:"#cc1f1f", x:560.0,   z:13680.0, sz:false },
-  { text:"Радиация",          sub:"Радиационная зона",   cat:"radiation", icon:"☢", color:"#7ec8a0", x:8599.7,  z:13277.3, sz:false },
-  { text:"Радиация (Павлово)",sub:"Радиационная зона",   cat:"radiation", icon:"☢", color:"#7ec8a0", x:2166.31, z:3362.51, sz:false },
+  { text:"Лагерь выживших",    sub:"Trader",              cat:"trader",    icon:"🏕", color:"#e0a020", x:8142.7,  z:10922.0, sz:true  },
+  { text:"Терминал",           sub:"Trader",              cat:"trader",    icon:"🔫", color:"#e0a020", x:14301.4, z:13253.1, sz:true  },
+  { text:"Егерь",              sub:"Trader",              cat:"trader",    icon:"🎣", color:"#e0a020", x:1230.3,  z:6473.0,  sz:true  },
+  { text:"Инженерный пост",    sub:"Крафт",               cat:"craft",     icon:"🔧", color:"#5b9bd5", x:3092.86, z:10827.0, sz:true  },
+  { text:"Алькатрас",          sub:"Опасная зона",        cat:"danger",    icon:"💀", color:"#cc1f1f", x:2680.0,  z:1280.0,  sz:false },
+  { text:"Радар",              sub:"Опасная зона",        cat:"danger",    icon:"📡", color:"#cc1f1f", x:560.0,   z:13680.0, sz:false },
+  { text:"Радиация",           sub:"Радиационная зона",   cat:"radiation", icon:"☢", color:"#7ec8a0", x:8599.7,  z:13277.3, sz:false },
+  { text:"Радиация (Павлово)", sub:"Радиационная зона",   cat:"radiation", icon:"☢", color:"#7ec8a0", x:2166.31, z:3362.51, sz:false },
 ];
 const SAFEZONES = [
   { x:8122.0,  z:10944.3, r:90,  label:"Лагерь выживших" },
@@ -166,7 +144,7 @@ function makeIcon(emoji, color) {
 
 const allLayers = [];
 MARKERS.forEach(m => {
-  const marker = L.marker(L.latLng(m.z, m.x), { icon: makeIcon(m.icon, m.color) })
+  const marker = L.marker([m.z, m.x], { icon: makeIcon(m.icon, m.color) })
     .bindPopup(`
       <div class="popup-title">${m.text}</div>
       <div class="popup-type" style="color:${m.color}">${m.icon} ${m.sub}</div>
@@ -179,9 +157,8 @@ MARKERS.forEach(m => {
 
 const szLayers = [];
 SAFEZONES.forEach(sz => {
-  const c = L.circle(L.latLng(sz.z, sz.x), {
-    radius: sz.r,
-    color:'#7ec8a0', fillColor:'#7ec8a0',
+  const c = L.circle([sz.z, sz.x], {
+    radius: sz.r, color:'#7ec8a0', fillColor:'#7ec8a0',
     fillOpacity:0.08, weight:1.5, dashArray:'6,5'
   }).bindPopup(`
     <div class="popup-title">🛡 Сейфзона</div>
