@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>404 — Shelter PVE</title>
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#cc1f1f;--khaki:#b7a98d;--bg:#080707;--text:#d4c9b5;--text-dim:#6a6058;
+  --mono:'Share Tech Mono',monospace;--head:'Oswald',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--head);overflow:hidden;}
+
+/* Частицы */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.p{position:absolute;width:2px;height:2px;background:var(--red);border-radius:50%;opacity:0;animation:float var(--d,8s) var(--delay,0s) infinite ease-in-out;}
+@keyframes float{0%{transform:translateY(100vh) translateX(0);opacity:0}10%{opacity:var(--op,0.4)}90%{opacity:var(--op,0.4)}100%{transform:translateY(-10vh) translateX(var(--dx,20px));opacity:0}}
+
+/* Сетка */
+.grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(204,31,31,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(204,31,31,0.03) 1px,transparent 1px);background-size:40px 40px;}
+
+/* Основной контент */
+.scene{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+
+/* 404 большие цифры */
+.big-404{position:relative;margin-bottom:1.5rem;}
+.glitch{
+  font-family:var(--head);font-size:clamp(6rem,20vw,14rem);font-weight:700;
+  color:transparent;-webkit-text-stroke:1px rgba(204,31,31,0.3);
+  letter-spacing:0.05em;line-height:1;position:relative;
+  animation:glitch-skew 4s infinite linear alternate-reverse;
+}
+.glitch::before,.glitch::after{
+  content:'404';position:absolute;inset:0;
+  font-family:var(--head);font-size:inherit;font-weight:700;letter-spacing:inherit;
+}
+.glitch::before{
+  color:rgba(204,31,31,0.6);-webkit-text-stroke:0;
+  animation:glitch-1 3s infinite;clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
+}
+.glitch::after{
+  color:rgba(91,155,213,0.4);-webkit-text-stroke:0;
+  animation:glitch-2 3s infinite;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
+}
+@keyframes glitch-skew{0%{transform:skew(0deg)}20%{transform:skew(-1deg)}40%{transform:skew(0.5deg)}100%{transform:skew(0deg)}}
+@keyframes glitch-1{0%,95%{transform:translate(0)}96%{transform:translate(-3px,1px)}97%{transform:translate(3px,-1px)}98%{transform:translate(-2px,0)}100%{transform:translate(0)}}
+@keyframes glitch-2{0%,93%{transform:translate(0)}94%{transform:translate(3px,2px)}96%{transform:translate(-3px,-1px)}98%{transform:translate(2px,0)}100%{transform:translate(0)}}
+
+.code-line{
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.15em;
+  color:rgba(204,31,31,0.5);margin-bottom:2rem;
+}
+.code-line span{color:var(--khaki);animation:blink 1.2s step-end infinite;}
+@keyframes blink{50%{opacity:0}}
+
+.title{font-family:var(--head);font-size:clamp(1.2rem,4vw,2rem);font-weight:600;letter-spacing:0.15em;color:var(--text);margin-bottom:0.8rem;text-transform:uppercase;}
+.subtitle{font-family:var(--mono);font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:2.5rem;line-height:1.8;max-width:400px;}
+
+.links{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+.link-btn{
+  font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:0.6rem 1.4rem;text-decoration:none;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:all 0.2s;
+}
+.link-primary{background:rgba(204,31,31,0.15);color:var(--red);border:1px solid rgba(204,31,31,0.35);}
+.link-primary:hover{background:rgba(204,31,31,0.28);}
+.link-secondary{background:rgba(183,169,141,0.07);color:var(--khaki);border:1px solid rgba(183,169,141,0.2);}
+.link-secondary:hover{background:rgba(183,169,141,0.15);}
+
+/* Сканлайн */
+.scanline{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
+
+/* Угловые декор */
+.corner{position:fixed;width:40px;height:40px;border-color:rgba(204,31,31,0.2);border-style:solid;}
+.corner-tl{top:1rem;left:1rem;border-width:1px 0 0 1px;}
+.corner-tr{top:1rem;right:1rem;border-width:1px 1px 0 0;}
+.corner-bl{bottom:1rem;left:1rem;border-width:0 0 1px 1px;}
+.corner-br{bottom:1rem;right:1rem;border-width:0 1px 1px 0;}
+
+/* Счётчик редиректа */
+.redirect{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);margin-top:2rem;letter-spacing:0.1em;}
+.redirect b{color:var(--red);}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scanline"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="particles" id="particles"></div>
+
+<div class="scene">
+  <div class="big-404">
+    <div class="glitch">404</div>
+  </div>
+
+  <div class="code-line">// ERROR: PAGE_NOT_FOUND <span>_</span></div>
+
+  <div class="title">Страница не найдена</div>
+  <div class="subtitle">
+    Похоже ты попал не туда.<br>
+    Эта территория необитаема — возвращайся в безопасную зону.
+  </div>
+
+  <div class="links">
+    <a href="index.html" class="link-btn link-primary">← На главную</a>
+    <a href="map.html" class="link-btn link-secondary">🗺 Карта</a>
+    <a href="faq.html" class="link-btn link-secondary">❓ FAQ</a>
+  </div>
+
+  <div class="redirect">авто-редирект через <b id="countdown">10</b> сек</div>
+</div>
+
+<script>
+// Частицы
+const p = document.getElementById('particles');
+for (let i = 0; i < 25; i++) {
+  const el = document.createElement('div');
+  el.className = 'p';
+  el.style.cssText = `left:${Math.random()*100}%;--d:${6+Math.random()*8}s;--delay:${Math.random()*8}s;--dx:${(Math.random()-0.5)*60}px;--op:${0.2+Math.random()*0.35}`;
+  p.appendChild(el);
+}
+
+// Обратный отсчёт
+let n = 10;
+const cd = document.getElementById('countdown');
+const t = setInterval(() => {
+  n--;
+  cd.textContent = n;
+  if (n <= 0) { clearInterval(t); location.href = 'index.html'; }
+}, 1000);
+</script>
+</body>
+</html>
