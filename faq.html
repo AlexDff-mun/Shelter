@@ -639,9 +639,15 @@ body::before{
         </select>
       </div>
     </div>
-    <div class="cf-field">
-      <label class="cf-label">Steam ID (необязательно)</label>
-      <input class="cf-input" id="cf-steam" placeholder="76561198XXXXXXXXX" maxlength="32">
+    <div class="cf-row">
+      <div class="cf-field">
+        <label class="cf-label">Steam ID (необязательно)</label>
+        <input class="cf-input" id="cf-steam" placeholder="76561198XXXXXXXXX" maxlength="32">
+      </div>
+      <div class="cf-field">
+        <label class="cf-label">Discord никнейм</label>
+        <input class="cf-input" id="cf-discord" placeholder="nickname или nickname#1234" maxlength="64">
+      </div>
     </div>
     <div class="cf-field">
       <label class="cf-label">Сообщение</label>
@@ -655,8 +661,11 @@ body::before{
   <div class="cf-success hidden" id="cf-success">
     <div class="cf-success-icon">✓</div>
     <div class="cf-success-title">Обращение отправлено!</div>
-    <div class="cf-success-text">Администрация ответит в Discord. Убедись что ты в нашем <a href="https://discord.gg/4EWuqwfBu" target="_blank">сервере</a>.</div>
-    <button class="cf-btn" onclick="resetForm()" style="margin-top:1rem;max-width:220px">← Новое обращение</button>
+    <div class="cf-success-text">Обращение принято! Мы напишем тебе в Discord.<br>Убедись что ты на нашем сервере — без этого ответить не получится.</div>
+    <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem">
+      <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="cf-btn" style="max-width:240px;text-decoration:none;display:inline-block;text-align:center">💬 Зайти в Discord →</a>
+      <button class="cf-btn" onclick="resetForm()" style="max-width:220px;background:rgba(255,255,255,0.04);color:var(--text-dim);border-color:rgba(255,255,255,0.08)">← Новое обращение</button>
+    </div>
   </div>
 </div></div>
 
@@ -747,6 +756,7 @@ async function sendForm() {
   const name  = document.getElementById('cf-name').value.trim();
   const type  = document.getElementById('cf-type').value;
   const steam = document.getElementById('cf-steam').value.trim();
+  const discord = document.getElementById('cf-discord').value.trim();
   const msg   = document.getElementById('cf-msg').value.trim();
   const err   = document.getElementById('cf-error');
   const btn   = document.getElementById('cf-submit');
