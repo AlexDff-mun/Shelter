@@ -2159,10 +2159,11 @@ window.copyIP = function() {
   const el = document.getElementById('rt-time');
   if(!el) return;
   function tick() {
-    // Use UTC+3 (Moscow time)
+    // UTC+3 Moscow time — независимо от часового пояса пользователя
     const now = new Date();
-    const msk = new Date(now.getTime() + (3 * 60 - now.getTimezoneOffset()) * 60000);
-    const h = msk.getUTCHours(), m = msk.getUTCMinutes(), s = msk.getUTCSeconds();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const msk = new Date(utc + 3 * 60 * 60000);
+    const h = msk.getHours(), m = msk.getMinutes(), s = msk.getSeconds();
     const totalSec = h * 3600 + m * 60 + s;
     const interval = 3 * 3600; // 3 hours
     const nextRestart = Math.ceil(totalSec / interval) * interval;

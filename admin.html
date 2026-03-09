@@ -834,7 +834,8 @@ function loadServerSettings() {
 // ── RESTART TIMER ──
 function updateRestartTimer() {
   const now = new Date();
-  const msk = new Date(now.toLocaleString('en-US', {timeZone:'Europe/Moscow'}));
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const msk = new Date(utc + 3 * 60 * 60000);
   const h = msk.getHours(), m = msk.getMinutes(), s = msk.getSeconds();
   const totalSec = h*3600+m*60+s;
   const period = 3*3600;
