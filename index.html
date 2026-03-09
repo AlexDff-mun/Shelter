@@ -794,6 +794,42 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
    RULES
 ══════════════════════════════════════════ */
 .rules-section { background:var(--bg); position:relative; overflow:hidden; }
+/* ── RULES PREVIEW ── */
+.rules-preview-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;
+}
+@media(max-width:900px){.rules-preview-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:550px){.rules-preview-grid{grid-template-columns:1fr;}}
+.rp-card{
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+  border-top:2px solid rgba(204,31,31,0.4);padding:1rem;
+  transition:border-color 0.2s,background 0.2s;
+}
+.rp-card:hover{background:rgba(255,255,255,0.035);border-top-color:var(--red);}
+.rp-card-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(255,255,255,0.05);}
+.rp-icon{font-size:1rem;}
+.rp-name{font-family:var(--head);font-size:0.75rem;font-weight:600;letter-spacing:0.12em;color:var(--text);text-transform:uppercase;}
+.rp-item{font-family:'Rajdhani',sans-serif;font-size:0.82rem;color:var(--khaki);padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03);line-height:1.4;display:flex;align-items:center;flex-wrap:wrap;gap:0.35rem;}
+.rp-item:last-child{border-bottom:none;}
+.rp-item strong{color:var(--text);}
+.rp-item.rp-critical{color:rgba(212,201,181,0.7);}
+.rp-tag{display:inline-block;font-family:var(--mono);font-size:0.44rem;letter-spacing:0.08em;padding:0.1rem 0.4rem;flex-shrink:0;}
+.rules-preview-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:1.5rem;padding:1rem 1.2rem;
+  background:rgba(204,31,31,0.04);border:1px solid rgba(204,31,31,0.12);
+  flex-wrap:wrap;gap:1rem;
+}
+.rpf-text{font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);letter-spacing:0.05em;}
+.rpf-btn{
+  font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.5rem 1.2rem;text-decoration:none;
+  background:rgba(204,31,31,0.1);color:var(--red);border:1px solid rgba(204,31,31,0.3);
+  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+  transition:all 0.2s;white-space:nowrap;
+}
+.rpf-btn:hover{background:rgba(204,31,31,0.2);}
+
 .rules-section::before {
   content:''; position:absolute; top:0; right:0; bottom:0; width:40%;
   background:linear-gradient(to left, rgba(204,31,31,0.04), transparent);
@@ -1830,153 +1866,49 @@ function show(name, el) {
   <div class="container">
     <div class="sec-label fu">Кодекс выживших</div>
     <h2 class="sec-title fu">Правила <span>сервера</span></h2>
-    <div class="rules-carousel fu">
-      <div class="rules-tabs">
-      <button class="rules-tab active" onclick="rulesTab(0)">📋 1. Общие</button>
-      <button class="rules-tab" onclick="rulesTab(1)">🗣 2. Поведение</button>
-      <button class="rules-tab" onclick="rulesTab(2)">👤 3. Никнеймы</button>
-      <button class="rules-tab" onclick="rulesTab(3)">⚔ 4. PVE</button>
-      <button class="rules-tab" onclick="rulesTab(4)">🖥 5. Читы</button>
-      <button class="rules-tab" onclick="rulesTab(5)">🚗 6. Транспорт</button>
-      <button class="rules-tab" onclick="rulesTab(6)">🎫 7. Тикеты</button>
-      <button class="rules-tab" onclick="rulesTab(7)">💰 8. Донат</button>
-      <button class="rules-tab" onclick="rulesTab(8)">🏴 9. Кланы</button>
+
+    <div class="rules-preview-grid fu">
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">⚔</span><span class="rp-name">PVE — Главное</span></div>
+        <div class="rp-item rp-critical"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Убийство, грабёж, рейды баз</div>
+        <div class="rp-item rp-critical"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Порча чужого имущества</div>
+        <div class="rp-item"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Связывание и гриф в любой форме</div>
       </div>
-      <div class="rules-panels">
-    <div class="rules-panel active" id="rules-panel-0">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">1.1</div><div class="rule-text">При входе на сервер игрок автоматически соглашается с настоящими правилами </div></div>
-        <div class="rule-item"><div class="rule-num">1.2</div><div class="rule-text">Незнание правил не освобождает от ответственности </div></div>
-        <div class="rule-item"><div class="rule-num">1.3</div><div class="rule-text">Решения администрации <strong>окончательны</strong> и обязательны к исполнению </div></div>
-        <div class="rule-item"><div class="rule-num">1.4</div><div class="rule-text">Проект является нейтральной игровой площадкой и находится вне политики </div></div>
-        <div class="rule-item"><div class="rule-num">1.5</div><div class="rule-text">Игровой чат и Discord могут логироваться </div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">1.6</div><div class="rule-text">Намеренное сокрытие нарушений может рассматриваться как <strong>соучастие</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">1.7</div><div class="rule-text">Администрация вправе вносить изменения в правила без уведомления </div></div>
-        <div class="rule-item"><div class="rule-num">1.8</div><div class="rule-text">Администрация вправе ограничить доступ <strong>без объяснения причин</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">1.9</div><div class="rule-text">Администрация не вмешивается в процесс и не компенсирует потери по вине игрока </div></div>
-        <div class="rule-item"><div class="rule-num">1.10</div><div class="rule-text">При нарушении правил администрация вправе применить любые меры на своё усмотрение </div></div>
-        </div>
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">🖥</span><span class="rp-name">Читы и баги</span></div>
+        <div class="rp-item rp-critical"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Читы, макросы, сторонние программы</div>
+        <div class="rp-item rp-critical"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Использование багов и эксплойтов</div>
+        <div class="rp-item"><span class="rp-tag rt-ban">ПЕРМ БАН</span>Намеренная перегрузка сервера</div>
       </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-1">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">2.1</div><div class="rule-text">Оскорбления, хамство, троллинг, буллинг, провокации <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.2</div><div class="rule-text">Нецензурная лексика в адрес игроков и администрации <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.3</div><div class="rule-text">Дискриминация по расовому, национальному, религиозному, половому признаку <span class="rule-tag rt-ban">БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.4</div><div class="rule-text">Политические и религиозные споры, агитация, пропаганда <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">2.5</div><div class="rule-text">Флуд, спам и реклама (включая ЛС и Discord) <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.6</div><div class="rule-text">Распространение ложной информации, наносящей вред репутации проекта <span class="rule-tag rt-ban">БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.7</div><div class="rule-text">Неуважительное отношение к администрации и участникам <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        <div class="rule-item"><div class="rule-num">2.8</div><div class="rule-text">Продажа за реальные деньги <span class="rule-tag rt-ban">БАН</span></div></div>
-        </div>
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">🗣</span><span class="rp-name">Поведение</span></div>
+        <div class="rp-item"><span class="rp-tag rt-warn">ВАРН</span>Оскорбления, хамство, троллинг</div>
+        <div class="rp-item"><span class="rp-tag rt-ban">БАН</span>Дискриминация и пропаганда</div>
+        <div class="rp-item"><span class="rp-tag rt-ban">БАН</span>Реклама и распространение лжи</div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">🎫</span><span class="rp-name">Тикеты</span></div>
+        <div class="rp-item">Тикет из игры — <strong>Ctrl+9</strong></div>
+        <div class="rp-item">Жалобы — только с видеозаписью</div>
+        <div class="rp-item">Восстановление — только в день потери</div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">🚗</span><span class="rp-name">Транспорт</span></div>
+        <div class="rp-item">Брошенный ТС эвакуируется через <strong>4 ч</strong></div>
+        <div class="rp-item"><span class="rp-tag rt-warn">ВАРН</span>Транспорт на дорогах и проездах</div>
+        <div class="rp-item">Незапертый ТС — ответственность игрока</div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-head"><span class="rp-icon">📋</span><span class="rp-name">Общее</span></div>
+        <div class="rp-item">Вход = согласие с правилами</div>
+        <div class="rp-item">Решения администрации <strong>окончательны</strong></div>
+        <div class="rp-item">Правила могут меняться без уведомления</div>
       </div>
     </div>
-    <div class="rules-panel" id="rules-panel-2">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">3.1</div><div class="rule-text">Запрещён никнейм <strong>SURVIVOR</strong>, а также ники с матом, рекламой, ссылками </div></div>
-        <div class="rule-item"><div class="rule-num">3.2</div><div class="rule-text">Запрещено использовать никнеймы создателей и администрации <span class="rule-tag rt-ban">БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">3.3</div><div class="rule-text">Запрещено выдавать себя за администрацию <span class="rule-tag rt-ban">БАН</span></div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">3.4</div><div class="rule-text">Запрещено намеренно дублировать никнеймы других игроков с целью обмана <span class="rule-tag rt-ban">БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">3.5</div><div class="rule-text">Владелец аккаунта несёт <strong>полную ответственность</strong> за все действия с его учётной записи </div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-3">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">4.1</div><div class="rule-text">Убийство игроков <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">4.2</div><div class="rule-text">Преднамеренное нанесение вреда другим игрокам <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">4.3</div><div class="rule-text">Воровство, рейды баз, проникновение в чужие постройки и транспорт <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">4.4</div><div class="rule-text">Преднамеренное уничтожение или порча чужого имущества <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">4.5</div><div class="rule-text">Связывание, отравление, кормление человечиной и любые формы грифа <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-4">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">5.1</div><div class="rule-text">Читы, сторонние программы, макросы, автокликеры, скрипты <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">5.2</div><div class="rule-text">Использование багов и эксплойтов сервера или модов <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">5.3</div><div class="rule-text">Распространение информации о найденных багах <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">5.4</div><div class="rule-text">Намеренное создание лагов и перегрузки сервера (лут-горы) <span class="rule-tag rt-ban">ПЕРМ БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">⚠</div><div class="rule-text">Все найденные ошибки необходимо <strong>незамедлительно</strong> сообщить администрации </div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-5">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">6.1</div><div class="rule-text">Брошенный транспорт эвакуируется через <strong>4 часа</strong>, взымается штраф </div></div>
-        <div class="rule-item"><div class="rule-num">6.2</div><div class="rule-text">Запрещено оставлять транспорт на дорогах и проездах <span class="rule-tag rt-warn">ВАРН</span></div></div>
-        <div class="rule-item"><div class="rule-num">6.3</div><div class="rule-text">Транспорт на трейд-зонах при отсутствии владельца будет эвакуирован </div></div>
-        <div class="rule-item"><div class="rule-num">6.4</div><div class="rule-text">Администрация не несёт ответственности за пропажу из незапертого транспорта </div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">6.5</div><div class="rule-text">За эвакуированный транспорт взымается штраф в игровой валюте </div></div>
-        <div class="rule-item"><div class="rule-num">6.6</div><div class="rule-text">Повреждённый транспорт из-за игровых механик не подлежит восстановлению </div></div>
-        <div class="rule-item"><div class="rule-num">6.7</div><div class="rule-text">Транспорт после лагов восстанавливается <strong>только при наличии видеозаписи</strong> </div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-6">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">7.1</div><div class="rule-text">Тикет/репорт прямо из игры — <strong>Ctrl+9</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">7.2</div><div class="rule-text">Репорт — жалоба на игрока. Тикет — всё остальное </div></div>
-        <div class="rule-item"><div class="rule-num">7.3</div><div class="rule-text">Жалобы рассматриваются <strong>только при наличии видеозаписи</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">7.4</div><div class="rule-text">Неактивный тикет закрывается через <strong>сутки</strong> </div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">7.5</div><div class="rule-text">Агрессия и хамство в тикетах — вплоть до перманентной блокировки <span class="rule-tag rt-ban">БАН</span></div></div>
-        <div class="rule-item"><div class="rule-num">7.6</div><div class="rule-text">Заявки на восстановление принимаются только в день происшествия при наличии видео </div></div>
-        <div class="rule-item"><div class="rule-num">7.7</div><div class="rule-text">Администратор не обязан отвечать мгновенно </div></div>
-        <div class="rule-item"><div class="rule-num">7.8</div><div class="rule-text">При отсутствии доказательств администрация вправе отказать в рассмотрении </div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-7">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">8.1</div><div class="rule-text">Донат только через <a href="https://shelter-games.ru" target="_blank" style="color:var(--red);text-decoration:none">shelter-games.ru</a> </div></div>
-        <div class="rule-item"><div class="rule-num">8.2</div><div class="rule-text">Донат <strong>не даёт игровых преимуществ</strong> — все вещи доступны игровым путём </div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">8.3</div><div class="rule-text">Любое пожертвование добровольно и <strong>не подлежит возврату</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">8.4</div><div class="rule-text">Товары, полученные за донат или голоса, не подлежат восстановлению </div></div>
-        </div>
-      </div>
-    </div>
-    <div class="rules-panel" id="rules-panel-8">
-      <div class="rules-panel-grid">
-        <div>
-        <div class="rule-item"><div class="rule-num">9.1</div><div class="rule-text">Клан считается действительным при составе <strong>от 5 активных игроков</strong> с названием </div></div>
-        <div class="rule-item"><div class="rule-num">9.2</div><div class="rule-text">Глава клана отвечает за состав и коммуникацию с администрацией </div></div>
-        <div class="rule-item"><div class="rule-num">9.3</div><div class="rule-text">Назначение и снятие участников производится главой клана </div></div>
-        <div class="rule-item"><div class="rule-num">9.4</div><div class="rule-text">Передача лидерства возможна только с согласия участников и администрации </div></div>
-        <div class="rule-item"><div class="rule-num">9.5</div><div class="rule-text">Игроки, отсутствующие более <strong>30 дней</strong>, могут быть исключены </div></div>
-        </div>
-        <div>
-        <div class="rule-item"><div class="rule-num">9.6</div><div class="rule-text">Неактивные кланы могут быть расформированы администрацией </div></div>
-        <div class="rule-item"><div class="rule-num">9.7</div><div class="rule-text">Все изменения в клане согласовываются с администрацией </div></div>
-        <div class="rule-item"><div class="rule-num">9.8</div><div class="rule-text">За серьёзные нарушения ответственность может быть применена ко <strong>всему клану</strong> </div></div>
-        <div class="rule-item"><div class="rule-num">9.9</div><div class="rule-text">После одобрения клану выдаётся роль и создаётся <strong>клановый канал</strong> в Discord </div></div>
-        </div>
-      </div>
-    </div>
-      </div>
+
+    <div class="rules-preview-footer fu">
+      <span class="rpf-text">Это краткая версия — полные правила со всеми пунктами и якорями</span>
+      <a href="rules.html" class="rpf-btn">📄 Читать полные правила →</a>
     </div>
   </div>
 </section>
