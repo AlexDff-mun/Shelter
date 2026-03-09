@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Правила сервера — Shelter PVE</title>
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- SEO -->
+<meta name="description" content="Правила сервера Shelter PVE DayZ. Общие правила, поведение, PVE, читы, транспорт, тикеты, донат, кланы.">
+<meta property="og:title" content="Правила — Shelter PVE">
+<meta property="og:description" content="Полные правила сервера Shelter PVE. Читай перед игрой.">
+<meta property="og:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
+<meta property="og:url" content="https://alexdff-mun.github.io/Shelter/rules.html">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#cc1f1f;--red-dark:#8b1010;--ember:#e05a1a;
+  --khaki:#b7a98d;--khaki-dark:#7a6a53;
+  --bg:#080707;--bg2:#0c0a0a;--bg3:#101010;
+  --text:#d4c9b5;--text-dim:#6a6058;--text-muted:#3a3430;
+  --rad:#7ec8a0;
+  --mono:'Share Tech Mono',monospace;
+  --head:'Oswald',sans-serif;
+  --body:'Rajdhani',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:56px;background:rgba(8,7,7,0.97);border-bottom:1px solid rgba(204,31,31,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;}
+.topbar-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
+.topbar-logo img{height:30px;width:30px;object-fit:contain;}
+.topbar-logo-text{font-family:var(--head);font-size:1rem;font-weight:700;letter-spacing:0.12em;color:var(--text);}
+.topbar-logo-text span{color:var(--red);}
+.topbar-back{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+.topbar-back:hover{color:var(--red);}
+
+/* ── LAYOUT ── */
+.page{display:flex;min-height:100vh;padding-top:56px;}
+
+/* ── SIDEBAR NAV ── */
+.sidenav{
+  width:220px;flex-shrink:0;position:sticky;top:56px;
+  height:calc(100vh - 56px);overflow-y:auto;
+  background:var(--bg2);border-right:1px solid rgba(255,255,255,0.04);
+  padding:1.5rem 0;
+}
+.sidenav::-webkit-scrollbar{width:3px;}
+.sidenav::-webkit-scrollbar-thumb{background:rgba(204,31,31,0.2);}
+.sidenav-title{font-family:var(--mono);font-size:0.48rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;padding:0 1.2rem;margin-bottom:0.8rem;}
+.sidenav-item{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.5rem 1.2rem;cursor:pointer;
+  font-family:var(--body);font-size:0.88rem;font-weight:500;
+  color:var(--text-dim);letter-spacing:0.02em;
+  border-left:2px solid transparent;
+  text-decoration:none;transition:all 0.15s;
+}
+.sidenav-item:hover{color:var(--text);background:rgba(255,255,255,0.02);}
+.sidenav-item.active{color:var(--red);border-left-color:var(--red);background:rgba(204,31,31,0.05);}
+.sidenav-icon{font-size:0.85rem;width:18px;text-align:center;flex-shrink:0;}
+
+/* ── MAIN CONTENT ── */
+.content{flex:1;max-width:860px;padding:2.5rem 2rem;margin:0 auto;}
+
+/* ── HERO ── */
+.rules-hero{margin-bottom:3rem;}
+.rules-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.25em;color:var(--red);text-transform:uppercase;margin-bottom:0.5rem;}
+.rules-title{font-family:var(--head);font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:0.05em;text-transform:uppercase;line-height:1.1;margin-bottom:1rem;}
+.rules-title span{color:var(--red);}
+.rules-desc{font-family:var(--body);font-size:0.95rem;color:var(--text-dim);line-height:1.7;max-width:560px;}
+.rules-desc a{color:var(--red);text-decoration:none;}
+.rules-desc a:hover{text-decoration:underline;}
+
+/* ── SHARE TOAST ── */
+.share-toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:rgba(8,7,7,0.97);border:1px solid rgba(126,200,160,0.3);
+  color:var(--rad);font-family:var(--mono);font-size:0.62rem;
+  padding:0.5rem 1.2rem;z-index:9999;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.share-toast.show{opacity:1;}
+
+/* ── SECTION ── */
+.rule-section{margin-bottom:3rem;scroll-margin-top:80px;}
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.8rem 1.2rem;background:var(--bg2);
+  border:1px solid rgba(255,255,255,0.05);
+  border-left:3px solid var(--red);
+  margin-bottom:1px;cursor:pointer;
+  transition:background 0.2s;
+}
+.section-header:hover{background:var(--bg3);}
+.section-header-left{display:flex;align-items:center;gap:0.8rem;}
+.section-num{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.15em;color:var(--red);width:24px;}
+.section-icon{font-size:1.1rem;}
+.section-name{font-family:var(--head);font-size:0.9rem;font-weight:600;letter-spacing:0.12em;color:var(--text);text-transform:uppercase;}
+.section-actions{display:flex;align-items:center;gap:0.6rem;}
+.copy-link{
+  font-family:var(--mono);font-size:0.5rem;letter-spacing:0.1em;
+  padding:0.2rem 0.6rem;background:transparent;
+  border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);
+  cursor:pointer;transition:all 0.2s;text-transform:uppercase;
+  clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%);
+}
+.copy-link:hover{border-color:rgba(204,31,31,0.3);color:var(--red);}
+.section-toggle{font-size:0.7rem;color:var(--text-dim);transition:transform 0.2s;}
+.section-toggle.open{transform:rotate(180deg);}
+
+/* ── RULES LIST ── */
+.rules-body{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.04);
+  border-top:none;overflow:hidden;
+  max-height:2000px;transition:max-height 0.35s ease;
+}
+.rules-body.collapsed{max-height:0;}
+.rule-row{
+  display:flex;align-items:flex-start;gap:1rem;
+  padding:0.75rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.03);
+  scroll-margin-top:80px;transition:background 0.15s;
+}
+.rule-row:last-child{border-bottom:none;}
+.rule-row:hover{background:rgba(255,255,255,0.02);}
+.rule-row:target{background:rgba(204,31,31,0.07);}
+.rule-id{
+  font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);
+  min-width:36px;padding-top:2px;flex-shrink:0;
+}
+.rule-body{flex:1;}
+.rule-text{font-family:var(--body);font-size:0.92rem;color:var(--khaki);line-height:1.6;}
+.rule-text strong{color:var(--text);font-weight:600;}
+.rule-text a{color:var(--red);text-decoration:none;}
+.rule-text a:hover{text-decoration:underline;}
+.rule-anchor{
+  font-family:var(--mono);font-size:0.45rem;color:var(--text-muted);
+  cursor:pointer;padding:0.15rem 0.4rem;margin-left:auto;flex-shrink:0;
+  transition:color 0.2s;margin-top:2px;
+}
+.rule-anchor:hover{color:var(--red);}
+
+/* ── TAGS ── */
+.rt{display:inline-block;font-family:var(--mono);font-size:0.48rem;letter-spacing:0.08em;padding:0.1rem 0.45rem;margin-left:0.4rem;vertical-align:middle;}
+.rt-ban{background:rgba(204,31,31,0.15);color:var(--red);border:1px solid rgba(204,31,31,0.25);}
+.rt-warn{background:rgba(224,160,32,0.12);color:#e0a020;border:1px solid rgba(224,160,32,0.25);}
+.rt-perm{background:rgba(204,31,31,0.2);color:#ff4444;border:1px solid rgba(204,31,31,0.4);}
+
+/* ── FOOTER NOTE ── */
+.rules-note{
+  margin-top:2rem;padding:1rem 1.2rem;
+  background:rgba(204,31,31,0.05);border:1px solid rgba(204,31,31,0.15);
+  border-left:3px solid var(--red);
+  font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);line-height:1.7;
+}
+.rules-note b{color:var(--text);}
+
+@media(max-width:750px){
+  .sidenav{display:none;}
+  .content{padding:1.5rem 1rem;}
+  .topbar{padding:0 1rem;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/SHL_PVE.png" alt="Shelter PVE">
+    <span class="topbar-logo-text">SHELTER <span>PVE</span></span>
+  </a>
+  <a href="index.html" class="topbar-back">← НА ГЛАВНУЮ</a>
+</header>
+
+<div class="page">
+  <!-- SIDEBAR -->
+  <nav class="sidenav">
+    <div class="sidenav-title">Разделы</div>
+    <a href="#s1" class="sidenav-item active"><span class="sidenav-icon">📋</span>1. Общие</a>
+    <a href="#s2" class="sidenav-item"><span class="sidenav-icon">🗣</span>2. Поведение</a>
+    <a href="#s3" class="sidenav-item"><span class="sidenav-icon">👤</span>3. Никнеймы</a>
+    <a href="#s4" class="sidenav-item"><span class="sidenav-icon">⚔</span>4. PVE</a>
+    <a href="#s5" class="sidenav-item"><span class="sidenav-icon">🖥</span>5. Читы</a>
+    <a href="#s6" class="sidenav-item"><span class="sidenav-icon">🚗</span>6. Транспорт</a>
+    <a href="#s7" class="sidenav-item"><span class="sidenav-icon">🎫</span>7. Тикеты</a>
+    <a href="#s8" class="sidenav-item"><span class="sidenav-icon">💰</span>8. Донат</a>
+    <a href="#s9" class="sidenav-item"><span class="sidenav-icon">🏴</span>9. Кланы</a>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <div class="rules-hero">
+      <div class="rules-label">// server_rules.txt</div>
+      <h1 class="rules-title">Правила <span>сервера</span></h1>
+      <p class="rules-desc">
+        При входе на сервер вы автоматически соглашаетесь с настоящими правилами.
+        Незнание правил не освобождает от ответственности.<br>
+        Вопросы и жалобы — в <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a>.
+      </p>
+    </div>
+
+    <!-- 1. ОБЩИЕ -->
+    <div class="rule-section" id="s1">
+      <div class="section-header" onclick="toggle('s1')">
+        <div class="section-header-left">
+          <span class="section-num">01</span>
+          <span class="section-icon">📋</span>
+          <span class="section-name">Общие правила</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s1')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s1">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s1">
+        <div class="rule-row" id="r1.1"><div class="rule-id">1.1</div><div class="rule-body"><div class="rule-text">При входе на сервер игрок автоматически соглашается с настоящими правилами</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.1')">🔗</span></div>
+        <div class="rule-row" id="r1.2"><div class="rule-id">1.2</div><div class="rule-body"><div class="rule-text">Незнание правил не освобождает от ответственности</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.2')">🔗</span></div>
+        <div class="rule-row" id="r1.3"><div class="rule-id">1.3</div><div class="rule-body"><div class="rule-text">Решения администрации <strong>окончательны</strong> и обязательны к исполнению</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.3')">🔗</span></div>
+        <div class="rule-row" id="r1.4"><div class="rule-id">1.4</div><div class="rule-body"><div class="rule-text">Проект является нейтральной игровой площадкой и находится вне политики</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.4')">🔗</span></div>
+        <div class="rule-row" id="r1.5"><div class="rule-id">1.5</div><div class="rule-body"><div class="rule-text">Игровой чат и Discord могут логироваться</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.5')">🔗</span></div>
+        <div class="rule-row" id="r1.6"><div class="rule-id">1.6</div><div class="rule-body"><div class="rule-text">Намеренное сокрытие нарушений может рассматриваться как <strong>соучастие</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r1.6')">🔗</span></div>
+        <div class="rule-row" id="r1.7"><div class="rule-id">1.7</div><div class="rule-body"><div class="rule-text">Администрация вправе вносить изменения в правила без уведомления</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.7')">🔗</span></div>
+        <div class="rule-row" id="r1.8"><div class="rule-id">1.8</div><div class="rule-body"><div class="rule-text">Администрация вправе ограничить доступ <strong>без объяснения причин</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r1.8')">🔗</span></div>
+        <div class="rule-row" id="r1.9"><div class="rule-id">1.9</div><div class="rule-body"><div class="rule-text">Администрация не вмешивается в процесс и не компенсирует потери по вине игрока</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.9')">🔗</span></div>
+        <div class="rule-row" id="r1.10"><div class="rule-id">1.10</div><div class="rule-body"><div class="rule-text">При нарушении правил администрация вправе применить любые меры на своё усмотрение</div></div><span class="rule-anchor" onclick="copyRule(event,'r1.10')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 2. ПОВЕДЕНИЕ -->
+    <div class="rule-section" id="s2">
+      <div class="section-header" onclick="toggle('s2')">
+        <div class="section-header-left">
+          <span class="section-num">02</span>
+          <span class="section-icon">🗣</span>
+          <span class="section-name">Поведение</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s2')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s2">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s2">
+        <div class="rule-row" id="r2.1"><div class="rule-id">2.1</div><div class="rule-body"><div class="rule-text">Оскорбления, хамство, троллинг, буллинг, провокации <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.1')">🔗</span></div>
+        <div class="rule-row" id="r2.2"><div class="rule-id">2.2</div><div class="rule-body"><div class="rule-text">Нецензурная лексика в адрес игроков и администрации <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.2')">🔗</span></div>
+        <div class="rule-row" id="r2.3"><div class="rule-id">2.3</div><div class="rule-body"><div class="rule-text">Дискриминация по расовому, национальному, религиозному, половому признаку <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.3')">🔗</span></div>
+        <div class="rule-row" id="r2.4"><div class="rule-id">2.4</div><div class="rule-body"><div class="rule-text">Политические и религиозные споры, агитация, пропаганда <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.4')">🔗</span></div>
+        <div class="rule-row" id="r2.5"><div class="rule-id">2.5</div><div class="rule-body"><div class="rule-text">Флуд, спам и реклама (включая ЛС и Discord) <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.5')">🔗</span></div>
+        <div class="rule-row" id="r2.6"><div class="rule-id">2.6</div><div class="rule-body"><div class="rule-text">Распространение ложной информации, наносящей вред репутации проекта <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.6')">🔗</span></div>
+        <div class="rule-row" id="r2.7"><div class="rule-id">2.7</div><div class="rule-body"><div class="rule-text">Неуважительное отношение к администрации и участникам <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.7')">🔗</span></div>
+        <div class="rule-row" id="r2.8"><div class="rule-id">2.8</div><div class="rule-body"><div class="rule-text">Продажа за реальные деньги <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r2.8')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 3. НИКНЕЙМЫ -->
+    <div class="rule-section" id="s3">
+      <div class="section-header" onclick="toggle('s3')">
+        <div class="section-header-left">
+          <span class="section-num">03</span>
+          <span class="section-icon">👤</span>
+          <span class="section-name">Никнеймы</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s3')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s3">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s3">
+        <div class="rule-row" id="r3.1"><div class="rule-id">3.1</div><div class="rule-body"><div class="rule-text">Запрещён никнейм <strong>SURVIVOR</strong>, а также ники с матом, рекламой, ссылками</div></div><span class="rule-anchor" onclick="copyRule(event,'r3.1')">🔗</span></div>
+        <div class="rule-row" id="r3.2"><div class="rule-id">3.2</div><div class="rule-body"><div class="rule-text">Запрещено использовать никнеймы создателей и администрации <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r3.2')">🔗</span></div>
+        <div class="rule-row" id="r3.3"><div class="rule-id">3.3</div><div class="rule-body"><div class="rule-text">Запрещено выдавать себя за администрацию <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r3.3')">🔗</span></div>
+        <div class="rule-row" id="r3.4"><div class="rule-id">3.4</div><div class="rule-body"><div class="rule-text">Запрещено намеренно дублировать никнеймы других игроков с целью обмана <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r3.4')">🔗</span></div>
+        <div class="rule-row" id="r3.5"><div class="rule-id">3.5</div><div class="rule-body"><div class="rule-text">Владелец аккаунта несёт <strong>полную ответственность</strong> за все действия с его учётной записи</div></div><span class="rule-anchor" onclick="copyRule(event,'r3.5')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 4. PVE -->
+    <div class="rule-section" id="s4">
+      <div class="section-header" onclick="toggle('s4')" style="border-left-color:var(--red)">
+        <div class="section-header-left">
+          <span class="section-num">04</span>
+          <span class="section-icon">⚔</span>
+          <span class="section-name">PVE — Запреты</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s4')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s4">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s4">
+        <div class="rule-row" id="r4.1"><div class="rule-id">4.1</div><div class="rule-body"><div class="rule-text">Убийство игроков <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r4.1')">🔗</span></div>
+        <div class="rule-row" id="r4.2"><div class="rule-id">4.2</div><div class="rule-body"><div class="rule-text">Преднамеренное нанесение вреда другим игрокам <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r4.2')">🔗</span></div>
+        <div class="rule-row" id="r4.3"><div class="rule-id">4.3</div><div class="rule-body"><div class="rule-text">Воровство, рейды баз, проникновение в чужие постройки и транспорт <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r4.3')">🔗</span></div>
+        <div class="rule-row" id="r4.4"><div class="rule-id">4.4</div><div class="rule-body"><div class="rule-text">Преднамеренное уничтожение или порча чужого имущества <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r4.4')">🔗</span></div>
+        <div class="rule-row" id="r4.5"><div class="rule-id">4.5</div><div class="rule-body"><div class="rule-text">Связывание, отравление, кормление человечиной и любые формы грифа <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r4.5')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 5. ЧИТЫ -->
+    <div class="rule-section" id="s5">
+      <div class="section-header" onclick="toggle('s5')">
+        <div class="section-header-left">
+          <span class="section-num">05</span>
+          <span class="section-icon">🖥</span>
+          <span class="section-name">Читы и эксплойты</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s5')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s5">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s5">
+        <div class="rule-row" id="r5.1"><div class="rule-id">5.1</div><div class="rule-body"><div class="rule-text">Читы, сторонние программы, макросы, автокликеры, скрипты <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r5.1')">🔗</span></div>
+        <div class="rule-row" id="r5.2"><div class="rule-id">5.2</div><div class="rule-body"><div class="rule-text">Использование багов и эксплойтов сервера или модов <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r5.2')">🔗</span></div>
+        <div class="rule-row" id="r5.3"><div class="rule-id">5.3</div><div class="rule-body"><div class="rule-text">Распространение информации о найденных багах <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r5.3')">🔗</span></div>
+        <div class="rule-row" id="r5.4"><div class="rule-id">5.4</div><div class="rule-body"><div class="rule-text">Намеренное создание лагов и перегрузки сервера (лут-горы) <span class="rt rt-perm">ПЕРМ БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r5.4')">🔗</span></div>
+        <div class="rule-row" id="r5.w"><div class="rule-id">⚠</div><div class="rule-body"><div class="rule-text">Все найденные ошибки необходимо <strong>незамедлительно</strong> сообщить администрации</div></div><span class="rule-anchor" onclick="copyRule(event,'r5.w')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 6. ТРАНСПОРТ -->
+    <div class="rule-section" id="s6">
+      <div class="section-header" onclick="toggle('s6')">
+        <div class="section-header-left">
+          <span class="section-num">06</span>
+          <span class="section-icon">🚗</span>
+          <span class="section-name">Транспорт</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s6')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s6">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s6">
+        <div class="rule-row" id="r6.1"><div class="rule-id">6.1</div><div class="rule-body"><div class="rule-text">Брошенный транспорт эвакуируется через <strong>4 часа</strong>, взымается штраф</div></div><span class="rule-anchor" onclick="copyRule(event,'r6.1')">🔗</span></div>
+        <div class="rule-row" id="r6.2"><div class="rule-id">6.2</div><div class="rule-body"><div class="rule-text">Запрещено оставлять транспорт на дорогах и проездах <span class="rt rt-warn">ВАРН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r6.2')">🔗</span></div>
+        <div class="rule-row" id="r6.3"><div class="rule-id">6.3</div><div class="rule-body"><div class="rule-text">Транспорт на трейд-зонах при отсутствии владельца будет эвакуирован</div></div><span class="rule-anchor" onclick="copyRule(event,'r6.3')">🔗</span></div>
+        <div class="rule-row" id="r6.4"><div class="rule-id">6.4</div><div class="rule-body"><div class="rule-text">Администрация не несёт ответственности за пропажу из незапертого транспорта</div></div><span class="rule-anchor" onclick="copyRule(event,'r6.4')">🔗</span></div>
+        <div class="rule-row" id="r6.5"><div class="rule-id">6.5</div><div class="rule-body"><div class="rule-text">За эвакуированный транспорт взымается штраф в игровой валюте</div></div><span class="rule-anchor" onclick="copyRule(event,'r6.5')">🔗</span></div>
+        <div class="rule-row" id="r6.6"><div class="rule-id">6.6</div><div class="rule-body"><div class="rule-text">Повреждённый транспорт из-за игровых механик не подлежит восстановлению</div></div><span class="rule-anchor" onclick="copyRule(event,'r6.6')">🔗</span></div>
+        <div class="rule-row" id="r6.7"><div class="rule-id">6.7</div><div class="rule-body"><div class="rule-text">Транспорт после лагов восстанавливается <strong>только при наличии видеозаписи</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r6.7')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 7. ТИКЕТЫ -->
+    <div class="rule-section" id="s7">
+      <div class="section-header" onclick="toggle('s7')">
+        <div class="section-header-left">
+          <span class="section-num">07</span>
+          <span class="section-icon">🎫</span>
+          <span class="section-name">Тикеты и репорты</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s7')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s7">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s7">
+        <div class="rule-row" id="r7.1"><div class="rule-id">7.1</div><div class="rule-body"><div class="rule-text">Тикет/репорт прямо из игры — <strong>Ctrl+9</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r7.1')">🔗</span></div>
+        <div class="rule-row" id="r7.2"><div class="rule-id">7.2</div><div class="rule-body"><div class="rule-text">Репорт — жалоба на игрока. Тикет — всё остальное</div></div><span class="rule-anchor" onclick="copyRule(event,'r7.2')">🔗</span></div>
+        <div class="rule-row" id="r7.3"><div class="rule-id">7.3</div><div class="rule-body"><div class="rule-text">Жалобы рассматриваются <strong>только при наличии видеозаписи</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r7.3')">🔗</span></div>
+        <div class="rule-row" id="r7.4"><div class="rule-id">7.4</div><div class="rule-body"><div class="rule-text">Неактивный тикет закрывается через <strong>сутки</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r7.4')">🔗</span></div>
+        <div class="rule-row" id="r7.5"><div class="rule-id">7.5</div><div class="rule-body"><div class="rule-text">Агрессия и хамство в тикетах — вплоть до перманентной блокировки <span class="rt rt-ban">БАН</span></div></div><span class="rule-anchor" onclick="copyRule(event,'r7.5')">🔗</span></div>
+        <div class="rule-row" id="r7.6"><div class="rule-id">7.6</div><div class="rule-body"><div class="rule-text">Заявки на восстановление принимаются только в день происшествия при наличии видео</div></div><span class="rule-anchor" onclick="copyRule(event,'r7.6')">🔗</span></div>
+        <div class="rule-row" id="r7.7"><div class="rule-id">7.7</div><div class="rule-body"><div class="rule-text">Администратор не обязан отвечать мгновенно</div></div><span class="rule-anchor" onclick="copyRule(event,'r7.7')">🔗</span></div>
+        <div class="rule-row" id="r7.8"><div class="rule-id">7.8</div><div class="rule-body"><div class="rule-text">При отсутствии доказательств администрация вправе отказать в рассмотрении</div></div><span class="rule-anchor" onclick="copyRule(event,'r7.8')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 8. ДОНАТ -->
+    <div class="rule-section" id="s8">
+      <div class="section-header" onclick="toggle('s8')">
+        <div class="section-header-left">
+          <span class="section-num">08</span>
+          <span class="section-icon">💰</span>
+          <span class="section-name">Донат</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s8')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s8">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s8">
+        <div class="rule-row" id="r8.1"><div class="rule-id">8.1</div><div class="rule-body"><div class="rule-text">Донат только через <a href="https://shelter-games.ru" target="_blank">shelter-games.ru</a></div></div><span class="rule-anchor" onclick="copyRule(event,'r8.1')">🔗</span></div>
+        <div class="rule-row" id="r8.2"><div class="rule-id">8.2</div><div class="rule-body"><div class="rule-text">Донат <strong>не даёт игровых преимуществ</strong> — все вещи доступны игровым путём</div></div><span class="rule-anchor" onclick="copyRule(event,'r8.2')">🔗</span></div>
+        <div class="rule-row" id="r8.3"><div class="rule-id">8.3</div><div class="rule-body"><div class="rule-text">Любое пожертвование добровольно и <strong>не подлежит возврату</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r8.3')">🔗</span></div>
+        <div class="rule-row" id="r8.4"><div class="rule-id">8.4</div><div class="rule-body"><div class="rule-text">Товары, полученные за донат или голоса, не подлежат восстановлению</div></div><span class="rule-anchor" onclick="copyRule(event,'r8.4')">🔗</span></div>
+      </div>
+    </div>
+
+    <!-- 9. КЛАНЫ -->
+    <div class="rule-section" id="s9">
+      <div class="section-header" onclick="toggle('s9')">
+        <div class="section-header-left">
+          <span class="section-num">09</span>
+          <span class="section-icon">🏴</span>
+          <span class="section-name">Кланы</span>
+        </div>
+        <div class="section-actions">
+          <button class="copy-link" onclick="copySection(event,'s9')">🔗 Ссылка</button>
+          <span class="section-toggle open" id="toggle-s9">▼</span>
+        </div>
+      </div>
+      <div class="rules-body" id="body-s9">
+        <div class="rule-row" id="r9.1"><div class="rule-id">9.1</div><div class="rule-body"><div class="rule-text">Клан считается действительным при составе <strong>от 5 активных игроков</strong> с названием</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.1')">🔗</span></div>
+        <div class="rule-row" id="r9.2"><div class="rule-id">9.2</div><div class="rule-body"><div class="rule-text">Глава клана отвечает за состав и коммуникацию с администрацией</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.2')">🔗</span></div>
+        <div class="rule-row" id="r9.3"><div class="rule-id">9.3</div><div class="rule-body"><div class="rule-text">Назначение и снятие участников производится главой клана</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.3')">🔗</span></div>
+        <div class="rule-row" id="r9.4"><div class="rule-id">9.4</div><div class="rule-body"><div class="rule-text">Передача лидерства возможна только с согласия участников и администрации</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.4')">🔗</span></div>
+        <div class="rule-row" id="r9.5"><div class="rule-id">9.5</div><div class="rule-body"><div class="rule-text">Игроки, отсутствующие более <strong>30 дней</strong>, могут быть исключены</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.5')">🔗</span></div>
+        <div class="rule-row" id="r9.6"><div class="rule-id">9.6</div><div class="rule-body"><div class="rule-text">Неактивные кланы могут быть расформированы администрацией</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.6')">🔗</span></div>
+        <div class="rule-row" id="r9.7"><div class="rule-id">9.7</div><div class="rule-body"><div class="rule-text">Все изменения в клане согласовываются с администрацией</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.7')">🔗</span></div>
+        <div class="rule-row" id="r9.8"><div class="rule-id">9.8</div><div class="rule-body"><div class="rule-text">За серьёзные нарушения ответственность может быть применена ко <strong>всему клану</strong></div></div><span class="rule-anchor" onclick="copyRule(event,'r9.8')">🔗</span></div>
+        <div class="rule-row" id="r9.9"><div class="rule-id">9.9</div><div class="rule-body"><div class="rule-text">После одобрения клану выдаётся роль и создаётся <strong>клановый канал</strong> в Discord</div></div><span class="rule-anchor" onclick="copyRule(event,'r9.9')">🔗</span></div>
+      </div>
+    </div>
+
+    <div class="rules-note">
+      <b>Последнее обновление:</b> март 2025 &nbsp;·&nbsp;
+      Администрация оставляет за собой право изменять правила без предварительного уведомления &nbsp;·&nbsp;
+      Вопросы: <a href="https://discord.gg/4EWuqwfBu" target="_blank" style="color:var(--red);text-decoration:none">Discord</a>
+    </div>
+  </main>
+</div>
+
+<div class="share-toast" id="toast"></div>
+
+<script>
+// Сворачивание секций
+function toggle(id) {
+  const body = document.getElementById('body-'+id);
+  const arrow = document.getElementById('toggle-'+id);
+  body.classList.toggle('collapsed');
+  arrow.classList.toggle('open');
+}
+
+// Копировать ссылку на секцию
+function copySection(e, id) {
+  e.stopPropagation();
+  const url = location.origin + location.pathname + '#' + id;
+  navigator.clipboard.writeText(url).then(() => toast('🔗 Ссылка на раздел скопирована'));
+}
+
+// Копировать ссылку на правило
+function copyRule(e, id) {
+  e.stopPropagation();
+  const url = location.origin + location.pathname + '#' + id;
+  navigator.clipboard.writeText(url).then(() => toast('🔗 Ссылка на правило ' + id.replace('r','') + ' скопирована'));
+}
+
+// Toast
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// Подсветка активного пункта в сайдбаре при скролле
+const sections = document.querySelectorAll('.rule-section');
+const navItems = document.querySelectorAll('.sidenav-item');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navItems.forEach(n => {
+    n.classList.toggle('active', n.getAttribute('href') === '#'+current);
+  });
+});
+
+// Авто-скролл к якорю при загрузке
+if (location.hash) {
+  setTimeout(() => {
+    const el = document.querySelector(location.hash);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+}
+</script>
+</body>
+</html>
