@@ -264,6 +264,49 @@ section{padding:5rem 2rem;position:relative;}
 .event-title{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text);margin-bottom:0.35rem;}
 .event-desc{font-size:0.8rem;color:var(--khaki-dark);line-height:1.6;}
 
+
+/* ── MECHANICS PREVIEW ── */
+.mech-preview-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;
+}
+@media(max-width:900px){.mech-preview-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:550px){.mech-preview-grid{grid-template-columns:1fr;}}
+
+.mp-card{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);
+  border-top:2px solid var(--c,rgba(204,31,31,0.35));
+  padding:1.3rem;
+  transition:background 0.2s, border-top-color 0.2s, transform 0.2s;
+}
+.mp-card:hover{
+  background:rgba(255,255,255,0.04);
+  border-top-color:var(--c,var(--red));
+  transform:translateY(-2px);
+}
+.mp-icon{font-size:1.6rem;margin-bottom:0.6rem;}
+.mp-title{
+  font-family:'Oswald',sans-serif;font-size:0.9rem;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;color:var(--text);margin-bottom:0.4rem;
+}
+.mp-desc{font-family:'Rajdhani',sans-serif;font-size:0.84rem;color:var(--khaki-dark);line-height:1.6;}
+
+.mp-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:1.5rem;padding:1rem 1.2rem;
+  background:rgba(204,31,31,0.03);border:1px solid rgba(204,31,31,0.1);
+  flex-wrap:wrap;gap:1rem;
+}
+.mp-footer-text{font-family:var(--mono);font-size:0.55rem;color:var(--khaki-dark);letter-spacing:0.05em;}
+.mp-footer-btn{
+  font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.5rem 1.2rem;text-decoration:none;
+  background:rgba(204,31,31,0.1);color:var(--red);border:1px solid rgba(204,31,31,0.3);
+  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+  transition:all 0.2s;white-space:nowrap;
+}
+.mp-footer-btn:hover{background:rgba(204,31,31,0.2);}
+
 /* CRAFT SECTION */
 .craft-section{background:var(--bg2);position:relative;overflow:hidden;}
 .craft-section::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0,transparent 40px,rgba(204,31,31,0.01) 40px,rgba(204,31,31,0.01) 41px),repeating-linear-gradient(-45deg,transparent 0,transparent 40px,rgba(204,31,31,0.01) 40px,rgba(204,31,31,0.01) 41px);pointer-events:none;}
@@ -396,21 +439,21 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
   will-change:transform,opacity;
 }
 .fu.vis{ opacity:1; transform:translateY(0); }
-@media(max-width:600px){section{padding:3.5rem 1.2rem;} .events-grid,.pillars-grid{grid-template-columns:1fr;} .topbar-links .server-addr,.topbar-links .tl:not(.primary){display:none;}}
+@media(max-width:600px){section{padding:3.5rem 1.2rem;} .events-grid,.pillars-grid{grid-template-columns:1fr;}}
 
 /* ══════════════════════════════════════
    MOBILE NAV — BURGER + DRAWER
 ══════════════════════════════════════ */
+/* ── BURGER — всегда виден ── */
 .burger {
-  display:none;
+  display:flex;
   flex-direction:column; justify-content:center; align-items:center;
   gap:5px; width:40px; height:40px;
   background:rgba(204,31,31,0.08);
   border:1px solid rgba(204,31,31,0.25);
-  cursor:pointer; padding:0;
+  cursor:pointer; padding:0; flex-shrink:0;
   clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
   transition:background 0.2s;
-  flex-shrink:0;
 }
 .burger span {
   display:block; width:20px; height:2px;
@@ -423,68 +466,62 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 .burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 .burger:hover { background:rgba(204,31,31,0.15); }
 
-/* OVERLAY */
+/* ── OVERLAY ── */
 .mobile-nav-overlay {
   position:fixed; inset:0; z-index:498;
-  background:rgba(0,0,0,0.6);
-  backdrop-filter:blur(3px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.3s;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(4px);
+  opacity:0; pointer-events:none;
+  transition:opacity 0.35s;
 }
-.mobile-nav-overlay.show {
-  opacity:1;
-  pointer-events:all;
-}
+.mobile-nav-overlay.show { opacity:1; pointer-events:all; }
 
-/* DRAWER */
+/* ── SIDE DRAWER (справа налево) ── */
 .mobile-nav {
-  position:fixed; top:60px; left:0; right:0; z-index:499;
-  background:rgba(10,8,8,0.98);
-  border-bottom:1px solid rgba(204,31,31,0.2);
-  transform:translateY(-8px);
-  opacity:0;
-  pointer-events:none;
-  transition:transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
-  max-height:calc(100vh - 60px);
+  position:fixed; top:60px; right:0; bottom:0; z-index:499;
+  width:280px; max-width:85vw;
+  background:rgba(8,7,7,0.99);
+  border-left:1px solid rgba(204,31,31,0.2);
+  border-top:1px solid rgba(204,31,31,0.1);
+  transform:translateX(100%);
+  opacity:0; pointer-events:none;
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
   overflow-y:auto;
+  box-shadow:-20px 0 60px rgba(0,0,0,0.7);
 }
 .mobile-nav.show {
-  transform:translateY(0);
-  opacity:1;
-  pointer-events:all;
+  transform:translateX(0);
+  opacity:1; pointer-events:all;
 }
 .mobile-nav-inner {
-  padding:1rem 1.2rem 1.5rem;
+  padding:1.5rem 1.2rem 2rem;
   display:flex; flex-direction:column; gap:2px;
+  min-height:100%;
 }
 .mobile-nav-status {
   display:flex; align-items:center; justify-content:space-between;
-  padding:0.6rem 0.8rem 0.8rem;
+  padding:0.6rem 0.8rem 1rem;
   border-bottom:1px solid rgba(204,31,31,0.1);
   margin-bottom:0.5rem;
 }
 .mobile-ip {
-  font-family:var(--mono); font-size:0.65rem;
+  font-family:var(--mono); font-size:0.6rem;
   color:var(--text-dim); letter-spacing:0.05em;
 }
 .mob-link {
   display:block; padding:0.85rem 0.8rem;
-  font-family:'Oswald',sans-serif; font-size:0.9rem;
+  font-family:'Oswald',sans-serif; font-size:0.95rem;
   font-weight:400; letter-spacing:0.1em; text-transform:uppercase;
   color:var(--khaki-dark); text-decoration:none;
   border-bottom:1px solid rgba(255,255,255,0.03);
-  transition:color 0.2s, padding-left 0.2s;
+  transition:color 0.2s, padding-left 0.2s, border-color 0.2s;
 }
-.mob-link:hover, .mob-link:active { color:var(--text); padding-left:1.2rem; }
+.mob-link:hover { color:var(--text); padding-left:1.2rem; border-color:rgba(204,31,31,0.15); }
 .mob-faq { color:var(--rad) !important; }
-.mob-social { font-size:0.8rem; color:var(--text-dim); }
-.mob-divider {
-  height:1px; background:rgba(204,31,31,0.1);
-  margin:0.4rem 0;
-}
+.mob-social { font-size:0.82rem; color:var(--text-dim); }
+.mob-divider { height:1px; background:rgba(204,31,31,0.1); margin:0.4rem 0; }
 .mob-connect {
-  display:block; margin-top:0.8rem; padding:0.9rem;
+  display:block; margin-top:1rem; padding:0.9rem;
   background:var(--red); color:#fff; text-align:center;
   font-family:'Oswald',sans-serif; font-size:0.9rem;
   font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
@@ -494,13 +531,12 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 }
 .mob-connect:hover { background:var(--red-dark); }
 
-@media(max-width:750px) {
-  .burger { display:flex; }
-  /* hide desktop links on mobile */
-  .topbar-links .tl,
-  .topbar-links .server-addr,
-  .topbar-links .pc-topbar { display:none !important; }
-}
+
+
+
+/* ── скрыть старые desktop ссылки, оставить только статус и кнопку подключиться ── */
+.topbar-links .tl:not(.primary),
+.topbar-links .server-addr { display:none !important; }
 
 /* ══════════════════════════════════════
    MOBILE LAYOUT FIXES
@@ -1077,6 +1113,78 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 .news-all-btn:hover{border-color:rgba(204,31,31,0.3);color:var(--red);}
 @media(max-width:750px){.news-grid{grid-template-columns:1fr;}}
 
+
+/* ── HERO SECONDARY BUTTONS ── */
+.hero-main-btn { font-size:1rem !important; padding:0.9rem 2.4rem !important; letter-spacing:0.15em; }
+.hero-secondary-btns { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
+.hero-btn-sep { width:1px; height:20px; background:rgba(255,255,255,0.1); }
+@media(max-width:600px){ .hero-btn-sep{display:none;} .hero-secondary-btns{gap:0.4rem;} }
+
+/* ── PILLARS REDESIGN ── */
+.pillar-icon { font-size:1.8rem; margin-bottom:0.6rem; display:block; filter:drop-shadow(0 0 8px rgba(204,31,31,0.3)); transition:transform 0.3s; }
+.pillar:hover .pillar-icon { transform:scale(1.15); }
+.pillar-desc { font-size:0.85rem; color:var(--khaki-dark); line-height:1.7; margin-top:0.4rem; }
+.pillar { transition:background 0.3s, transform 0.3s; }
+.pillar:hover { transform:translateY(-2px); }
+.pillar-title { font-size:1.1rem; margin-bottom:0.2rem; }
+
+/* ── MAP SECTION REDESIGN ── */
+.map-section {
+  position:relative; overflow:hidden;
+  padding:5rem 0;
+  border-top:1px solid rgba(204,31,31,0.08);
+  border-bottom:1px solid rgba(204,31,31,0.08);
+  background:var(--bg2);
+}
+.map-section-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 50% 80% at 80% 50%, rgba(204,31,31,0.06), transparent),
+    radial-gradient(ellipse 30% 60% at 20% 50%, rgba(126,200,160,0.03), transparent);
+}
+.map-section-overlay {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(204,31,31,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(204,31,31,0.04) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+.map-section-inner {
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:3rem; flex-wrap:wrap;
+}
+.map-section-text { flex:1; min-width:280px; }
+.map-section-stats {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1px; background:rgba(255,255,255,0.05);
+  flex-shrink:0;
+}
+.map-stat {
+  background:var(--bg2); padding:1.5rem 2rem;
+  text-align:center; transition:background 0.2s;
+}
+.map-stat:hover { background:var(--bg3); }
+.map-stat-val {
+  font-family:'Oswald',sans-serif; font-size:2.2rem;
+  font-weight:700; color:var(--red);
+  text-shadow:0 0 20px rgba(204,31,31,0.4);
+}
+.map-stat-label {
+  font-family:var(--mono); font-size:0.52rem;
+  letter-spacing:0.15em; color:var(--text-dim);
+  text-transform:uppercase; margin-top:0.2rem;
+}
+@media(max-width:750px){
+  .map-section-inner { flex-direction:column; }
+  .map-section-stats { width:100%; grid-template-columns:repeat(4,1fr); }
+  .map-stat { padding:1rem; }
+  .map-stat-val { font-size:1.6rem; }
+}
+@media(max-width:480px){
+  .map-section-stats { grid-template-columns:repeat(2,1fr); }
+}
+
 </style>
   <link rel="icon" type="image/x-icon" href="images/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
@@ -1184,9 +1292,13 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
     <h1 class="hero-title"><span class="t1">Shelter</span><span class="t2">PVE</span></h1>
     <p class="hero-sub">Выживание требует не только оружия,<br>но и смекалки, ресурсов и верных союзников</p>
     <div class="hero-cta">
-      <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn btn-red">Подключиться</a>
-      <a href="#craft" class="btn btn-outline">База крафта</a>
-      <a href="#features" class="btn btn-outline">О сервере</a>
+      <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn btn-red hero-main-btn">⚡ Подключиться</a>
+      <div class="hero-secondary-btns">
+        <a href="mechanics.html" class="btn btn-outline">Механики</a>
+        <span class="hero-btn-sep"></span>
+        <a href="#features" class="btn btn-outline">О сервере</a>
+      </div>
+      <div class="hero-hint">⚙ крафт — часть механик сервера &nbsp;·&nbsp; гайды скоро</div>
     </div>
   </div>
   <div class="scroll-down"><span>scroll</span><div class="scroll-bar"></div></div>
@@ -1262,487 +1374,53 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 
 <section class="craft-section" id="craft">
   <div class="container">
-    <div class="craft-header-row">
-      <div>
-        <div class="sec-label fu">Производство</div>
-        <h2 class="sec-title fu">База <span>крафта</span></h2>
-        <p class="fu" style="color:var(--khaki-dark);font-size:0.88rem;max-width:480px;line-height:1.7;margin-top:0.3rem">Полная база рецептов: оружие, броня, ПНВ, электроника, ёмкости, рюкзаки и добыча руды</p>
+    <div class="sec-label fu">Производство</div>
+    <h2 class="sec-title fu">Механики <span>и крафт</span></h2>
+    <p class="fu" style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.12em;color:var(--khaki-dark);margin-bottom:0.5rem;text-transform:uppercase;">⚙ дроны &nbsp;·&nbsp; трейдеры &nbsp;·&nbsp; верстак &nbsp;·&nbsp; крафт рецепты &nbsp;·&nbsp; аванпосты &nbsp;·&nbsp; и многое другое</p>
+
+    <div class="mech-preview-grid fu">
+
+      <div class="mp-card" style="--c:var(--red)">
+        <div class="mp-icon">🚁</div>
+        <div class="mp-title">Боевые дроны</div>
+        <div class="mp-desc">На военках патрулируют автономные дроны — засекают и преследуют. Зачистка требует тактики.</div>
       </div>
-    </div>
-    <div class="craft-embed-box fu">
-      <div class="craft-embed-label">Shelter PVE // База крафта</div>
-<div class="tabs">
-  <div class="tab active" onclick="craftShow('weapons',this)">🔫 Оружие</div>
-  <div class="tab" onclick="craftShow('nvg',this)">🌙 ПНВ</div>
-  <div class="tab" onclick="craftShow('electronics',this)">🔌 Электроника</div>
-  <div class="tab" onclick="craftShow('barrels',this)">🛢 Ёмкости</div>
-  <div class="tab" onclick="craftShow('backpacks',this)">🎒 Рюкзаки</div>
-  <div class="tab" onclick="craftShow('armor',this)">🛡 Броня</div>
-  <div class="tab" onclick="craftShow('clothing',this)">👕 Одежда</div>
-   <div class="tab" onclick="craftShow('mining',this)">⛏ Добыча</div>
-</div>
 
-<main>
-<div class="legend">
-  <div class="li"><div class="ld" style="border-color:var(--accent3)"></div> Уничтожается при крафте</div>
-  <div class="li"><div class="ld" style="border-color:var(--accent2)"></div> Сохраняется</div>
-  <div class="li"><div class="ld" style="border-color:#e87040"></div> Теряет прочность</div>
-</div>
-
-<!-- ═══ WEAPONS ═══ -->
-<div class="section active" id="tab-weapons">
-  <div class="sec-title">Оружие — VZP M107</div>
-  <div class="note"><strong>Цепочка:</strong> Gamma → Beta → Alpha. Инструменты на всех этапах: <strong>Тиски + Дрель</strong>. Gamma крафтится 2.5 минуты и требует специальный верстак.</div>
-  <div class="chain">
-    <div class="chain-title">► Путь к VZP M107 Alpha</div>
-    <div class="steps">
-      <div class="step"><span class="sn">КОМПОНЕНТЫ</span><span class="sv">M99 + детали + краска</span></div>
-      <div class="sarr">→</div>
-      <div class="step"><span class="sn">ЭТАП 1</span><span class="sv">M107 Gamma</span></div>
-      <div class="sarr">→</div>
-      <div class="step"><span class="sn">ЭТАП 2</span><span class="sv">M107 Beta</span></div>
-      <div class="sarr">→</div>
-      <div class="step"><span class="sn">ФИНАЛ ★</span><span class="sv">M107 Alpha</span></div>
-    </div>
-  </div>
-  <div class="grid">
-    <div class="card">
-      <div class="cname" data-cls="VZP_M107_Gamma">VZP M107 Gamma</div>
-      <div class="meta"><span class="badge bt">⏱ 150 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div>
-      <div class="lbl" style="margin-bottom:6px">Инструменты</div>
-      <div class="tools" style="margin-bottom:12px"><span class="tool">Тиски</span><span class="tool">Дрель</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="kr_M99">Снайперская винтовка M99</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="kr_muzzle50bmg_flashhider_M99">Пламегаситель для M99</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="kr_bipod_bipods_m82">Сошки M82</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="OOTS_item_nabor_tonkyi">Набор инструментов (тонкий)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="OOTS_item_nabor_calibrate">Набор калибровки</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="OOTS_item_nabor_gryboi">Набор инструментов (грубый)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="NM_Spraycan_White">Краска белая</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="WeaponCleaningKit">Набор чистки оружия</span><span class="iamt">90%<span class="id">уничтожается</span></span></div>
+      <div class="mp-card" style="--c:var(--rad)">
+        <div class="mp-icon">☢️</div>
+        <div class="mp-title">Радиационные зоны</div>
+        <div class="mp-desc">Вместо хим-зон — радиация. Лучший лут только внутри. Дозиметр и антирад обязательны.</div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- ═══ NVG ═══ -->
-<div class="section" id="tab-nvg">
-  <div class="sec-title">Приборы ночного видения</div>
-  <div class="note"><strong>Продвинутый ПНВ и все фильтры</strong> требуют <strong>Чертёж ПНВ</strong> — расходует 14% прочности за крафт.</div>
-  <div class="grid">
-    <div class="card">
-      <div class="cname" data-cls="NVGoggles">ПНВ (базовый)</div>
-      <div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электронного ремонта</span><span class="iamt">100%<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="Binoculars">Бинокль</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="Chemlight_Green">Хим. лампа (зелёная)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×10<span class="id">уничтожается</span></span></div>
+      <div class="mp-card" style="--c:var(--gold,#e0a020)">
+        <div class="mp-icon">🛒</div>
+        <div class="mp-title">Три трейдера</div>
+        <div class="mp-desc">Лагерь выживших, Терминал, Егерь — каждый со своим ассортиментом и атмосферой.</div>
       </div>
-    </div>
-    <div class="card r">
-      <div class="cname" data-cls="FC_NVGoggles_3_Black">ПНВ FC (чёрный) ★</div>
-      <div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div>
-      <div class="lbl" style="margin-bottom:6px">Инструменты</div>
-      <div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="NVGoggles">ПНВ (базовый)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="PMP_item_Pripoy">Припой</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="AP_item_camera">Камера</span><span class="iamt">×4<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×40<span class="id">уничтожается</span></span></div>
-        <div class="ing k"><span class="iname" data-cls="AP_tool_multimetr">Мультиметр</span><span class="iamt">×1<span class="idmg">−20% прочности</span></span></div>
+
+      <div class="mp-card" style="--c:var(--blue,#5b9bd5)">
+        <div class="mp-icon">🔧</div>
+        <div class="mp-title">Верстак и крафт</div>
+        <div class="mp-desc">Инженерный пост с верстаком — создавай предметы которых нет в луте. Рецепты, компоненты, уникальный результат.</div>
       </div>
-    </div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_Beige">Фильтр ПНВ — Бежевый</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Yellow">Хим. лампа (жёлтая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_Yellow">Фильтр ПНВ — Жёлтый</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Yellow">Хим. лампа (жёлтая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_LightGreen">Фильтр ПНВ — Светло-зелёный</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Green">Хим. лампа (зелёная)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_White">Хим. лампа (белая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_LightBlue">Фильтр ПНВ — Голубой</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Blue">Хим. лампа (синяя)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_White">Хим. лампа (белая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_Purple">Фильтр ПНВ — Фиолетовый</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Blue">Хим. лампа (синяя)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_Red">Хим. лампа (красная)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="FC_Nvg_Filter_White">Фильтр ПНВ — Белый</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж ПНВ −14%</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">100%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="HeadlightH7_Box">Лампа H7 (коробка)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Chemlight_White">Хим. лампа (белая)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_item_lenses">Линзы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
 
-<!-- ═══ ELECTRONICS ═══ -->
-<div class="section" id="tab-electronics">
-  <div class="sec-title">Электроника</div>
-  <div class="note"><strong>Паяльник</strong> нужен на всех этапах. Сначала разбираем электронику на компоненты, затем крафтим Чип Virtex и Дрон детектор (Тир 1-3). Для Virtex нужен <strong>Чертёж Иммобилайзера</strong>.</div>
-  <div class="chain"><div class="chain-title">► Цепочка крафта компонентов</div><div class="steps"><div class="step"><span class="sn">РАЗБИРАЕМ</span><span class="sv">ОЗУ / Видеокарта / iPhone / Wi-Fi камера</span></div><div class="sarr">→</div><div class="step"><span class="sn">ПОЛУЧАЕМ</span><span class="sv">Микрочип / Плата / LCD / Камера</span></div><div class="sarr">→</div><div class="step"><span class="sn">ЭТАП</span><span class="sv">Чип Virtex</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 1</span><span class="sv">Дрон детектор</span></div><div class="sarr">→</div><div class="step"><span class="sn">ФИНАЛ ★</span><span class="sv">Дрон детектор Тир 3 ★</span></div></div></div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="PMP_item_Microchip">Микрочип</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="PMP_item_RAM">Оперативная память (ОЗУ)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="idmg">−20% прочности</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="OOTS_item_LCD">LCD-экран</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="OOTS_item_IPhone_Ruin">Разбитый iPhone</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="idmg">−20% прочности</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="PMP_item_Plata">Плата</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="PMP_item_GPU">Видеокарта</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="idmg">−20% прочности</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="AP_item_camera">Камера</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="OOTS_item_Wificamera">Wi-Fi камера</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="idmg">−20% прочности</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="OOTS_item_Virtex">Чип Virtex</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж Иммобилайзера</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="PMP_item_Plata">Плата</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_Microchip">Микрочип</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="AP_drone_tool_hider">Дрон детектор Тир 1</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="OOTS_item_Virtex">Чип Virtex</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_elc">Электронные компоненты</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_drone_item_module_black">Вычислительный модуль дрона (чёрный)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="ik">сохраняется</span></span></div><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">80%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="AP_drone_tool_hider_2">Дрон детектор Тир 2</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_drone_tool_hider">Дрон детектор Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_drone_item_module_black">Вычислительный модуль дрона (чёрный)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="ik">сохраняется</span></span></div><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">80%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="AP_drone_tool_hider_3">Дрон детектор Тир 3 ★</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_drone_tool_hider_2">Дрон детектор Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AP_drone_item_module_black">Вычислительный модуль дрона (чёрный)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="ik">сохраняется</span></span></div><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">80%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card g"><div class="cname" data-cls="ExpansionGPS">GPS</div><div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Паяльник</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="OOTS_item_IPhone_Ruin">Разбитый iPhone</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_elc">Электронные компоненты</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing k"><span class="iname" data-cls="Screwdriver">Отвёртка</span><span class="iamt">×1<span class="ik">сохраняется</span></span></div><div class="ing d"><span class="iname" data-cls="ElectronicRepairKit">Набор электрика</span><span class="iamt">45%<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
-
-<!-- ═══ BARRELS ═══ -->
-<div class="section" id="tab-barrels">
-  <div class="sec-title">Ёмкости и бочки</div>
-  <div class="note"><strong>Цепочка крафта:</strong> Бочка 300л крафтится из обычной синей бочки (DayZ) + металлопластины. Бочка 500л — апгрейд соответствующей бочки 300л. Инструмент везде: <strong>Металлорез</strong>.</div>
-  <div class="chain"><div class="chain-title">► Цепочка бочек 500л</div><div class="steps"><div class="step"><span class="sn">ОСНОВА</span><span class="sv">Бочка (синяя, обычная)</span></div><div class="sarr">→</div><div class="step"><span class="sn">ЭТАП 1</span><span class="sv">Бочка 300л (чёрная / синяя / красная)</span></div><div class="sarr">→</div><div class="step"><span class="sn">ЭТАП 2 ★</span><span class="sv">Бочка 500л (Flame / Camo / Palm)</span></div></div></div>
-  <div class="sub-title">Бочка для нефти и Канистра</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="AP_op_barrel">Бочка для нефти</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_White">Краска белая</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="CanisterGasoline">Канистра бензина</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Green">Краска зелёная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-  <div class="sub-title">Бочки 300л (из синей базовой бочки)</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="CMK_Barrel300_Black">Бочка 300л — Чёрная</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="Barrel_Blue">Бочка (синяя, базовая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="CMK_Barrel300_Blue">Бочка 300л — Синяя</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="Barrel_Blue">Бочка (синяя, базовая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Blue">Краска синяя</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="CMK_Barrel300_Red">Бочка 300л — Красная</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="Barrel_Blue">Бочка (синяя, базовая)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Red">Краска красная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-  <div class="sub-title">Бочки 500л (апгрейд бочки 300л)</div>
-  <div class="grid">
-    <div class="card r"><div class="cname" data-cls="CMK_Barrel500_Flame">Бочка 500л — Flame</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="CMK_Barrel300_Black">Бочка 300л (чёрная)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×50<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Red">Краска красная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Yellow">Краска жёлтая</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="CMK_Barrel500_Camo">Бочка 500л — Камуфляж</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="CMK_Barrel300_Blue">Бочка 300л (синяя)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×50<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Green">Краска зелёная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Yellow">Краска жёлтая</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="CMK_Barrel500_Palm">Бочка 500л — Пальмы</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="CMK_Barrel300_Red">Бочка 300л (красная)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="MetalPlate">Листы металла</span><span class="iamt">×50<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Green">Краска зелёная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Red">Краска красная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
-
-<!-- ═══ BACKPACKS ═══ -->
-<div class="section" id="tab-backpacks">
-  <div class="sec-title">Рюкзаки (Тиры)</div>
-  <div class="note">Все рюкзаки требуют <strong>Чертёж рюкзака</strong> (−50% на Тир 1-2, −100% на Тир 3-5). <strong>Тир 5</strong> дополнительно требует <strong>Металлорез</strong> и занимает 120 сек. Инструмент на всех этапах: <strong>Швейная машина</strong>.</div>
-  <div class="chain"><div class="chain-title">► Цепочка улучшения рюкзака</div><div class="steps"><div class="step"><span class="sn">ОСНОВА</span><span class="sv">Тактический рюкзак (чёрный)</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 1</span><span class="sv">Рюкзак Тир 1</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 2</span><span class="sv">Рюкзак Тир 2</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 3</span><span class="sv">Рюкзак Тир 3</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 4</span><span class="sv">Рюкзак Тир 4</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 5 ★</span><span class="sv">Рюкзак Тир 5</span></div></div></div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_bag_TIR1">Рюкзак Тир 1</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж рюкзака −50%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_bag_tacticul_black">Тактический рюкзак (чёрный)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×5<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_bag_TIR2">Рюкзак Тир 2</div><div class="meta"><span class="badge bt">⏱ 40 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж рюкзака −50%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_bag_TIR1">Рюкзак Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×10<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_bag_TIR3">Рюкзак Тир 3</div><div class="meta"><span class="badge bt">⏱ 45 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж рюкзака −100%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_bag_TIR2">Рюкзак Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×15<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_bag_TIR4">Рюкзак Тир 4</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж рюкзака −100%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_bag_TIR3">Рюкзак Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="kr_items_paracord">Паракорд</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_bag">Инструкция по рюкзаку</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_bag_TIR5">Рюкзак Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 120 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж рюкзака −100%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_bag_TIR4">Рюкзак Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="kr_items_paracord">Паракорд</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_bag">Инструкция по рюкзаку</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
-
-<!-- ═══ ARMOR ═══ -->
-<div class="section" id="tab-armor">
-  <div class="sec-title">Броня</div>
-  <div class="note"><strong>Жилеты Тир 2-5</strong> требуют Чертёж бронежилета (−100%). <strong>Тир 5</strong> — особый Чертёж бронежилета Тир 5. <strong>Шлемы Тир 2-5</strong> требуют Чертёж шлема (−100%). Тир 4 и 5 дополнительно нужна инструкция.</div>
-
-  <div class="sub-title">🦺 Бронежилеты</div>
-  <div class="chain"><div class="chain-title">► Цепочка улучшения жилета</div><div class="steps"><div class="step"><span class="sn">ОСНОВА</span><span class="sv">Тактический жилет (чёрный)</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 1</span><span class="sv">Жилет Тир 1</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 2</span><span class="sv">Жилет Тир 2</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 3</span><span class="sv">Жилет Тир 3</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 4</span><span class="sv">Жилет Тир 4</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 5 ★</span><span class="sv">Жилет Тир 5</span></div></div></div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_Vest_TIR1">Жилет Тир 1</div><div class="meta"><span class="badge bt">⏱ 20 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_vest_slick_black">Тактический жилет (чёрный)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Vest_TIR2">Жилет Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж жилета −100%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Vest_TIR1">Жилет Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Vest_TIR3">Жилет Тир 3</div><div class="meta"><span class="badge bt">⏱ 40 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж жилета −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Vest_TIR2">Жилет Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Vest_TIR4">Жилет Тир 4</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж жилета −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Vest_TIR3">Жилет Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_vest">Инструкция по жилету</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_Vest_TIR5">Жилет Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 75 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж жилета Тир 5 −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Vest_TIR4">Жилет Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">80%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_vest">Инструкция по жилету</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-
-  <div class="sub-title">⛑ Шлемы</div>
-  <div class="chain"><div class="chain-title">► Цепочка улучшения шлема</div><div class="steps"><div class="step"><span class="sn">ОСНОВА</span><span class="sv">Шлем ЛШЗС (чёрный)</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 1</span><span class="sv">Шлем Тир 1</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 2</span><span class="sv">Шлем Тир 2</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 3</span><span class="sv">Шлем Тир 3</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 4</span><span class="sv">Шлем Тир 4</span></div><div class="sarr">→</div><div class="step"><span class="sn">ТИР 5 ★</span><span class="sv">Шлем Тир 5</span></div></div></div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_helm_TIR1">Шлем Тир 1</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Тиски</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_helm_lshz_black">Шлем ЛШЗС (чёрный)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_helm_TIR2">Шлем Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж шлема −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Тиски</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_helm_TIR1">Шлем Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_helm_TIR3">Шлем Тир 3</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж шлема −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Тиски</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_helm_TIR2">Шлем Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×3<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_helm_TIR4">Шлем Тир 4</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж шлема −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Тиски</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_helm_TIR3">Шлем Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×4<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_helm_TIR5">Шлем Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж шлема −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Металлорез</span><span class="tool">Тиски</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_helm_TIR4">Шлем Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Железный слиток</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_helm">Инструкция по шлему</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
-
-<!-- ═══ CLOTHING ═══ -->
-<div class="section" id="tab-clothing">
-  <div class="sec-title">Одежда</div>
-  <div class="note"><strong>Тир 2 и выше</strong> требуют <strong>Чертёж одежды</strong> (−100%). <strong>Тир 4-5</strong> дополнительно нужна Инструкция по одежде. Инструмент: <strong>Швейная машина</strong>.</div>
-  <div class="warn"><strong>⚠ Тир 5 одежды</strong> полностью уничтожает швейную машину (−99-100% прочности). Убедитесь что инструмент в хорошем состоянии!</div>
-
-  <div class="sub-title">🧥 Куртки</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_Jacket_TIR1">Куртка Тир 1</div><div class="meta"><span class="badge bt">⏱ 20 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="Fruck_Ghost_Jacket">Куртка Ghost</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Jacket_TIR2">Куртка Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Jacket_TIR1">Куртка Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Jacket_TIR3">Куртка Тир 3</div><div class="meta"><span class="badge bt">⏱ 40 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Jacket_TIR2">Куртка Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×3<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Jacket_TIR4">Куртка Тир 4</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Jacket_TIR3">Куртка Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_clothing">Инструкция по одежде</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCJacketGray">Куртка NBC (серая)</span><span class="iamt">×3<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_Jacket_TIR5">Куртка Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 60 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Jacket_TIR4">Куртка Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">80%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_clothing">Инструкция по одежде</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_NBC">Инструкция NBC</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCJacketGray">Куртка NBC (серая)</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×8<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-
-  <div class="sub-title">👖 Штаны</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_pants_TIR1">Штаны Тир 1</div><div class="meta"><span class="badge bt">⏱ 20 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_pants_survivor_2">Штаны выжившего</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_pants_TIR2">Штаны Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_pants_TIR1">Штаны Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_pants_TIR3">Штаны Тир 3</div><div class="meta"><span class="badge bt">⏱ 40 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_pants_TIR2">Штаны Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×15<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_pants_TIR4">Штаны Тир 4</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_pants_TIR3">Штаны Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×20<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_clothing">Инструкция по одежде</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCPantsGray">Штаны NBC (серые)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_pants_TIR5">Штаны Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 60 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_pants_TIR4">Штаны Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_nitki3">Черные нитки</span><span class="iamt">×25<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">80%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="PMP_item_ArmorPlate">Бронепластина</span><span class="iamt">×6<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_clothing">Инструкция по одежде</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SHL_inst_NBC">Инструкция NBC</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCPantsGray">Штаны NBC (серые)</span><span class="iamt">×4<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-
-  <div class="sub-title">👟 Обувь</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_Shoes_TIR1">Обувь Тир 1</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="Fruck_Kruger_Shoes_black">Ботинки Kruger (чёрные)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="CowPelt">Шкура коровы</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="LeatherSewingKit">Набор скорняка</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Rope">Верёвка</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Shoes_TIR2">Обувь Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Shoes_TIR1">Обувь Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="CowPelt">Шкура коровы</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Rope">Верёвка</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="LeatherSewingKit">Набор скорняка</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Shoes_TIR3">Обувь Тир 3</div><div class="meta"><span class="badge bt">⏱ 40 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Shoes_TIR2">Обувь Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="CowPelt">Шкура коровы</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="LeatherSewingKit">Набор скорняка</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Rope">Верёвка</span><span class="iamt">×3<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_Shoes_TIR4">Обувь Тир 4</div><div class="meta"><span class="badge bt">⏱ 50 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Shoes_TIR3">Обувь Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="CowPelt">Шкура коровы</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Rope">Верёвка</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="LeatherSewingKit">Набор скорняка</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_Shoes_TIR5">Обувь Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 60 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_Shoes_TIR4">Обувь Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="CowPelt">Шкура коровы</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_shilo">Шило</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="LeatherSewingKit">Набор скорняка</span><span class="iamt">80%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NM_Spraycan_Black">Краска чёрная</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Rope">Верёвка</span><span class="iamt">×5<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCBootsGray">Ботинки NBC (серые)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-
-  <div class="sub-title">🧤 Перчатки</div>
-  <div class="grid">
-    <div class="card"><div class="cname" data-cls="SHL_gloves_TIR1">Перчатки Тир 1</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="AP_gloves_combat_black">Боевые перчатки (чёрные)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×2<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_gloves_TIR2">Перчатки Тир 2</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_gloves_TIR1">Перчатки Тир 1</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×4<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×4<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_gloves_TIR3">Перчатки Тир 3</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_gloves_TIR2">Перчатки Тир 2</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×6<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×6<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card"><div class="cname" data-cls="SHL_gloves_TIR4">Перчатки Тир 4</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_gloves_TIR3">Перчатки Тир 3</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×8<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">75%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×8<span class="id">уничтожается</span></span></div></div></div>
-    <div class="card r"><div class="cname" data-cls="SHL_gloves_TIR5">Перчатки Тир 5 ★</div><div class="meta"><span class="badge bt">⏱ 30 сек</span><span class="badge be">⚡ Электричество</span><span class="badge bp">📜 Чертёж одежды −100%</span><span class="badge br">🔧 Верстак</span></div><div class="lbl" style="margin-bottom:6px">Инструменты</div><div class="tools" style="margin-bottom:12px"><span class="tool">Швейная машина</span></div><div class="lbl">Ингредиенты</div><div class="ings"><div class="ing d"><span class="iname" data-cls="SHL_gloves_TIR4">Перчатки Тир 4</span><span class="iamt">×1<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_tkan_6">Черная ткань</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="SewingKit">Набор для шитья</span><span class="iamt">80%<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="Ej_Items_arms">Армированный скотч</span><span class="iamt">×10<span class="id">уничтожается</span></span></div><div class="ing d"><span class="iname" data-cls="NBCGlovesGray">Перчатки NBC (серые)</span><span class="iamt">×2<span class="id">уничтожается</span></span></div></div></div>
-  </div>
-</div>
-
-<!-- ═══ FUEL ═══ -->
-<div class="section" id="tab-fuel">
-  <div class="sec-title">Бензин</div>
-  <div class="grid">
-    <div class="card">
-      <div class="cname" data-cls="WaterBottle">Бензин (бутылка)</div>
-      <div class="meta"><span class="badge bt">⏱ 10 сек</span><span class="badge be">⚡ Электричество</span></div>
-      <div class="lbl" style="margin-bottom:6px">Инструменты</div>
-      <div class="tools" style="margin-bottom:12px"><span class="tool">Газовая горелка</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="WaterBottle">Бутылка с нефтью (500 ед.)</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
+      <div class="mp-card" style="--c:var(--ember)">
+        <div class="mp-icon">🏚️</div>
+        <div class="mp-title">Укреплённые аванпосты</div>
+        <div class="mp-desc">Уникальные точки с AI-охраной по всей карте. Высокий риск — высокая награда.</div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- ═══ MINING ═══ -->
-<div class="section" id="tab-mining">
-  <div class="sec-title">Добыча и переработка</div>
-  <div class="note">Переработка камней в точильные камни и крафт деревянной кирки. Кирка крафтится по цепочке: сначала детали, потом сборка.</div>
-  <div class="chain"><div class="chain-title">► Цепочка крафта: Деревянная кирка</div><div class="steps"><div class="step"><span class="sn">МАТЕРИАЛ</span><span class="sv">Слиток металла</span></div><div class="sarr">→</div><div class="step"><span class="sn">ЭТАП 1</span><span class="sv">Клин</span></div><div class="sarr">+</div><div class="step"><span class="sn">ЭТАП 2</span><span class="sv">Жало для кирки</span></div><div class="sarr">→</div><div class="step"><span class="sn">ФИНАЛ ★</span><span class="sv">Деревянная кирка</span></div></div></div>
-  <div class="grid">
-    <div class="card g">
-      <div class="cname" data-cls="Whetstone">Точильный камень (×100)</div>
-      <div class="meta"><span class="badge bt">⏱ 20 сек</span><span class="badge be">⚡ Электричество</span><span class="badge br">🔧 Верстак</span></div>
-      <div class="lbl" style="margin-bottom:6px">Инструменты</div>
-      <div class="tools" style="margin-bottom:12px"><span class="tool">Шлифовальный станок</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="Stone">Камень</span><span class="iamt">×2<span class="id">уничтожается</span></span></div>
+      <div class="mp-card" style="--c:#6a9e6a">
+        <div class="mp-icon">🌿</div>
+        <div class="mp-title">Фермерство и ресурсы</div>
+        <div class="mp-desc">Выращивай урожай, добывай руду. Пассивный доход и ресурсная база для крафта.</div>
       </div>
+
     </div>
-    <div class="card">
-      <div class="cname" data-cls="AZ_Clin">Клин</div>
-      <div class="meta"><span class="badge be">⚡ Электричество</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Слиток металла</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="cname" data-cls="AZ_Pixe_wood">Жало для кирки</div>
-      <div class="meta"><span class="badge be">⚡ Электричество</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="AZ_ingot_Iron">Слиток металла</span><span class="iamt">×10<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="SledgeHammer">Кувалда</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-      </div>
-    </div>
-    <div class="card r">
-      <div class="cname" data-cls="AZ_Wooden_Pickaxe">Деревянная кирка ★</div>
-      <div class="meta"><span class="badge be">⚡ Электричество</span></div>
-      <div class="lbl" style="margin-bottom:6px">Инструменты</div>
-      <div class="tools" style="margin-bottom:12px"><span class="tool">Молоток</span></div>
-      <div class="lbl">Ингредиенты</div>
-      <div class="ings">
-        <div class="ing d"><span class="iname" data-cls="AZ_Clin">Металлическая пластина</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="AZ_Pixe_wood">Жало для кирки</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing d"><span class="iname" data-cls="AZ_Wooden_cuttings">Деревянный черенок</span><span class="iamt">×1<span class="id">уничтожается</span></span></div>
-        <div class="ing k"><span class="iname" data-cls="Hammer">Молоток</span><span class="iamt">×1<span class="ik">сохраняется</span></span></div>
-      </div>
-    </div>
-  </div>
-</div>
 
-</main>
-
-<script>
-function show(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  el.classList.add('active');
-}
-</script>
-<script>
-(function(){
-  const IMGS={"NM_Spraycan_Yellow":"images/craft/c0001.png",
-"SHL_helm_TIR4":"images/craft/c0002.png",
-"NBCJacketGray":"images/craft/c0003.png",
-"Ej_Items_elc":"images/craft/c0004.png",
-"Chemlight_Blue":"images/craft/c0005.png",
-"PMP_item_RAM":"images/craft/c0006.png",
-"PMP_item_Pripoy":"images/craft/c0007.png",
-"VZP_M107_Beta":"images/craft/c0008.png",
-"SHL_bag_TIR1":"images/craft/c0009.png",
-"Screwdriver":"images/craft/c0010.png",
-"SHL_helm_TIR5":"images/craft/c0011.png",
-"FC_Nvg_Filter_LightBlue":"images/craft/c0012.png",
-"OOTS_item_Wificamera":"images/craft/c0013.png",
-"SHL_gloves_TIR3":"images/craft/c0014.png",
-"OOTS_item_IPhone_Ruin":"images/craft/c0015.png",
-"NM_Spraycan_Red":"images/craft/c0016.png",
-"Ej_Items_tkan_6":"images/craft/c0017.png",
-"ExpansionGPS":"images/craft/c0018.png",
-"PMP_item_Plata":"images/craft/c0019.png",
-"SHL_bag_TIR4":"images/craft/c0020.png",
-"AZ_ingot_Iron":"images/craft/c0021.png",
-"SHL_Shoes_TIR2":"images/craft/c0022.png",
-"NM_Spraycan_Green":"images/craft/c0023.png",
-"SHL_inst_helm":"images/craft/c0024.png",
-"SHL_Vest_TIR4":"images/craft/c0025.png",
-"AP_op_barrel":"images/craft/c0026.png",
-"SHL_inst_NBC":"images/craft/c0027.png",
-"CMK_Barrel300_Black":"images/craft/c0028.png",
-"HeadlightH7_Box":"images/craft/c0029.png",
-"SHL_bag_TIR3":"images/craft/c0030.png",
-"AZ_Wooden_Pickaxe":"images/craft/c0031.png",
-"SHL_gloves_TIR5":"images/craft/c0032.png",
-"NM_Spraycan_Black":"images/craft/c0033.png",
-"OOTS_item_nabor_calibrate":"images/craft/c0034.png",
-"Chemlight_Red":"images/craft/c0035.png",
-"AZ_Pixe_wood":"images/craft/c0036.png",
-"SHL_Jacket_TIR5":"images/craft/c0037.png",
-"kr_bipod_bipods_m82":"images/craft/c0038.png",
-"SHL_gloves_TIR4":"images/craft/c0039.png",
-"SHL_Shoes_TIR3":"images/craft/c0040.png",
-"FC_Nvg_Filter_White":"images/craft/c0041.png",
-"OOTS_item_nabor_tonkyi":"images/craft/c0042.png",
-"VZP_M107_Gamma":"images/craft/c0043.png",
-"Fruck_Kruger_Shoes_black":"images/craft/c0044.png",
-"SHL_Vest_TIR2":"images/craft/c0045.png",
-"CowPelt":"images/craft/c0046.png",
-"Hammer":"images/craft/c0047.png",
-"SHL_inst_clothing":"images/craft/c0048.png",
-"FC_NVGoggles_3_Black":"images/craft/c0049.png",
-"AP_helm_lshz_black":"images/craft/c0050.png",
-"FC_Nvg_Filter_Yellow":"images/craft/c0051.png",
-"AP_drone_tool_hider3":"images/craft/c0052.png",
-"AP_vest_slick_black":"images/craft/c0053.png",
-"Fruck_Ghost_Jacket":"images/craft/c0054.png",
-"MetalPlate":"images/craft/c0055.png",
-"FC_Nvg_Filter_Purple":"images/craft/c0056.png",
-"OOTS_item_Virtex":"images/craft/c0057.png",
-"AP_pants_survivor_2":"images/craft/c0058.png",
-"NBCPantsGray":"images/craft/c0059.png",
-"VZP_M107_Alpha":"images/craft/c0060.png",
-"Whetstone":"images/craft/c0061.png",
-"CMK_Barrel500_Flame":"images/craft/c0062.png",
-"CanisterGasoline":"images/craft/c0063.png",
-"AP_bag_tacticul_black":"images/craft/c0064.png",
-"PMP_item_GPU":"images/craft/c0065.png",
-"SHL_Jacket_TIR4":"images/craft/c0066.png",
-"PMP_item_ArmorPlate":"images/craft/c0067.png",
-"AP_drone_item_module_black":"images/craft/c0068.png",
-"kr_items_paracord":"images/craft/c0069.png",
-"SHL_helm_TIR2":"images/craft/c0070.png",
-"Binoculars":"images/craft/c0071.png",
-"SHL_inst_vest":"images/craft/c0072.png",
-"Rope":"images/craft/c0073.png",
-"SHL_bag_TIR2":"images/craft/c0074.png",
-"SHL_Vest_TIR3":"images/craft/c0075.png",
-"Barrel_Blue":"images/craft/c0076.png",
-"NM_Spraycan_Blue":"images/craft/c0077.png",
-"FC_Nvg_Filter_Beige":"images/craft/c0078.png",
-"NM_Spraycan_White":"images/craft/c0079.png",
-"Ej_Items_arms":"images/craft/c0080.png",
-"SHL_gloves_TIR1":"images/craft/c0081.png",
-"WaterBottle":"images/craft/c0082.png",
-"SHL_Shoes_TIR5":"images/craft/c0083.png",
-"OOTS_item_nabor_gryboi":"images/craft/c0084.png",
-"SewingKit":"images/craft/c0085.png",
-"CMK_Barrel300_Red":"images/craft/c0086.png",
-"SHL_Jacket_TIR2":"images/craft/c0087.png",
-"OOTS_item_LCD":"images/craft/c0088.png",
-"AP_drone_tool_hider":"images/craft/c0089.png",
-"FC_Nvg_Filter_LightGreen":"images/craft/c0090.png",
-"SHL_Vest_TIR5":"images/craft/c0091.png",
-"AP_tool_multimetr":"images/craft/c0092.png",
-"CMK_Barrel500_Palm":"images/craft/c0093.png",
-"AP_item_camera":"images/craft/c0094.png",
-"Stone":"images/craft/c0095.png",
-"AZ_Clin":"images/craft/c0096.png",
-"NVGoggles":"images/craft/c0097.png",
-"SledgeHammer":"images/craft/c0098.png",
-"PMP_item_Microchip":"images/craft/c0099.png",
-"SHL_Shoes_TIR4":"images/craft/c0100.png",
-"CMK_Barrel300_Blue":"images/craft/c0101.png",
-"SHL_Jacket_TIR1":"images/craft/c0102.png",
-"SHL_bag_TIR5":"images/craft/c0103.png",
-"Chemlight_Yellow":"images/craft/c0104.png",
-"ElectronicRepairKit":"images/craft/c0105.png",
-"SHL_helm_TIR3":"images/craft/c0106.png",
-"Ej_Items_shilo":"images/craft/c0107.png",
-"AP_drone_tool_hider2":"images/craft/c0108.png",
-"Chemlight_Green":"images/craft/c0109.png",
-"NBCBootsGray":"images/craft/c0110.png",
-"Chemlight_White":"images/craft/c0111.png",
-"Ej_Items_nitki3":"images/craft/c0112.png",
-"SHL_Shoes_TIR1":"images/craft/c0113.png",
-"kr_muzzle50bmg_flashhider_M99":"images/craft/c0114.png",
-"AZ_Wooden_cuttings":"images/craft/c0115.png",
-"WeaponCleaningKit":"images/craft/c0116.png",
-"kr_M99":"images/craft/c0117.png",
-"SHL_gloves_TIR2":"images/craft/c0118.png",
-"SHL_helm_TIR1":"images/craft/c0119.png",
-"NBCGlovesGray":"images/craft/c0120.png",
-"AP_item_lenses":"images/craft/c0121.png",
-"CMK_Barrel500_Camo":"images/craft/c0122.png",
-"LeatherSewingKit":"images/craft/c0123.png",
-"SHL_Vest_TIR1":"images/craft/c0124.png",
-"AP_gloves_combat_black":"images/craft/c0125.png",
-"SHL_Jacket_TIR3":"images/craft/c0126.png",
-"SHL_inst_bag":"images/craft/c0127.png",
-"AP_drone_tool_hider_2":"images/craft/c0108.png",
-"AP_drone_tool_hider_3":"images/craft/c0052.png"};
-
-  const tip = document.createElement('div');
-  tip.className = 'tt';
-  tip.style.opacity = '0';
-  document.body.appendChild(tip);
-
-  let active = null;
-
-  document.addEventListener('mouseover', function(e) {
-    const el = e.target.closest('[data-cls]');
-    if (!el) return;
-    const cls = el.dataset.cls;
-    if (!IMGS[cls]) return;
-    active = el;
-    tip.innerHTML = '<img src="'+IMGS[cls]+'">';
-    tip.style.opacity = '1';
-    positionTip(e);
-  });
-
-  document.addEventListener('mousemove', function(e) {
-    if (!active) return;
-    positionTip(e);
-  });
-
-  document.addEventListener('mouseout', function(e) {
-    const el = e.target.closest('[data-cls]');
-    if (!el) return;
-    active = null;
-    tip.style.opacity = '0';
-  });
-
-  function positionTip(e) {
-    const tw = tip.offsetWidth || 160;
-    const th = tip.offsetHeight || 170;
-    let x = e.clientX + 16;
-    let y = e.clientY + 16;
-    if (x + tw > window.innerWidth - 10) x = e.clientX - tw - 10;
-    if (y + th > window.innerHeight - 10) y = e.clientY - th - 10;
-    tip.style.left = x + 'px';
-    tip.style.top = y + 'px';
-  }
-})();
-</script>
+    <div class="mp-footer fu">
+      <span class="mp-footer-text">Это лишь часть механик — полный список с подробным описанием каждой</span>
+      <a href="mechanics.html" class="mp-footer-btn">⚙ Все механики сервера →</a>
     </div>
   </div>
 </section>
@@ -1781,12 +1459,32 @@ function show(name, el) {
 <section class="pillars-section">
   <div class="container">
     <div class="sec-label fu">Для кого этот сервер</div>
-    <h2 class="sec-title fu">Четыре <span>столпа</span></h2>
+    <h2 class="sec-title fu">Почему <span>Shelter PVE</span></h2>
     <div class="pillars-grid">
-      <div class="pillar fu"><div class="pillar-num">01</div><div class="pillar-title">Глубокий геймплей</div><div class="pillar-desc">Крафт, исследование, выживание с реальными механиками</div></div>
-      <div class="pillar fu"><div class="pillar-num">02</div><div class="pillar-title">Командная работа</div><div class="pillar-desc">Верные союзники решают всё. Один в поле не воин</div></div>
-      <div class="pillar fu"><div class="pillar-num">03</div><div class="pillar-title">Исследование мира</div><div class="pillar-desc">Каждый угол и тайник может хранить что-то ценное</div></div>
-      <div class="pillar fu"><div class="pillar-num">04</div><div class="pillar-title">Тактический подход</div><div class="pillar-desc">Планирование, снаряжение, позиция — думай наперёд</div></div>
+      <div class="pillar fu">
+        <div class="pillar-num">01</div>
+        <div class="pillar-icon">⚙️</div>
+        <div class="pillar-title">Глубокий геймплей</div>
+        <div class="pillar-desc">Кастомный крафт, уникальные трейдеры, дроны, радиация — каждая сессия непохожа на предыдущую. Здесь есть чем заняться и через 100 часов.</div>
+      </div>
+      <div class="pillar fu">
+        <div class="pillar-num">02</div>
+        <div class="pillar-icon">🤝</div>
+        <div class="pillar-title">Без токсичности</div>
+        <div class="pillar-desc">PVE формат — никто не убьёт тебя при выходе из базы. Мы строим сообщество где помогают, а не грифят. Это другой DayZ.</div>
+      </div>
+      <div class="pillar fu">
+        <div class="pillar-num">03</div>
+        <div class="pillar-icon">🗺️</div>
+        <div class="pillar-title">Живой мир</div>
+        <div class="pillar-desc">Аванпосты, охотничьи лагеря, крашсайты вертолётов, радиационные зоны — карта Chernarus+ постоянно удивляет. Ищи, исследуй, находи.</div>
+      </div>
+      <div class="pillar fu">
+        <div class="pillar-num">04</div>
+        <div class="pillar-icon">🛡️</div>
+        <div class="pillar-title">Активная администрация</div>
+        <div class="pillar-desc">Тикеты обрабатываются быстро, ивенты проводятся регулярно, сервер развивается. Мы здесь не только для того чтобы запустить — а чтобы поддерживать.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1794,16 +1492,26 @@ function show(name, el) {
 <div class="divider"></div>
 
 <!-- ════════════ MAP ════════════ -->
-<section class="map-section" id="map-section" style="padding:4rem 0;text-align:center;background:var(--bg2);border-top:1px solid rgba(204,31,31,0.08);border-bottom:1px solid rgba(204,31,31,0.08);">
-  <div class="container">
-    <div class="sec-label fu">Навигация</div>
-    <h2 class="sec-title fu">Карта <span>сервера</span></h2>
-    <p class="fu" style="color:var(--khaki-dark);font-size:0.88rem;max-width:480px;margin:0.5rem auto 2rem;line-height:1.7;">
-      Интерактивная карта Chernarus+ с трейдерами, сейфзонами и точками интереса сервера
-    </p>
-    <a href="map.html" class="btn btn-red fu" style="display:inline-flex;align-items:center;gap:0.6rem;font-size:0.85rem;">
-      🗺 ОТКРЫТЬ КАРТУ
-    </a>
+<section class="map-section" id="map-section">
+  <div class="map-section-bg"></div>
+  <div class="map-section-overlay"></div>
+  <div class="container map-section-inner">
+    <div class="map-section-text fu">
+      <div class="sec-label">Навигация</div>
+      <h2 class="sec-title">Карта <span>сервера</span></h2>
+      <p style="color:var(--khaki-dark);font-size:0.92rem;max-width:420px;line-height:1.8;margin-bottom:1.8rem;">
+        Интерактивная карта Chernarus+ — трейдеры, сейфзоны, радиационные зоны и точки интереса. Планируй маршрут до выхода на сервер.
+      </p>
+      <a href="map.html" class="btn btn-red" style="display:inline-flex;align-items:center;gap:0.5rem;">
+          🗺 Открыть карту
+        </a>
+    </div>
+    <div class="map-section-stats fu">
+      <div class="map-stat"><div class="map-stat-val">3</div><div class="map-stat-label">Трейдера</div></div>
+      <div class="map-stat"><div class="map-stat-val">2</div><div class="map-stat-label">Рад. зоны</div></div>
+      <div class="map-stat"><div class="map-stat-val">4</div><div class="map-stat-label">Аванпоста</div></div>
+      <div class="map-stat"><div class="map-stat-val">∞</div><div class="map-stat-label">Крашсайты</div></div>
+    </div>
   </div>
 </section>
 
