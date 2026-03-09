@@ -314,6 +314,46 @@ body::before{
   .faq-q-text{font-size:0.95rem;}
   .topbar{padding:0 1rem;}
 }
+
+/* ── CONTACT FORM ── */
+.contact-section{padding:4rem 0;border-top:1px solid rgba(255,255,255,0.05);margin-top:2rem;}
+.contact-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.25em;color:var(--red);text-transform:uppercase;margin-bottom:0.5rem;}
+.contact-title{font-family:'Oswald',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text);margin-bottom:0.6rem;}
+.contact-title span{color:var(--red);}
+.contact-desc{font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);letter-spacing:0.05em;margin-bottom:2rem;}
+.contact-form{max-width:680px;}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:550px){.cf-row{grid-template-columns:1fr;}}
+.cf-field{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.9rem;}
+.cf-label{font-family:var(--mono);font-size:0.52rem;letter-spacing:0.12em;color:var(--text-dim);text-transform:uppercase;}
+.cf-input{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  color:var(--text);font-family:var(--mono);font-size:0.72rem;
+  padding:0.55rem 0.8rem;outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.cf-input:focus{border-color:rgba(204,31,31,0.4);}
+.cf-input option{background:#0c0a0a;}
+.cf-textarea{resize:vertical;min-height:120px;line-height:1.6;}
+.cf-counter{font-family:var(--mono);font-size:0.48rem;color:var(--text-muted);text-align:right;margin-top:0.2rem;}
+.cf-error{font-family:var(--mono);font-size:0.58rem;color:var(--red);min-height:1rem;margin-bottom:0.5rem;}
+.cf-btn{
+  font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:0.7rem 1.8rem;cursor:pointer;border:none;width:100%;
+  background:rgba(204,31,31,0.15);color:var(--red);border:1px solid rgba(204,31,31,0.3);
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:all 0.2s;
+}
+.cf-btn:hover{background:rgba(204,31,31,0.25);}
+.cf-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.cf-success{max-width:680px;text-align:center;padding:3rem;background:rgba(126,200,160,0.04);border:1px solid rgba(126,200,160,0.15);}
+.cf-success.hidden{display:none;}
+.cf-success-icon{font-size:2.5rem;color:var(--rad);margin-bottom:1rem;}
+.cf-success-title{font-family:'Oswald',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--text);margin-bottom:0.5rem;text-transform:uppercase;}
+.cf-success-text{font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);line-height:1.8;}
+.cf-success-text a{color:var(--red);text-decoration:none;}
+
+.hidden{display:none!important;}
 </style>
   <link rel="icon" type="image/x-icon" href="images/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
@@ -575,6 +615,51 @@ body::before{
 
 </div><!-- /.faq-container -->
 
+
+<!-- ════ ФОРМА ОБРАЩЕНИЯ ════ -->
+<div class="contact-section" id="contact">
+  <div class="contact-label">// support_ticket</div>
+  <h2 class="contact-title">Форма <span>обращения</span></h2>
+  <p class="contact-desc">Не нашёл ответа в FAQ? Заполни форму — мы ответим в Discord.</p>
+
+  <div class="contact-form" id="contact-form">
+    <div class="cf-row">
+      <div class="cf-field">
+        <label class="cf-label">Никнейм / Steam имя</label>
+        <input class="cf-input" id="cf-name" placeholder="Твой никнейм" maxlength="64">
+      </div>
+      <div class="cf-field">
+        <label class="cf-label">Тип обращения</label>
+        <select class="cf-input" id="cf-type">
+          <option value="❓ Вопрос">❓ Вопрос</option>
+          <option value="🐛 Баг / Ошибка">🐛 Баг / Ошибка</option>
+          <option value="⚠️ Жалоба на игрока">⚠️ Жалоба на игрока</option>
+          <option value="📦 Восстановление">📦 Восстановление</option>
+          <option value="💬 Другое">💬 Другое</option>
+        </select>
+      </div>
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">Steam ID (необязательно)</label>
+      <input class="cf-input" id="cf-steam" placeholder="76561198XXXXXXXXX" maxlength="32">
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">Сообщение</label>
+      <textarea class="cf-input cf-textarea" id="cf-msg" placeholder="Опиши ситуацию подробно..." maxlength="1500"></textarea>
+      <div class="cf-counter"><span id="cf-count">0</span>/1500</div>
+    </div>
+    <div class="cf-error" id="cf-error"></div>
+    <button class="cf-btn" id="cf-submit" onclick="sendForm()">📨 ОТПРАВИТЬ ОБРАЩЕНИЕ</button>
+  </div>
+
+  <div class="cf-success hidden" id="cf-success">
+    <div class="cf-success-icon">✓</div>
+    <div class="cf-success-title">Обращение отправлено!</div>
+    <div class="cf-success-text">Администрация ответит в Discord. Убедись что ты в нашем <a href="https://discord.gg/4EWuqwfBu" target="_blank">сервере</a>.</div>
+    <button class="cf-btn" onclick="resetForm()" style="margin-top:1rem;max-width:220px">← Новое обращение</button>
+  </div>
+</div>
+
 <div class="faq-footer">
   Остались вопросы? — <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> · <a href="https://t.me/ShelterPVE" target="_blank">Telegram</a> · <a href="index.html">На главную</a>
 </div>
@@ -649,6 +734,75 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') lb.classList.re
 // ── OPEN FIRST ITEM BY DEFAULT ──
 const first = document.querySelector('.faq-item');
 if (first) first.classList.add('open');
+</script>
+<script>
+
+const WEBHOOK = 'https://discord.com/api/webhooks/1480639920598028542/D6yPwrYnoj0lQ2dt4L12jkvGRmy6WnhyJRGn2UmbzoBMeU88d-gNfqzdPr2Ik9bdEr6D';
+
+document.getElementById('cf-msg').addEventListener('input', function() {
+  document.getElementById('cf-count').textContent = this.value.length;
+});
+
+async function sendForm() {
+  const name  = document.getElementById('cf-name').value.trim();
+  const type  = document.getElementById('cf-type').value;
+  const steam = document.getElementById('cf-steam').value.trim();
+  const msg   = document.getElementById('cf-msg').value.trim();
+  const err   = document.getElementById('cf-error');
+  const btn   = document.getElementById('cf-submit');
+
+  err.textContent = '';
+  if (!name) { err.textContent = '✗ Укажи никнейм'; return; }
+  if (!msg || msg.length < 10) { err.textContent = '✗ Сообщение слишком короткое'; return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Отправка...';
+
+  const embed = {
+    title: type,
+    color: 0xCC1F1F,
+    fields: [
+      { name: '👤 Игрок', value: name, inline: true },
+      { name: '🎮 Steam ID', value: steam || 'не указан', inline: true },
+      { name: '📝 Сообщение', value: msg },
+    ],
+    footer: { text: 'Shelter PVE • Форма обращений' },
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const res = await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] })
+    });
+    if (res.ok) {
+      document.getElementById('contact-form').classList.add('hidden');
+      document.getElementById('cf-success').classList.remove('hidden');
+    } else {
+      err.textContent = '✗ Ошибка отправки. Попробуй позже или напиши в Discord напрямую.';
+      btn.disabled = false;
+      btn.textContent = '📨 ОТПРАВИТЬ ОБРАЩЕНИЕ';
+    }
+  } catch(e) {
+    err.textContent = '✗ Нет соединения. Попробуй позже.';
+    btn.disabled = false;
+    btn.textContent = '📨 ОТПРАВИТЬ ОБРАЩЕНИЕ';
+  }
+}
+
+function resetForm() {
+  document.getElementById('cf-name').value = '';
+  document.getElementById('cf-steam').value = '';
+  document.getElementById('cf-msg').value = '';
+  document.getElementById('cf-count').textContent = '0';
+  document.getElementById('cf-error').textContent = '';
+  document.getElementById('cf-submit').disabled = false;
+  document.getElementById('cf-submit').textContent = '📨 ОТПРАВИТЬ ОБРАЩЕНИЕ';
+  document.getElementById('contact-form').classList.remove('hidden');
+  document.getElementById('cf-success').classList.add('hidden');
+}
+
 </script>
 </body>
 </html>
