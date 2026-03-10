@@ -17,6 +17,83 @@ DayZ PVE сервер "Shelter PVE". Сайт на GitHub Pages + API на VPS.
 | PM2 | `pm2 restart shelter-api` |
 | nginx конфиг | /etc/nginx/sites-available/shelter-api |
 
+
+---
+
+## Discord
+
+| Канал | ID |
+|-------|----|
+| #новости | 1363913152814649574 |
+| #изменения | 1363934009859768422 |
+| #обновления-модов | 1421934937749327953 |
+| Сервер Discord | https://discord.gg/4EWuqwfBu |
+
+### Как получить Bot Token
+1. Открой https://discord.com/developers/applications
+2. New Application → дай имя "ShelterBot"
+3. Bot → Reset Token → скопируй токен
+4. Bot → включи "Message Content Intent"
+5. OAuth2 → URL Generator → bot + Read Message History → скопируй URL → открой → добавь бота на сервер
+
+### Схема интеграции Discord → Сайт
+```
+Discord канал → discord.js бот на VPS → POST /api/news → data/news.json
+                                                        ↓
+                                         index.html GET /api/news каждые 5 мин
+```
+
+### Файл бота на VPS
+- Путь: `/var/www/shelter-api/discord-bot.js`
+- Запуск: `pm2 start discord-bot.js --name shelter-bot`
+- Env: `DISCORD_BOT_TOKEN` через `pm2 set shelter-bot:DISCORD_BOT_TOKEN токен`
+
+### Формат новости из Discord
+```json
+{
+  "id": "discord_1363913152814649574_1234567890",
+  "title": "Первая строка сообщения",
+  "tag": "НОВОСТИ",
+  "text": "Полный текст сообщения",
+  "date": "2026-03-10",
+  "source": "discord",
+  "channel": "новости",
+  "discord_msg_id": "1234567890"
+}
+```
+
+---
+
+## VPS — прямой доступ из Claude Code
+
+Claude Code может напрямую деплоить на VPS через SSH. Для этого:
+
+```bash
+# Подключиться к VPS
+ssh root@85.198.71.246
+
+# Путь к API
+cd /var/www/shelter-api
+
+# Файлы
+index.js          # основной API
+discord-bot.js    # Discord бот (создать)
+data/news.json    # новости
+data/markers.json # маркеры карты
+
+# PM2 процессы
+pm2 list
+pm2 restart shelter-api
+pm2 restart shelter-bot
+pm2 logs shelter-api --lines 20
+```
+
+### Workflow для Claude Code
+1. Редактирует файлы локально (index.js, discord-bot.js)
+2. Загружает на GitHub (`git push`)
+3. На VPS: `curl -o /var/www/shelter-api/discord-bot.js https://raw.githubusercontent.com/AlexDff-mun/Shelter/main/discord-bot.js`
+4. `pm2 restart shelter-bot`
+
 ## Сервер DayZ
 - IP: `217.168.247.192:2312` (Game Port)
 - Query Port: `2317`
@@ -132,11 +209,45 @@ POST /api/ticket       { name, topic, message, contact } → Discord webhook
   - Мини-карта в углу
   - Координаты в реальном времени как у iZurvive
 - [ ] **Новости из VPS** — GET /api/news → index.html (сейчас localStorage)
-- [ ] **Маркеры из VPS** — GET /api/markers → map.html (сейчас localStorage)
+- [ ] **Маркеры из VPS** — GET /api/markers → map.html (сейчас localStorage) ✅ частично (загрузка работает, сохранение работает)
 
 ### 🟢 Улучшения
+- [ ] **Discord → Новости и Обновления** — автоматически тянуть посты из Discord каналов на сайт:
+  - Нужен Discord бот (или webhook listener) на VPS
+  - Канал `#новости` → секция "Новости" на index.html
+  - Канал `#обновления` → секция "Обновления" на index.html
+  - Бот слушает новые сообщения → POST /api/news на VPS → index.html подтягивает через GET /api/news
+  - Либо: Discord публичный канал → парсинг через Discord API (bot token нужен)
+  - Хранение: /var/www/shelter-api/data/news.json
+  - На index.html: секция новостей читает GET https://shelter-dayz.ru/api/news
+  - Формат новости: { id, title, tag, text, date, source: 'discord' }
+  - Discord Bot Token нужно получить на https://discord.com/developers
+  - Установка: npm install discord.js на VPS
+- [ ] **Авторизация через Steam** — вход на сайт через Steam OpenID:
+  - Кнопка "Войти через Steam" на сайте (faq.html, возможно index.html)
+  - Steam OpenID: GET https://steamcommunity.com/openid/login → редирект обратно на сайт
+  - VPS эндпоинты: GET /api/steam/login → редирект на Steam, GET /api/steam/callback → сохранить steamId, вернуть JWT
+  - После входа: показывать аватар Steam + ник в шапке сайта
+  - Хранить сессию в sessionStorage (JWT с steamId, steamName, steamAvatar)
+  - npm deps на VPS: openid, axios (или node-fetch)
+  - Профиль Steam API: https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=STEAM_API_KEY&steamids=STEAMID
+  - Steam API ключ получить на: https://steamcommunity.com/dev/apikey
+  - После входа пользователь привязан к своему SteamID — все его тикеты хранятся под этим ID
+
+- [ ] **Тикеты — переписка после обращения** — диалог между игроком и администрацией:
+  - Текущий faq.html имеет форму отправки тикета (POST /api/ticket) — расширить до полноценного чата
+  - Новые VPS эндпоинты:
+    - GET  /api/tickets              (auth) → список тикетов пользователя (по steamId из JWT)
+    - GET  /api/tickets/:id          → история сообщений тикета
+    - POST /api/tickets/:id/reply    (auth) → добавить сообщение в тикет (игрок или админ)
+    - PUT  /api/tickets/:id/status   (auth admin) → изменить статус (open/closed/pending)
+  - Хранение: /var/www/shelter-api/data/tickets.json
+  - Формат тикета: { id, steamId, steamName, topic, status, createdAt, messages: [{from, text, date}] }
+  - На faq.html: после отправки тикета показывать страницу диалога с историей переписки
+  - В admin.html: раздел "Тикеты" — список всех тикетов, фильтр по статусу, ответ на тикет
+  - Уведомление: при ответе админа → POST Discord webhook в служебный канал
+
 - [ ] **mechanics.html** — написать контент для вкладки "Гайды"
-- [ ] **Discord интеграция** — новости из Discord канала на сайт
 - [ ] **craft.html** — добавить новые рецепты
 - [ ] **game.shelter-dayz.ru** — настроить как основной домен
 
