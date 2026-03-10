@@ -691,7 +691,7 @@ async function checkPwd() {
   if (!pwd) return;
   errEl.textContent = '...';
   try {
-    const r = await fetch(API + '/login', {
+    const r = await fetch(API + '/auth', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ password: pwd })
@@ -791,16 +791,19 @@ async function saveMarkers() {
   // Если есть токен — синхронизировать с VPS
   if (mapAdminToken) {
     try {
-      await fetch(API + '/markers', {
-        method: 'PUT',
+      const r = await fetch(API + '/markers', {
+        method: 'POST',
         headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+mapAdminToken },
-        body: JSON.stringify({ markers: data })
+        body: JSON.stringify(data)
       });
-      toast('💾 Сохранено + синхронизировано с сервером!');
-      return;
+      const d = await r.json();
+      if (d.ok) {
+        toast('💾 Сохранено на сервере — карта обновится у всех!');
+        return;
+      }
     } catch(e) {}
   }
-  toast('💾 Сохранено (localStorage)');
+  toast('💾 Сохранено локально');
 }
 
 function exportJSON() {
@@ -827,6 +830,23 @@ function toast(msg) {
   clearTimeout(el._t);
   el._t = setTimeout(() => el.classList.remove('show'), 2500);
 }
+
+// ════ АВТООБНОВЛЕНИЕ маркеров каждые 60 сек ════
+async function autoRefreshMarkers() {
+  if (adminMode) return; // в admin режиме не перезагружаем чтобы не сбить редактирование
+  try {
+    const fresh = await fetch(API + '/markers').then(r => r.json());
+    if (!Array.isArray(fresh) || !fresh.length) return;
+    const current = markers.map(({id,text,cat,x,z,sz,szr}) => ({id,text,cat,x,z,sz,szr}));
+    if (JSON.stringify(current) === JSON.stringify(fresh)) return; // нет изменений
+    // Есть изменения — перерисовать без уведомления
+    markers.forEach(m => { map.removeLayer(m._marker); if (m._circle) map.removeLayer(m._circle); });
+    markers.length = 0;
+    fresh.forEach(m => addMarkerToMap(m));
+    localStorage.setItem('shelter_map_markers', JSON.stringify(fresh));
+  } catch(e) {}
+}
+setInterval(autoRefreshMarkers, 60000);
 
 // ════ ЗАПУСК ════
 async function initMap() {
