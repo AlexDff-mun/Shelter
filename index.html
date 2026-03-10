@@ -1732,15 +1732,10 @@ document.querySelectorAll('.fu').forEach(el => obs.observe(el));
 
 
 // ── PLAYER COUNTER via BattleMetrics ──
-const BM_IP   = '217.168.247.192';
-const BM_PORT = 2312;
-const MAX_PLAYERS = 50; // Известный максимум сервера
+const API_URL = 'http://85.198.71.246/api/server';
+const MAX_PLAYERS = 50;
 
-// Ищем по точному IP, берём первые 5 результатов и фильтруем по порту
-const BM_URL = `https://api.battlemetrics.com/servers?filter[search]=${BM_IP}&filter[game]=dayz&page[size]=5`;
-
-function setCounterUI(players, max, status) {
-  const online = status === 'online';
+function setCounterUI(players, max, online) {
   const dot1 = document.getElementById('dot-hero');
   const dot2 = document.getElementById('dot-topbar');
   const dot3 = document.getElementById('dot-mobile');
@@ -1754,45 +1749,27 @@ function setCounterUI(players, max, status) {
   if (dot3) dot3.className = cls;
 
   if (c1) c1.innerHTML = online
-    ? `<span>${players}</span> / ${max}`
-    : `<span style="color:var(--text-dim)">Офлайн</span>`;
-  if (c2) c2.textContent = online ? `${players}/${max}` : '—';
-  if (c3) c3.textContent = online ? `${players}/${max}` : '—';
+    ? '<span>' + players + '</span> / ' + max
+    : '<span style="color:var(--text-dim)">Офлайн</span>';
+  if (c2) c2.textContent = online ? players + '/' + max : '—';
+  if (c3) c3.textContent = online ? players + '/' + max : '—';
 }
 
 async function fetchPlayerCount() {
   try {
-    const res = await fetch(BM_URL);
+    const res = await fetch(API_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const servers = data.data || [];
-
-    // Ищем сервер с нашим портом, иначе берём первый
-    let match = servers.find(s => {
-      const port = s.attributes?.port;
-      const qport = s.attributes?.portQuery;
-      return port === BM_PORT || qport === BM_PORT || qport === BM_PORT + 1;
-    }) || servers[0];
-
-    if (match) {
-      const a = match.attributes;
-      const players = a.players ?? 0;
-      // maxPlayers из API может быть неверным — используем наш известный максимум
-      const max = (a.maxPlayers && a.maxPlayers >= 10) ? a.maxPlayers : MAX_PLAYERS;
-      setCounterUI(players, max, a.status);
-      console.log('[BM] Найден сервер:', a.name, '—', players, '/', max, a.status);
-    } else {
-      setCounterUI(0, MAX_PLAYERS, 'offline');
-    }
+    const max = data.maxPlayers || MAX_PLAYERS;
+    setCounterUI(data.players || 0, max, data.online);
   } catch(e) {
-    console.warn('[BM] Ошибка:', e);
-    // При ошибке показываем прочерк но не скрываем блок
+    console.warn('[API] Ошибка:', e);
     const dots = document.querySelectorAll('[id^="dot-"]');
     dots.forEach(d => d.className = 'pc-dot offline');
     const c1 = document.getElementById('count-hero');
     const c2 = document.getElementById('count-topbar');
-    if (c1) c1.innerHTML = `<span style="color:var(--text-dim)">—</span> / ${MAX_PLAYERS}`;
-    if (c2) c2.textContent = `—/${MAX_PLAYERS}`;
+    if (c1) c1.innerHTML = '<span style="color:var(--text-dim)">—</span> / ' + MAX_PLAYERS;
+    if (c2) c2.textContent = '—/' + MAX_PLAYERS;
   }
 }
 

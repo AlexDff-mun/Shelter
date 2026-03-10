@@ -746,7 +746,7 @@ if (first) first.classList.add('open');
 </script>
 <script>
 
-const WEBHOOK = 'https://discord.com/api/webhooks/1480639920598028542/D6yPwrYnoj0lQ2dt4L12jkvGRmy6WnhyJRGn2UmbzoBMeU88d-gNfqzdPr2Ik9bdEr6D';
+const API_TICKET = 'http://85.198.71.246/api/ticket';
 
 document.getElementById('cf-msg').addEventListener('input', function() {
   document.getElementById('cf-count').textContent = this.value.length;
@@ -781,12 +781,13 @@ async function sendForm() {
   };
 
   try {
-    const res = await fetch(WEBHOOK, {
+    const res = await fetch(API_TICKET, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: '<@&1301959752170864872> <@&1368210437891424326>', embeds: [embed] })
+      body: JSON.stringify({ nickname: name, type: type, steamid: steam, discord: discord, message: msg })
     });
-    if (res.ok) {
+    const result = await res.json();
+    if (result.ok) {
       document.getElementById('contact-form').classList.add('hidden');
       document.getElementById('cf-success').classList.remove('hidden');
     } else {
