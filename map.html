@@ -4,218 +4,844 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Карта — Shelter PVE</title>
-<meta name="description" content="Интерактивная карта сервера Shelter PVE.">
-<meta name="robots" content="index, follow">
+<meta name="description" content="Интерактивная карта сервера Shelter PVE. Трейдеры, крафт, опасные зоны, радиация и сейфзоны на карте Chernarus+.">
 <meta property="og:title" content="Карта Chernarus+ — Shelter PVE">
 <meta property="og:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="images/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--red:#cc1f1f;--khaki:#b7a98d;--bg:#080707;--text:#d4c9b5;--text-dim:#6a6058;--rad:#7ec8a0;--mono:'Share Tech Mono',monospace;}
+:root{
+  --red:#cc1f1f;--ember:#e05a1a;
+  --khaki:#b7a98d;--khaki-dark:#7a6a53;
+  --bg:#080707;--bg2:rgba(8,7,7,0.96);
+  --text:#d4c9b5;--text-dim:#6a6058;
+  --rad:#7ec8a0;--gold:#e0a020;--blue:#5b9bd5;
+  --mono:'Share Tech Mono',monospace;
+  --head:'Oswald',sans-serif;
+}
 html,body{height:100%;overflow:hidden;background:var(--bg);}
-.topbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:52px;background:rgba(8,7,7,0.96);border-bottom:1px solid rgba(204,31,31,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;gap:0.8rem;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;height:52px;
+  background:var(--bg2);border-bottom:1px solid rgba(204,31,31,0.2);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;gap:0.8rem;
+}
 .topbar-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
-.topbar-logo img{height:28px;width:28px;object-fit:contain;}
-.topbar-logo-text{font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;letter-spacing:0.12em;color:var(--text);}
+.topbar-logo img{height:28px;width:28px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(204,31,31,0.8));}
+.topbar-logo-text{font-family:var(--head);font-size:0.95rem;font-weight:600;letter-spacing:0.12em;color:var(--text);}
 .topbar-logo-text span{color:var(--red);}
-.topbar-back{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+.topbar-center{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--text-dim);text-transform:uppercase;flex:1;text-align:center;}
+.topbar-back{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;white-space:nowrap;display:flex;align-items:center;gap:0.4rem;}
 .topbar-back:hover{color:var(--red);}
-.topbar-title{font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.2em;color:var(--text-dim);text-transform:uppercase;flex:1;text-align:center;}
-.toolbar{position:fixed;top:52px;left:0;right:0;z-index:900;background:rgba(8,7,7,0.93);border-bottom:1px solid rgba(204,31,31,0.1);backdrop-filter:blur(8px);padding:0.38rem 1rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:nowrap;overflow-x:auto;}
-.toolbar::-webkit-scrollbar{display:none;}
-.filter-btn{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.72rem;background:transparent;border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
-.filter-btn:hover{border-color:rgba(204,31,31,0.3);color:var(--text);}
-.filter-btn.active{border-color:var(--c,var(--red));color:var(--c,var(--red));background:rgba(204,31,31,0.07);}
+
+/* ── FILTERS BAR ── */
+.filters{
+  position:fixed;top:52px;left:0;right:0;z-index:900;
+  background:rgba(8,7,7,0.93);border-bottom:1px solid rgba(204,31,31,0.1);
+  backdrop-filter:blur(8px);
+  padding:0.38rem 1rem;display:flex;align-items:center;gap:0.35rem;
+  flex-wrap:nowrap;overflow-x:auto;
+}
+.filters::-webkit-scrollbar{display:none;}
+.fbtn{
+  font-family:var(--mono);font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.28rem 0.65rem;background:transparent;
+  border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);
+  cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  transition:all 0.2s;white-space:nowrap;flex-shrink:0;
+}
+.fbtn:hover{border-color:rgba(204,31,31,0.3);color:var(--text);}
+.fbtn.active{border-color:var(--c,var(--red));color:var(--c,var(--red));background:rgba(204,31,31,0.07);}
+.fbtn.active[style*="gold"]{background:rgba(224,160,32,0.07);}
+.fbtn.active[style*="blue"]{background:rgba(91,155,213,0.07);}
+.fbtn.active[style*="rad"]{background:rgba(126,200,160,0.07);}
+
+/* Search */
 .search-wrap{position:relative;margin-left:auto;flex-shrink:0;}
-.search-input{font-family:var(--mono);font-size:0.62rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text);padding:0.28rem 0.6rem 0.28rem 1.6rem;outline:none;width:160px;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.search-input{
+  font-family:var(--mono);font-size:0.6rem;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  color:var(--text);padding:0.28rem 0.6rem 0.28rem 1.6rem;
+  outline:none;width:160px;transition:all .2s;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
 .search-input:focus{border-color:rgba(204,31,31,0.35);width:200px;}
 .search-input::placeholder{color:var(--text-dim);}
 .search-icon{position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);font-size:0.65rem;color:var(--text-dim);pointer-events:none;}
-.search-results{position:absolute;top:calc(100% + 4px);right:0;width:240px;background:rgba(8,7,7,0.98);border:1px solid rgba(204,31,31,0.2);z-index:9999;max-height:200px;overflow-y:auto;display:none;}
+.search-results{
+  position:absolute;top:calc(100% + 4px);right:0;width:240px;
+  background:rgba(8,7,7,0.98);border:1px solid rgba(204,31,31,0.2);
+  z-index:9999;max-height:220px;overflow-y:auto;display:none;
+}
 .search-results.show{display:block;}
-.sr-item{font-family:var(--mono);font-size:0.62rem;padding:0.45rem 0.8rem;color:var(--text-dim);cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:0.5rem;transition:background .15s;}
+.sr-item{
+  font-family:var(--mono);font-size:0.6rem;
+  padding:0.45rem 0.8rem;color:var(--text-dim);cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  display:flex;align-items:center;gap:0.5rem;transition:background .15s;
+}
 .sr-item:hover{background:rgba(204,31,31,0.1);color:var(--text);}
-.admin-btn{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;padding:0.28rem 0.6rem;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(106,96,88,0.5);cursor:pointer;transition:all .2s;flex-shrink:0;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
-.admin-btn:hover{border-color:rgba(224,160,32,0.3);color:var(--text-dim);}
-.admin-btn.active{border-color:#e0a020;color:#e0a020;background:rgba(224,160,32,0.08);}
-#map{position:fixed;top:calc(52px + 38px);left:0;right:0;bottom:0;}
-.leaflet-container{background:#06080a!important;}
+.sr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ── MAP ── */
+#map{position:fixed;top:calc(52px + 37px);left:0;right:0;bottom:0;}
+.leaflet-container{background:#04060a!important;}
+.leaflet-control-attribution{display:none!important;}
 .leaflet-control-zoom{border:1px solid rgba(204,31,31,0.25)!important;background:rgba(8,7,7,0.95)!important;}
 .leaflet-control-zoom a{background:rgba(8,7,7,0.95)!important;color:var(--khaki)!important;border-color:rgba(204,31,31,0.15)!important;font-family:var(--mono)!important;}
 .leaflet-control-zoom a:hover{color:var(--red)!important;background:rgba(204,31,31,0.1)!important;}
-.leaflet-control-attribution{display:none!important;}
-.leaflet-popup-content-wrapper{background:transparent!important;border:none!important;border-radius:0!important;box-shadow:none!important;padding:0!important;}
-.leaflet-popup-tip-container{display:none;}
-.leaflet-popup-content{margin:0!important;}
-.leaflet-popup-close-button{top:8px!important;right:8px!important;color:var(--text-dim)!important;z-index:10;}
+
+/* ── VILLAGE LABELS ── */
+.village-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.08em;
+  color:rgba(183,169,141,0.55);text-transform:uppercase;
+  pointer-events:none;white-space:nowrap;
+  text-shadow:0 0 4px rgba(0,0,0,0.9),0 0 8px rgba(0,0,0,0.7);
+}
+.village-label.city{font-size:11px;color:rgba(212,201,181,0.65);letter-spacing:0.12em;}
+.village-label.town{font-size:9.5px;color:rgba(183,169,141,0.55);}
+.village-label.village{font-size:8px;color:rgba(106,96,88,0.5);}
+
+/* ── CUSTOM POPUPS ── */
+.leaflet-popup-content-wrapper{
+  background:rgba(6,5,5,0.97)!important;
+  border:1px solid rgba(255,255,255,0.07)!important;
+  border-radius:0!important;
+  box-shadow:0 0 30px rgba(0,0,0,0.6),0 0 0 1px rgba(204,31,31,0.1)!important;
+  color:var(--text)!important;padding:0!important;
+  overflow:hidden;
+}
+.leaflet-popup-tip{background:rgba(6,5,5,0.97)!important;}
+.leaflet-popup-content{margin:0!important;min-width:200px;max-width:240px;}
+.leaflet-popup-close-button{color:var(--text-dim)!important;top:8px!important;right:10px!important;font-size:16px!important;z-index:10;}
 .leaflet-popup-close-button:hover{color:var(--red)!important;}
-.popup-card{min-width:220px;max-width:260px;background:rgba(6,5,5,0.97);border:1px solid rgba(255,255,255,0.07);overflow:hidden;}
-.popup-header{padding:0.7rem 2rem 0.5rem 0.9rem;border-left:3px solid var(--pc,#cc1f1f);background:rgba(255,255,255,0.02);}
-.popup-cat{font-family:var(--mono);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--pc,#cc1f1f);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.35rem;}
-.popup-name{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:600;color:var(--text);letter-spacing:0.05em;}
-.popup-body{padding:0.6rem 0.9rem;}
-.popup-desc{font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.5rem;}
-.popup-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem;}
-.popup-tag{font-family:var(--mono);font-size:0.52rem;padding:0.15rem 0.4rem;border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);}
-.popup-tag.sz{color:var(--rad);border-color:rgba(126,200,160,0.3);}
-.popup-coords{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);opacity:0.6;border-top:1px solid rgba(255,255,255,0.04);padding-top:0.4rem;display:flex;justify-content:space-between;}
-.popup-footer{padding:0.4rem 0.9rem 0.6rem;border-top:1px solid rgba(255,255,255,0.04);}
-.popup-del{font-family:var(--mono);font-size:0.55rem;color:var(--red);cursor:pointer;background:rgba(204,31,31,0.08);border:1px solid rgba(204,31,31,0.2);padding:0.25rem 0.5rem;transition:all .2s;display:inline-block;}
-.popup-del:hover{background:rgba(204,31,31,0.2);}
-.city-label{background:transparent;border:none;pointer-events:none;}
-.city-label div{font-family:'Oswald',sans-serif;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;color:rgba(183,169,141,0.5);text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;text-align:center;}
-.city-label.lg div{font-size:11px;color:rgba(183,169,141,0.75);}
-.city-label.md div{font-size:9px;}
-.city-label.sm div{font-size:7.5px;color:rgba(183,169,141,0.38);}
-.admin-panel{position:fixed;right:0;top:calc(52px + 38px);bottom:0;width:280px;background:rgba(6,5,5,0.97);border-left:1px solid rgba(204,31,31,0.2);z-index:800;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow:hidden;}
+
+/* Popup inner */
+.popup{overflow:hidden;}
+.popup-stripe{height:3px;width:100%;}
+.popup-body{padding:12px 14px 14px;}
+.popup-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.popup-icon-wrap{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:1px;}
+.popup-title{font-family:var(--head);font-size:1rem;font-weight:600;letter-spacing:0.03em;color:#fff;line-height:1.1;}
+.popup-type{font-family:var(--mono);font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
+.popup-divider{height:1px;background:rgba(255,255,255,0.05);margin:8px 0;}
+.popup-row{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);padding:2px 0;}
+.popup-row b{color:var(--text);}
+.popup-sz-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(126,200,160,0.1);border:1px solid rgba(126,200,160,0.25);color:var(--rad);font-family:var(--mono);font-size:0.55rem;letter-spacing:0.08em;margin-top:6px;}
+.popup-del-btn{
+  display:block;width:100%;margin-top:10px;padding:6px;
+  background:rgba(204,31,31,0.08);border:1px solid rgba(204,31,31,0.25);
+  color:var(--red);font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;
+  text-transform:uppercase;cursor:pointer;text-align:center;transition:all .2s;
+}
+.popup-del-btn:hover{background:rgba(204,31,31,0.18);}
+
+/* ── ADMIN PANEL ── */
+.admin-btn{
+  font-family:var(--mono);font-size:0.52rem;letter-spacing:0.1em;
+  padding:0.26rem 0.55rem;background:transparent;
+  border:1px solid rgba(255,255,255,0.06);color:rgba(106,96,88,0.5);
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+.admin-btn:hover{border-color:rgba(224,160,32,0.3);color:var(--text-dim);}
+.admin-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(224,160,32,0.08);}
+
+.admin-panel{
+  position:fixed;right:0;top:calc(52px + 37px);bottom:0;width:280px;
+  background:rgba(5,4,4,0.98);border-left:1px solid rgba(204,31,31,0.2);
+  z-index:800;transform:translateX(100%);transition:transform .35s cubic-bezier(0.16,1,0.3,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
 .admin-panel.open{transform:translateX(0);}
 .ap-header{padding:1rem;border-bottom:1px solid rgba(255,255,255,0.05);}
-.ap-title{font-family:'Oswald',sans-serif;font-size:0.8rem;letter-spacing:0.2em;color:#e0a020;text-transform:uppercase;}
-.ap-hint{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);margin-top:0.4rem;line-height:1.5;}
-.ap-hint b{color:var(--text);}
+.ap-title{font-family:var(--head);font-size:0.8rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;}
+.ap-hint{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);margin-top:0.5rem;line-height:1.6;}
+.ap-hint b{color:rgba(183,169,141,0.7);}
 .ap-body{padding:1rem;flex:1;overflow-y:auto;}
-.ap-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.3rem;display:block;}
-.ap-input,.ap-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text);font-family:var(--mono);font-size:0.7rem;padding:0.4rem 0.6rem;margin-bottom:0.7rem;outline:none;}
+.ap-label{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.3rem;display:block;}
+.ap-input,.ap-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text);font-family:var(--mono);font-size:0.68rem;padding:0.38rem 0.6rem;margin-bottom:0.65rem;outline:none;}
 .ap-input:focus,.ap-select:focus{border-color:rgba(204,31,31,0.4);}
 .ap-select option{background:#111;}
-.ap-row{display:flex;gap:0.5rem;}
+.ap-row{display:flex;gap:0.4rem;}
 .ap-row .ap-input{flex:1;}
-.ap-btn{width:100%;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.5rem;cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s;border:none;margin-bottom:0.5rem;}
+.ap-sz-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.65rem;}
+.ap-sz-row input[type=checkbox]{accent-color:var(--rad);width:14px;height:14px;}
+.ap-sz-row span{font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);flex:1;}
+.ap-sz-row .ap-input{width:70px;margin:0;}
+.ap-btn{
+  width:100%;font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;
+  text-transform:uppercase;padding:0.48rem;cursor:pointer;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  transition:all .2s;border:none;margin-bottom:0.4rem;
+}
 .ap-btn-add{background:rgba(204,31,31,0.15);color:var(--red);border:1px solid rgba(204,31,31,0.3);}
 .ap-btn-add:hover{background:rgba(204,31,31,0.25);}
-.ap-btn-save{background:rgba(126,200,160,0.15);color:var(--rad);border:1px solid rgba(126,200,160,0.3);}
-.ap-btn-save:hover{background:rgba(126,200,160,0.25);}
-.ap-btn-reset{background:transparent;color:rgba(106,96,88,0.6);border:1px solid rgba(106,96,88,0.2);font-size:0.55rem;}
+.ap-btn-save{background:rgba(126,200,160,0.12);color:var(--rad);border:1px solid rgba(126,200,160,0.3);}
+.ap-btn-save:hover{background:rgba(126,200,160,0.2);}
+.ap-btn-export{background:rgba(183,169,141,0.08);color:var(--khaki);border:1px solid rgba(183,169,141,0.2);}
+.ap-btn-export:hover{background:rgba(183,169,141,0.16);}
+.ap-btn-reset{background:transparent;color:rgba(106,96,88,0.5);border:1px solid rgba(106,96,88,0.15);font-size:0.52rem;}
 .ap-btn-reset:hover{color:var(--red);border-color:rgba(204,31,31,0.3);}
-.ap-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:0.8rem 0;}
-.ap-sz-toggle{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.7rem;}
-.ap-sz-toggle input[type=checkbox]{accent-color:var(--rad);}
-.ap-sz-label{font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);}
-.ap-toast{position:fixed;bottom:4rem;left:50%;transform:translateX(-50%);background:rgba(126,200,160,0.9);color:#080707;font-family:var(--mono);font-size:0.7rem;padding:0.5rem 1.2rem;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
-.ap-toast.show{opacity:1;}
-.ap-toast.err{background:rgba(204,31,31,0.9);}
-#coords{position:fixed;bottom:1rem;left:1rem;z-index:900;font-family:var(--mono);font-size:0.58rem;color:rgba(183,169,141,0.35);background:rgba(8,7,7,0.7);padding:0.3rem 0.6rem;pointer-events:none;}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:flex;align-items:center;justify-content:center;}
+.ap-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:0.6rem 0;}
+
+/* ── COORDS ── */
+#coords{
+  position:fixed;bottom:1rem;left:1rem;z-index:900;
+  font-family:var(--mono);font-size:0.55rem;color:rgba(106,96,88,0.4);
+  background:rgba(8,7,7,0.7);padding:0.28rem 0.6rem;pointer-events:none;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+
+/* ── LEGEND ── */
+.legend-wrap{position:fixed;bottom:1rem;right:1rem;z-index:900;}
+.legend-btn{
+  font-family:var(--mono);font-size:0.56rem;letter-spacing:0.08em;
+  padding:0.38rem 0.75rem;
+  background:rgba(8,7,7,0.92);border:1px solid rgba(204,31,31,0.2);
+  color:var(--text-dim);cursor:pointer;
+  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+  transition:all .2s;
+}
+.legend-btn:hover{color:var(--red);}
+.map-legend{
+  position:absolute;bottom:calc(100% + 8px);right:0;
+  background:rgba(6,5,5,0.97);border:1px solid rgba(204,31,31,0.2);
+  padding:1rem 1.1rem;min-width:185px;display:none;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+.map-legend.show{display:block;}
+.legend-title{font-family:var(--head);font-size:0.62rem;letter-spacing:0.2em;color:var(--red);margin-bottom:0.7rem;text-transform:uppercase;}
+.legend-item{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;font-family:var(--mono);font-size:0.58rem;color:var(--khaki);}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.leg-ring{width:12px;height:12px;border-radius:50%;border:1.5px dashed;flex-shrink:0;}
+.leg-text{width:10px;height:2px;flex-shrink:0;background:rgba(183,169,141,0.4);}
+
+/* ── LOGIN MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-bg.hidden{display:none;}
-.modal{background:#0f0d0d;border:1px solid rgba(204,31,31,0.3);padding:2rem;min-width:280px;text-align:center;}
-.modal-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:0.2em;color:#e0a020;margin-bottom:1rem;text-transform:uppercase;}
+.modal{
+  background:#0d0b0b;border:1px solid rgba(204,31,31,0.3);
+  padding:2rem;min-width:290px;text-align:center;position:relative;
+}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);}
+.modal-title{font-family:var(--head);font-size:1rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:1rem;text-transform:uppercase;}
 .modal input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-family:var(--mono);font-size:0.8rem;padding:0.6rem;text-align:center;outline:none;margin-bottom:0.8rem;}
 .modal input:focus{border-color:rgba(204,31,31,0.4);}
-.modal-error{font-family:var(--mono);font-size:0.62rem;color:var(--red);min-height:1.2em;margin-bottom:0.6rem;}
-.modal-btn{width:100%;font-family:var(--mono);font-size:0.7rem;letter-spacing:0.15em;padding:0.6rem;background:rgba(204,31,31,0.15);border:1px solid rgba(204,31,31,0.3);color:var(--red);cursor:pointer;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
-.modal-btn:hover{background:rgba(204,31,31,0.25);}
-.admin-mode #map,.admin-mode .leaflet-container{cursor:crosshair!important;}
-@media(max-width:750px){.topbar-title{display:none;}.toolbar{padding:0.35rem 0.5rem;gap:0.25rem;}.filter-btn{font-size:0.52rem;padding:0.28rem 0.5rem;}.search-wrap{display:none;}.admin-panel{width:100%;}}
+.modal-err{font-family:var(--mono);font-size:0.6rem;color:var(--red);min-height:1.2em;margin-bottom:0.5rem;}
+.modal-btn{width:100%;font-family:var(--mono);font-size:0.68rem;letter-spacing:0.15em;padding:0.6rem;background:rgba(204,31,31,0.12);border:1px solid rgba(204,31,31,0.3);color:var(--red);cursor:pointer;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.modal-btn:hover{background:rgba(204,31,31,0.22);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:3.5rem;left:50%;transform:translateX(-50%) translateY(8px);
+  background:rgba(126,200,160,0.12);border:1px solid rgba(126,200,160,0.35);
+  color:var(--rad);font-family:var(--mono);font-size:0.65rem;
+  padding:0.45rem 1.2rem;z-index:9999;pointer-events:none;
+  opacity:0;transition:all .3s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── Admin mode cursor ── */
+body.admin-mode #map{cursor:crosshair;}
+
+/* ── Mobile ── */
+@media(max-width:700px){
+  .topbar-center{display:none;}
+  .filters{padding:0.3rem 0.5rem;gap:0.2rem;}
+  .fbtn{font-size:0.5rem;padding:0.25rem 0.5rem;}
+  .admin-panel{width:100%;}
+  .legend-wrap{right:0.5rem;}
+}
 </style>
 </head>
 <body>
+
+<!-- Login modal -->
 <div class="modal-bg hidden" id="login-modal">
   <div class="modal">
-    <div class="modal-title">&#128272; Доступ к редактору</div>
+    <div class="modal-title">🔐 Редактор карты</div>
     <input type="password" id="pwd-input" placeholder="Пароль" onkeydown="if(event.key==='Enter')checkPwd()">
-    <div class="modal-error" id="pwd-error"></div>
+    <div class="modal-err" id="pwd-error"></div>
     <button class="modal-btn" onclick="checkPwd()">ВОЙТИ</button>
   </div>
 </div>
+
+<!-- Topbar -->
 <header class="topbar">
   <a href="index.html" class="topbar-logo">
     <img src="images/SHL_PVE.png" alt="Shelter PVE">
     <span class="topbar-logo-text">SHELTER <span>PVE</span></span>
   </a>
-  <div class="topbar-title">&#128506; КАРТА — CHERNARUS+</div>
-  <a href="index.html" class="topbar-back">&#8592; НА ГЛАВНУЮ</a>
+  <div class="topbar-center">🗺 CHERNARUS+ // ИНТЕРАКТИВНАЯ КАРТА</div>
+  <a href="index.html" class="topbar-back">← На главную</a>
 </header>
-<div class="toolbar">
-  <button class="filter-btn active" data-cat="all" style="--c:var(--text)">ВСЕ</button>
-  <button class="filter-btn" data-cat="trader" style="--c:#e0a020">&#128722; ТРЕЙДЕРЫ</button>
-  <button class="filter-btn" data-cat="craft" style="--c:#5b9bd5">&#128295; КРАФТ</button>
-  <button class="filter-btn" data-cat="danger" style="--c:var(--red)">&#128128; ОПАСНОСТЬ</button>
-  <button class="filter-btn" data-cat="radiation" style="--c:var(--rad)">&#9762; РАДИАЦИЯ</button>
-  <button class="filter-btn" data-cat="safezone" style="--c:#7ec8a0">&#128737; СЕЙФЗОНЫ</button>
+
+<!-- Filters -->
+<div class="filters">
+  <button class="fbtn active" data-cat="all" style="--c:var(--text)">ВСЕ</button>
+  <button class="fbtn" data-cat="trader" style="--c:var(--gold)">🛒 ТРЕЙДЕРЫ</button>
+  <button class="fbtn" data-cat="craft"  style="--c:var(--blue)">🔧 КРАФТ</button>
+  <button class="fbtn" data-cat="danger" style="--c:var(--red)">💀 ОПАСНОСТЬ</button>
+  <button class="fbtn" data-cat="radiation" style="--c:var(--rad)">☢ РАДИАЦИЯ</button>
+  <button class="fbtn" id="sz-btn" data-cat="safezone" style="--c:var(--rad)">🛡 СЕЙФЗОНЫ</button>
+  <button class="fbtn" id="village-btn" style="--c:var(--khaki)">🏘 СЁЛА</button>
+
   <div class="search-wrap">
-    <span class="search-icon">&#128269;</span>
-    <input class="search-input" id="search-input" type="text" placeholder="Поиск по карте..." oninput="onSearch(this.value)" onblur="setTimeout(()=>hideSearch(),200)">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search-input" placeholder="Поиск на карте..." autocomplete="off">
     <div class="search-results" id="search-results"></div>
   </div>
-  <button class="admin-btn" id="admin-btn" onclick="adminLogin()">&#9881; ADMIN</button>
+
+  <button class="admin-btn" id="admin-btn" onclick="adminLogin()">⚙ ADMIN</button>
 </div>
+
 <div id="map"></div>
 <div id="coords">X: — / Z: —</div>
+
+<!-- Legend -->
+<div class="legend-wrap">
+  <button class="legend-btn" id="legend-toggle" onclick="toggleLegend()">📋 Легенда</button>
+  <div class="map-legend" id="map-legend">
+    <div class="legend-title">Легенда</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#e0a020"></div>Трейдер</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#5b9bd5"></div>Крафт / Верстак</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#cc1f1f"></div>Опасная зона</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#7ec8a0"></div>Радиация</div>
+    <div class="legend-item"><div class="leg-ring" style="border-color:#7ec8a0;opacity:0.7"></div>Сейфзона</div>
+    <div class="legend-item"><div class="leg-text"></div>Название села</div>
+  </div>
+</div>
+
+<!-- Admin panel -->
 <div class="admin-panel" id="admin-panel">
   <div class="ap-header">
-    <div class="ap-title">&#9881; Редактор карты</div>
-    <div class="ap-hint"><b>Клик по карте</b> — задать координаты<br><b>Перетащить маркер</b> — переместить<br><b>Попап маркера</b> — удалить</div>
+    <div class="ap-title">⚙ Редактор карты</div>
+    <div class="ap-hint">
+      <b>Клик по карте</b> — задать координаты<br>
+      <b>Перетащить маркер</b> — переместить<br>
+      <b>Попап → Удалить</b> — удалить точку
+    </div>
   </div>
   <div class="ap-body">
-    <span class="ap-label">Название</span>
+    <span class="ap-label">Название точки</span>
     <input class="ap-input" id="ap-name" placeholder="Лагерь выживших">
-    <span class="ap-label">Описание</span>
-    <input class="ap-input" id="ap-desc" placeholder="Краткое описание">
+
     <span class="ap-label">Категория</span>
     <select class="ap-select" id="ap-cat">
-      <option value="trader">&#128722; Трейдер</option>
-      <option value="craft">&#128295; Крафт</option>
-      <option value="danger">&#128128; Опасная зона</option>
-      <option value="radiation">&#9762; Радиация</option>
+      <option value="trader">🛒 Трейдер</option>
+      <option value="craft">🔧 Крафт</option>
+      <option value="danger">💀 Опасная зона</option>
+      <option value="radiation">☢ Радиация</option>
     </select>
+
     <span class="ap-label">Координаты (кликни по карте)</span>
     <div class="ap-row">
       <input class="ap-input" id="ap-x" placeholder="X" type="number">
       <input class="ap-input" id="ap-z" placeholder="Z" type="number">
     </div>
-    <div class="ap-sz-toggle">
+
+    <div class="ap-sz-row">
       <input type="checkbox" id="ap-sz">
-      <span class="ap-sz-label">Сейфзона (радиус, м)</span>
-      <input class="ap-input" id="ap-sz-r" placeholder="90" type="number" style="width:70px;margin:0 0 0 auto">
+      <span>Сейфзона</span>
+      <input class="ap-input" id="ap-sz-r" placeholder="90" type="number">
     </div>
+
     <button class="ap-btn ap-btn-add" onclick="addMarkerFromForm()">+ ДОБАВИТЬ ТОЧКУ</button>
     <hr class="ap-divider">
-    <button class="ap-btn ap-btn-save" onclick="saveToServer()">&#128190; СОХРАНИТЬ НА СЕРВЕР</button>
-    <button class="ap-btn ap-btn-reset" onclick="resetMarkers()">&#8635; ПЕРЕЗАГРУЗИТЬ</button>
+    <button class="ap-btn ap-btn-save" onclick="saveMarkers()">💾 СОХРАНИТЬ</button>
+    <button class="ap-btn ap-btn-export" onclick="exportJSON()">📋 ЭКСПОРТ JSON</button>
+    <button class="ap-btn ap-btn-reset" onclick="resetToDefault()">↺ СБРОС К ДЕФОЛТУ</button>
   </div>
 </div>
-<div class="ap-toast" id="ap-toast"></div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-const API="http://85.198.71.246";
-const MAP_M=15360,HALF=MAP_M/2;
-const BOUNDS=[[-HALF,-HALF],[HALF,HALF]];
-const CATS={trader:{icon:"&#128517;",color:"#e0a020",label:"Трейдер"},craft:{icon:"&#128295;",color:"#5b9bd5",label:"Крафт"},danger:{icon:"&#128128;",color:"#cc1f1f",label:"Опасная зона"},radiation:{icon:"&#9762;",color:"#7ec8a0",label:"Радиационная зона"}};
-const CITIES=[["Черногорск",6500,2400,"lg"],["Электрозаводск",10500,2200,"lg"],["Балота",4200,2100,"sm"],["Зеленогорск",2400,7000,"md"],["Выбор",3900,10400,"md"],["Тиси",2800,14200,"sm"],["Североград",8200,13500,"md"],["Новодмитровск",11800,13200,"md"],["Красностав",12400,11500,"md"],["Светлоярск",14500,11300,"md"],["Березино",13500,7500,"md"],["Солничный",14200,5400,"sm"],["Камышово",12600,3800,"sm"],["Стары Собор",7200,9400,"sm"],["Новый Собор",7600,10300,"sm"],["Кабанино",5700,10200,"sm"],["Пустошка",5000,9000,"sm"],["Могилевка",7900,8200,"sm"],["Поляна",10200,8600,"sm"],["Горка",11200,10200,"sm"],["Гуглово",9400,9900,"sm"],["Лопатино",3900,8800,"sm"],["Рогово",4200,5500,"sm"],["Козловка",6200,4700,"sm"],["Погоревка",7100,5800,"sm"],["Павлово",2000,3000,"sm"]];
-const map=L.map("map",{crs:L.CRS.Simple,minZoom:-3,maxZoom:3,zoomSnap:0.25,attributionControl:false,maxBounds:[[-HALF-500,-HALF-500],[HALF+500,HALF+500]],maxBoundsViscosity:0.85});
-L.imageOverlay("images/map_chernarus.jpg",BOUNDS,{opacity:0.92}).addTo(map);
+// ════ КОНФИГ ════
+const API = 'https://shelter-dayz.ru/api'; // ← после SSL; без SSL: 'http://85.198.71.246/api'
+let mapAdminToken = sessionStorage.getItem('shelter_map_token') || '';
+const MAP_M = 15360;
+const HALF  = MAP_M / 2;
+const BOUNDS = [[-HALF, -HALF], [HALF, HALF]];
+
+// ════ КАТЕГОРИИ ════
+const CATS = {
+  trader:    { icon:'🛒', color:'#e0a020', label:'Трейдер',         bg:'rgba(224,160,32,0.15)'  },
+  craft:     { icon:'🔧', color:'#5b9bd5', label:'Крафт / Верстак', bg:'rgba(91,155,213,0.15)'  },
+  danger:    { icon:'💀', color:'#cc1f1f', label:'Опасная зона',    bg:'rgba(204,31,31,0.15)'   },
+  radiation: { icon:'☢',  color:'#7ec8a0', label:'Радиационная зона', bg:'rgba(126,200,160,0.15)'},
+};
+
+// ════ СЁЛА CHERNARUS ════
+const VILLAGES = [
+  // Города (city)
+  { name:'Chernogorsk',    x:3220,  z:2380,  type:'city' },
+  { name:'Elektrozavodsk', x:5450,  z:2720,  type:'city' },
+  { name:'Berezino',       x:11550, z:7200,  type:'city' },
+  { name:'Severograd',     x:7500,  z:13500, type:'city' },
+  { name:'Novodmitrovsk',  x:10100, z:13200, type:'city' },
+  { name:'Svetlojarsk',    x:13000, z:2950,  type:'city' },
+  // Посёлки (town)
+  { name:'Zelenogorsk',    x:2300,  z:6850,  type:'town' },
+  { name:'Krasnostav',     x:10200, z:5800,  type:'town' },
+  { name:'Polana',         x:9700,  z:6200,  type:'town' },
+  { name:'Stary Sobor',    x:5950,  z:7350,  type:'town' },
+  { name:'Novy Sobor',     x:7100,  z:7800,  type:'town' },
+  { name:'Kabanino',       x:5400,  z:8600,  type:'town' },
+  { name:'Novaya Petrovka',x:6100,  z:13100, type:'town' },
+  { name:'Kamensk',        x:12100, z:12600, type:'town' },
+  { name:'Olsha',          x:9600,  z:13300, type:'town' },
+  { name:'Krasnoe',        x:8500,  z:11500, type:'town' },
+  // Деревни (village)
+  { name:'Kamenka',        x:700,   z:2350,  type:'village' },
+  { name:'Komarovo',       x:1500,  z:1980,  type:'village' },
+  { name:'Balota',         x:2150,  z:1800,  type:'village' },
+  { name:'Pavlovo',        x:2100,  z:3250,  type:'village' },
+  { name:'Solnichniy',     x:9500,  z:4600,  type:'village' },
+  { name:'Gorka',          x:8500,  z:7000,  type:'village' },
+  { name:'Mogilevka',      x:7600,  z:6900,  type:'village' },
+  { name:'Vybor',          x:4050,  z:9450,  type:'village' },
+  { name:'Pustoshka',      x:4200,  z:9800,  type:'village' },
+  { name:'Myshkino',       x:3300,  z:8250,  type:'village' },
+  { name:'Rogovo',         x:3900,  z:5950,  type:'village' },
+  { name:'Sosnovka',       x:3200,  z:4900,  type:'village' },
+  { name:'Drozhino',       x:3800,  z:6700,  type:'village' },
+  { name:'Pogorevka',      x:4500,  z:7400,  type:'village' },
+  { name:'Lopatino',       x:5500,  z:10200, type:'village' },
+  { name:'Vavilovo',       x:6200,  z:5500,  type:'village' },
+  { name:'Guglovo',        x:8400,  z:9100,  type:'village' },
+  { name:'Gvozdno',        x:7100,  z:9700,  type:'village' },
+  { name:'Dubrovka',       x:11250, z:8900,  type:'village' },
+  { name:'Tulga',          x:10700, z:8100,  type:'village' },
+  { name:'Veresnik',       x:10600, z:10400, type:'village' },
+  { name:'Sinistok',       x:4600,  z:11200, type:'village' },
+  { name:'Dichina',        x:6100,  z:8000,  type:'village' },
+  { name:'Tisy',           x:1500,  z:14050, type:'village' },
+  { name:'Novy Lug',       x:8000,  z:5300,  type:'village' },
+];
+
+// ════ МАРКЕРЫ ════
+const DEFAULT_MARKERS = [
+  { id:'m1', text:'Лагерь выживших',    cat:'trader',    x:7856,    z:10544, sz:true,  szr:90  },
+  { id:'m2', text:'Терминал',           cat:'trader',    x:13859,   z:12789, sz:true,  szr:108 },
+  { id:'m3', text:'Егерь',             cat:'trader',    x:1186,    z:6244,  sz:true,  szr:50  },
+  { id:'m4', text:'Инженерный пост',   cat:'craft',     x:3092.86, z:10827, sz:true,  szr:50  },
+  { id:'m5', text:'Алькатрас',         cat:'danger',    x:2666,    z:1230,  sz:false, szr:0   },
+  { id:'m6', text:'Радар',             cat:'danger',    x:579,     z:13173, sz:false, szr:0   },
+  { id:'m7', text:'Радиация',          cat:'radiation', x:8351,    z:12765, sz:false, szr:0   },
+  { id:'m8', text:'Радиация (Павлово)',cat:'radiation', x:2072,    z:3215,  sz:false, szr:0   },
+];
+
+// ════ КАРТА ════
+const map = L.map('map', {
+  crs: L.CRS.Simple,
+  minZoom: -3, maxZoom: 3, zoomSnap: 0.25,
+  attributionControl: false,
+  maxBounds:[[-HALF-500,-HALF-500],[HALF+500,HALF+500]],
+  maxBoundsViscosity: 0.85,
+  zoomControl: true,
+});
+
+L.imageOverlay('images/map_chernarus.jpg', BOUNDS, { opacity:0.92 }).addTo(map);
 map.fitBounds(BOUNDS);
-function toLL(x,z){return L.latLng(z-HALF,x-HALF);}
-function fromLL(ll){return{x:ll.lng+HALF,z:ll.lat+HALF};}
-CITIES.forEach(([name,x,z,size])=>{L.marker(toLL(x,z),{icon:L.divIcon({html:"<div>"+name+"</div>",className:"city-label "+size,iconAnchor:[60,8]}),interactive:false,zIndexOffset:-1000}).addTo(map);});
-function makeIcon(cat){const c=CATS[cat]||CATS.danger;return L.divIcon({html:"<div style='filter:drop-shadow(0 0 6px "+c.color+");width:36px;height:44px'><svg xmlns='http://www.w3.org/2000/svg' width='36' height='44' viewBox='0 0 36 44'><path d='M18 2C9.2 2 2 9.2 2 18c0 11 16 26 16 26S34 29 34 18C34 9.2 26.8 2 18 2z' fill='"+c.color+"' fill-opacity='0.25' stroke='"+c.color+"' stroke-width='1.5'/><circle cx='18' cy='18' r='10' fill='"+c.color+"' fill-opacity='0.2' stroke='"+c.color+"' stroke-width='1'/><text x='18' y='23' text-anchor='middle' font-size='13'>"+c.icon+"</text></svg></div>",iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-50],className:""});}
-function makePopup(obj,del){const c=CATS[obj.cat]||CATS.danger;const tags=obj.sz&&obj.szr>0?"<span class='popup-tag sz'>&#128737; Сейфзона "+obj.szr+"м</span>":"";return "<div class='popup-card' style='--pc:"+c.color+"'><div class='popup-header'><div class='popup-cat'>"+c.icon+" "+c.label+"</div><div class='popup-name'>"+obj.text+"</div></div><div class='popup-body'>"+(obj.desc?"<div class='popup-desc'>"+obj.desc+"</div>":"")+(tags?"<div class='popup-tags'>"+tags+"</div>":"")+"<div class='popup-coords'><span>X: "+Math.round(obj.x)+"</span><span>Z: "+Math.round(obj.z)+"</span></div></div>"+(del?"<div class='popup-footer'><span class='popup-del' onclick='deleteMarker(\""+obj.id+"\")'>&#128465; Удалить точку</span></div>":"")+"</div>";}
-let markers=[],adminMode=false,adminToken=sessionStorage.getItem("shelter_admin_token")||"",nextId=100,currentFilter="all";
-async function loadMarkers(){try{const r=await fetch(API+"/api/markers");return await r.json();}catch(e){return[];}}
-function renderAll(data){markers.forEach(m=>{if(m._marker)map.removeLayer(m._marker);if(m._circle)map.removeLayer(m._circle);});markers=[];data.forEach(m=>addMarkerToMap(m));}
-function addMarkerToMap(data){const ll=toLL(data.x,data.z);const lm=L.marker(ll,{icon:makeIcon(data.cat),draggable:false});const obj={...data,_marker:lm,_circle:null};markers.push(obj);if(data.sz&&data.szr>0){obj._circle=L.circle(ll,{radius:data.szr,color:"#7ec8a0",fillColor:"#7ec8a0",fillOpacity:0.07,weight:1.5,dashArray:"6,5"}).addTo(map);}lm.bindPopup(makePopup(obj,adminMode),{maxWidth:280});lm.addTo(map);lm.on("dragend",e=>{const pos=fromLL(e.target.getLatLng());obj.x=Math.round(pos.x);obj.z=Math.round(pos.z);if(obj._circle)obj._circle.setLatLng(e.target.getLatLng());lm.setPopupContent(makePopup(obj,adminMode));toast("X:"+obj.x+" Z:"+obj.z);});}
-function deleteMarker(id){const idx=markers.findIndex(m=>m.id===id);if(idx===-1)return;const m=markers[idx];map.removeLayer(m._marker);if(m._circle)map.removeLayer(m._circle);markers.splice(idx,1);map.closePopup();toast("&#128465; Маркер удалён");}
-document.querySelectorAll(".filter-btn").forEach(btn=>{btn.addEventListener("click",()=>{document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");currentFilter=btn.dataset.cat;markers.forEach(m=>{const show=currentFilter==="all"||currentFilter===m.cat||(currentFilter==="safezone"&&m.sz);show?m._marker.addTo(map):map.removeLayer(m._marker);if(m._circle){show?m._circle.addTo(map):map.removeLayer(m._circle);}});});});
-function onSearch(val){const q=val.trim().toLowerCase();const box=document.getElementById("search-results");if(!q){box.classList.remove("show");return;}const found=markers.filter(m=>m.text.toLowerCase().includes(q));if(!found.length){box.innerHTML="<div class='sr-item'>Ничего не найдено</div>";box.classList.add("show");return;}box.innerHTML=found.slice(0,8).map(m=>{const c=CATS[m.cat]||CATS.danger;return"<div class='sr-item' onclick='goToMarker(\""+m.id+"\")'>"+c.icon+" "+m.text+"</div>";}).join("");box.classList.add("show");}
-function hideSearch(){document.getElementById("search-results").classList.remove("show");document.getElementById("search-input").value="";}
-function goToMarker(id){const m=markers.find(m=>m.id===id);if(!m)return;hideSearch();map.setView(toLL(m.x,m.z),1,{animate:true});setTimeout(()=>m._marker.openPopup(),400);}
-map.on("mousemove",e=>{const{x,z}=fromLL(e.latlng);document.getElementById("coords").textContent="X: "+x.toFixed(0)+"  Z: "+z.toFixed(0);});
-function adminLogin(){if(adminMode){exitAdmin();return;}if(adminToken){verifyToken();return;}document.getElementById("login-modal").classList.remove("hidden");setTimeout(()=>document.getElementById("pwd-input").focus(),100);}
-async function verifyToken(){try{const r=await fetch(API+"/api/auth/check",{headers:{"Authorization":"Bearer "+adminToken}});const d=await r.json();if(d.ok)enterAdmin();else{adminToken="";sessionStorage.removeItem("shelter_admin_token");document.getElementById("login-modal").classList.remove("hidden");}}catch(e){document.getElementById("login-modal").classList.remove("hidden");}}
-async function checkPwd(){const val=document.getElementById("pwd-input").value;document.getElementById("pwd-error").textContent="";try{const r=await fetch(API+"/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:val})});const d=await r.json();if(d.ok){adminToken=d.token;sessionStorage.setItem("shelter_admin_token",adminToken);document.getElementById("login-modal").classList.add("hidden");document.getElementById("pwd-input").value="";enterAdmin();}else{document.getElementById("pwd-error").textContent="✗ Неверный пароль";document.getElementById("pwd-input").value="";}}catch(e){document.getElementById("pwd-error").textContent="✗ Ошибка соединения";}}
-document.getElementById("login-modal").addEventListener("click",e=>{if(e.target===document.getElementById("login-modal")){document.getElementById("login-modal").classList.add("hidden");document.getElementById("pwd-input").value="";document.getElementById("pwd-error").textContent="";}});
-function enterAdmin(){adminMode=true;document.getElementById("admin-btn").classList.add("active");document.getElementById("admin-btn").textContent="&#9881; ВЫЙТИ";document.getElementById("admin-panel").classList.add("open");document.getElementById("map").classList.add("admin-mode");markers.forEach(m=>{m._marker.dragging.enable();m._marker.setPopupContent(makePopup(m,true));});map.on("click",onMapClick);toast("&#10003; Режим редактирования включён");}
-function exitAdmin(){adminMode=false;document.getElementById("admin-btn").classList.remove("active");document.getElementById("admin-btn").textContent="&#9881; ADMIN";document.getElementById("admin-panel").classList.remove("open");document.getElementById("map").classList.remove("admin-mode");markers.forEach(m=>{m._marker.dragging.disable();m._marker.setPopupContent(makePopup(m,false));});map.off("click",onMapClick);}
-function onMapClick(e){if(e.originalEvent.target.closest(".leaflet-marker-icon"))return;const{x,z}=fromLL(e.latlng);document.getElementById("ap-x").value=Math.round(x);document.getElementById("ap-z").value=Math.round(z);toast("X:"+Math.round(x)+" Z:"+Math.round(z));}
-function addMarkerFromForm(){const name=document.getElementById("ap-name").value.trim();const desc=document.getElementById("ap-desc").value.trim();const cat=document.getElementById("ap-cat").value;const x=parseFloat(document.getElementById("ap-x").value);const z=parseFloat(document.getElementById("ap-z").value);const sz=document.getElementById("ap-sz").checked;const szr=parseFloat(document.getElementById("ap-sz-r").value)||50;if(!name){toast("&#10007; Введи название!");return;}if(isNaN(x)||isNaN(z)){toast("&#10007; Кликни по карте");return;}const newM={id:"m"+(nextId++),text:name,desc,cat,x,z,sz,szr};addMarkerToMap(newM);if(adminMode){const obj=markers[markers.length-1];obj._marker.dragging.enable();obj._marker.setPopupContent(makePopup(obj,true));}document.getElementById("ap-name").value="";document.getElementById("ap-desc").value="";document.getElementById("ap-x").value="";document.getElementById("ap-z").value="";document.getElementById("ap-sz").checked=false;toast("&#10003; Добавлено: "+name);}
-async function saveToServer(){const data=markers.map(({id,text,desc,cat,x,z,sz,szr})=>({id,text,desc:desc||"",cat,x,z,sz,szr}));try{const r=await fetch(API+"/api/markers",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+adminToken},body:JSON.stringify(data)});const d=await r.json();if(d.ok)toast("&#128190; Сохранено на сервере!");else toast("&#10007; Ошибка сохранения",true);}catch(e){toast("&#10007; Ошибка соединения",true);}}
-async function resetMarkers(){if(!confirm("Перезагрузить маркеры с сервера?"))return;const data=await loadMarkers();renderAll(data);if(adminMode)markers.forEach(m=>{m._marker.dragging.enable();m._marker.setPopupContent(makePopup(m,true));});toast("&#8635; Маркеры перезагружены");}
-function toast(msg,err){const el=document.getElementById("ap-toast");el.textContent=msg;el.classList.toggle("err",!!err);el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2500);}
-loadMarkers().then(data=>renderAll(data));
+
+function toLL(x, z)  { return L.latLng(z - HALF, x - HALF); }
+function fromLL(ll)  { return { x: ll.lng + HALF, z: ll.lat + HALF }; }
+
+// ════ ИКОНКИ МАРКЕРОВ ════
+function makeIcon(cat) {
+  const {icon, color} = CATS[cat] || CATS.danger;
+  return L.divIcon({
+    html:`<div style="position:relative;width:40px;height:48px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.6)) drop-shadow(0 0 6px ${color}55)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" viewBox="0 0 40 48">
+        <defs>
+          <radialGradient id="rg${cat}" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="${color}" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="${color}" stop-opacity="0.08"/>
+          </radialGradient>
+        </defs>
+        <path d="M20 3C11.2 3 4 10.2 4 19c0 12 16 27 16 27S36 31 36 19C36 10.2 28.8 3 20 3z"
+          fill="url(#rg${cat})" stroke="${color}" stroke-width="1.5" stroke-opacity="0.8"/>
+        <circle cx="20" cy="19" r="10" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="1" stroke-opacity="0.6"/>
+        <circle cx="20" cy="19" r="6" fill="${color}" fill-opacity="0.3"/>
+        <text x="20" y="25" text-anchor="middle" font-size="13" style="filter:none">${icon}</text>
+      </svg>
+    </div>`,
+    iconSize:[40,48], iconAnchor:[20,48], popupAnchor:[0,-50], className:''
+  });
+}
+
+// ════ СОСТОЯНИЕ ════
+let markers = [];
+let adminMode = false;
+let villagesVisible = false;
+let villageLayers = [];
+let nextId = 100;
+
+// ════ ЗАГРУЗКА МАРКЕРОВ ════
+function loadMarkers() {
+  // Если маркеры загружены с сервера — использовать их (приоритет)
+  if (window._serverMarkersLoaded) return window._serverMarkersLoaded;
+  try { const s = localStorage.getItem('shelter_map_markers'); return s ? JSON.parse(s) : DEFAULT_MARKERS; }
+  catch(e) { return DEFAULT_MARKERS; }
+}
+
+// ════ КРАСИВЫЙ ПОПАП ════
+function buildPopupHtml(obj) {
+  const cat = CATS[obj.cat] || CATS.danger;
+  const delBtn = adminMode
+    ? `<button class="popup-del-btn" onclick="deleteMarker('${obj.id}')">🗑 Удалить точку</button>`
+    : '';
+  return `<div class="popup">
+    <div class="popup-stripe" style="background:linear-gradient(90deg,${cat.color},${cat.color}88,transparent)"></div>
+    <div class="popup-body">
+      <div class="popup-head">
+        <div class="popup-icon-wrap" style="background:${cat.bg}">${cat.icon}</div>
+        <div>
+          <div class="popup-title">${obj.text}</div>
+          <div class="popup-type" style="color:${cat.color}">${cat.label}</div>
+        </div>
+      </div>
+      <div class="popup-divider"></div>
+      <div class="popup-row">📍 <b>X: ${Math.round(obj.x)}</b> &nbsp;/&nbsp; <b>Z: ${Math.round(obj.z)}</b></div>
+      ${obj.sz && obj.szr > 0
+        ? `<div class="popup-sz-badge">🛡 Сейфзона · ${obj.szr} м</div>`
+        : ''}
+      ${delBtn}
+    </div>
+  </div>`;
+}
+
+// ════ РЕНДЕР МАРКЕРОВ ════
+function renderAll() {
+  markers.forEach(m => {
+    if (m._marker) map.removeLayer(m._marker);
+    if (m._circle) map.removeLayer(m._circle);
+  });
+  markers = [];
+  loadMarkers().forEach(m => addMarkerToMap(m));
+}
+
+function addMarkerToMap(data) {
+  const ll = toLL(data.x, data.z);
+  const leafletMarker = L.marker(ll, { icon: makeIcon(data.cat), draggable: false });
+  const obj = { ...data, _marker: leafletMarker, _circle: null };
+  markers.push(obj);
+
+  if (data.sz && data.szr > 0) {
+    obj._circle = L.circle(ll, {
+      radius: data.szr, color:'#7ec8a0', fillColor:'#7ec8a0',
+      fillOpacity:0.06, weight:1.5, dashArray:'5,4', opacity:0.5
+    }).addTo(map);
+  }
+
+  rebindPopup(obj);
+  leafletMarker.addTo(map);
+
+  leafletMarker.on('dragend', e => {
+    const pos = fromLL(e.target.getLatLng());
+    obj.x = Math.round(pos.x); obj.z = Math.round(pos.z);
+    if (obj._circle) obj._circle.setLatLng(e.target.getLatLng());
+    rebindPopup(obj);
+    toast(`📍 X: ${obj.x}  Z: ${obj.z}`);
+  });
+}
+
+function rebindPopup(obj) {
+  obj._marker.unbindPopup();
+  obj._marker.bindPopup(buildPopupHtml(obj), { maxWidth:250, minWidth:200 });
+}
+
+function deleteMarker(id) {
+  const idx = markers.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  map.removeLayer(markers[idx]._marker);
+  if (markers[idx]._circle) map.removeLayer(markers[idx]._circle);
+  markers.splice(idx, 1);
+  map.closePopup();
+  toast('🗑 Маркер удалён');
+}
+
+// ════ НАЗВАНИЯ СЁЛ ════
+function renderVillages() {
+  villageLayers.forEach(l => map.removeLayer(l));
+  villageLayers = [];
+  VILLAGES.forEach(v => {
+    const ll = toLL(v.x, v.z);
+    const lbl = L.marker(ll, {
+      icon: L.divIcon({
+        html: `<span class="village-label ${v.type}">${v.name}</span>`,
+        className: '', iconAnchor:[0, 6]
+      }),
+      interactive: false, zIndexOffset: -100
+    });
+    villageLayers.push(lbl);
+  });
+}
+
+function showVillages() {
+  villageLayers.forEach(l => l.addTo(map));
+}
+function hideVillages() {
+  villageLayers.forEach(l => map.removeLayer(l));
+}
+
+// ════ ФИЛЬТРЫ ════
+let currentFilter = 'all';
+let safezoneVisible = true;
+
+document.querySelectorAll('.fbtn[data-cat]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const cat = btn.dataset.cat;
+
+    if (cat === 'safezone') {
+      safezoneVisible = !safezoneVisible;
+      btn.classList.toggle('active', safezoneVisible);
+      markers.forEach(({_circle}) => {
+        if (_circle) safezoneVisible ? _circle.addTo(map) : map.removeLayer(_circle);
+      });
+      return;
+    }
+
+    document.querySelectorAll('.fbtn[data-cat]:not([data-cat=safezone])').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = cat;
+    markers.forEach(({_marker, cat: mcat}) => {
+      const show = currentFilter === 'all' || currentFilter === mcat;
+      show ? _marker.addTo(map) : map.removeLayer(_marker);
+    });
+  });
+});
+
+// Кнопка сёл
+document.getElementById('village-btn').addEventListener('click', function() {
+  villagesVisible = !villagesVisible;
+  this.classList.toggle('active', villagesVisible);
+  villagesVisible ? showVillages() : hideVillages();
+});
+
+// ════ ПОИСК ════
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) { searchResults.classList.remove('show'); return; }
+  const hits = [
+    ...markers.map(m => ({...m, _src:'marker'})),
+    ...VILLAGES.map(v => ({text:v.name, x:v.x, z:v.z, cat:'village', _src:'village'}))
+  ].filter(m => m.text.toLowerCase().includes(q)).slice(0, 8);
+
+  if (!hits.length) { searchResults.innerHTML = '<div class="sr-item">Ничего не найдено</div>'; searchResults.classList.add('show'); return; }
+  searchResults.innerHTML = hits.map(m => {
+    const cat = CATS[m.cat];
+    const color = cat ? cat.color : '#6a6058';
+    const icon  = cat ? cat.icon : '📌';
+    return `<div class="sr-item" onclick="flyTo(${m.x},${m.z},'${m.text.replace(/'/g,"\\'")}')">
+      <div class="sr-dot" style="background:${color}"></div>
+      ${icon} ${m.text}
+    </div>`;
+  }).join('');
+  searchResults.classList.add('show');
+});
+
+searchInput.addEventListener('keydown', e => { if(e.key==='Escape') { searchResults.classList.remove('show'); searchInput.blur(); } });
+document.addEventListener('click', e => { if(!e.target.closest('.search-wrap')) searchResults.classList.remove('show'); });
+
+function flyTo(x, z, name) {
+  map.flyTo(toLL(x, z), 1, {duration:0.8});
+  searchResults.classList.remove('show');
+  searchInput.value = '';
+  // Найти маркер и открыть попап
+  setTimeout(() => {
+    const m = markers.find(m => m.text === name);
+    if (m) m._marker.openPopup();
+  }, 900);
+}
+
+// ════ КООРДИНАТЫ ════
+map.on('mousemove', e => {
+  const {x,z} = fromLL(e.latlng);
+  document.getElementById('coords').textContent = `X: ${x.toFixed(0)}  Z: ${z.toFixed(0)}`;
+});
+
+// ════ ЛЕГЕНДА ════
+function toggleLegend() {
+  document.getElementById('map-legend').classList.toggle('show');
+}
+
+// ════ ADMIN ════
+function adminLogin() {
+  if (adminMode) { exitAdmin(); return; }
+  document.getElementById('login-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+}
+async function checkPwd() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('pwd-error');
+  if (!pwd) return;
+  errEl.textContent = '...';
+  try {
+    const r = await fetch(API + '/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pwd })
+    });
+    const d = await r.json();
+    if (d.token) {
+      mapAdminToken = d.token;
+      sessionStorage.setItem('shelter_map_token', mapAdminToken);
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('pwd-input').value = '';
+      errEl.textContent = '';
+      enterAdmin();
+      // После входа — синхронизировать маркеры с сервером
+      syncMarkersFromServer();
+    } else {
+      errEl.textContent = '✗ ' + (d.error || 'Неверный пароль');
+      document.getElementById('pwd-input').value = '';
+    }
+  } catch(e) {
+    errEl.textContent = '✗ Ошибка подключения к серверу';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+
+async function syncMarkersFromServer() {
+  try {
+    const data = await fetch(API + '/markers').then(r => r.json());
+    if (Array.isArray(data) && data.length) {
+      // Перезаписать маркеры с сервера
+      markers.forEach(m => { map.removeLayer(m._marker); if (m._circle) map.removeLayer(m._circle); });
+      markers.length = 0;
+      data.forEach(m => addMarkerToMap(m));
+      if (adminMode) markers.forEach(m => { m._marker.dragging.enable(); rebindPopup(m); });
+      toast('✓ Маркеры синхронизированы с сервером');
+    }
+  } catch(e) {}
+}
+document.getElementById('login-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('login-modal')) {
+    document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-error').textContent = '';
+  }
+});
+
+function enterAdmin() {
+  adminMode = true;
+  document.getElementById('admin-btn').classList.add('active');
+  document.getElementById('admin-btn').textContent = '⚙ ВЫЙТИ';
+  document.getElementById('admin-panel').classList.add('open');
+  document.body.classList.add('admin-mode');
+  markers.forEach(m => { m._marker.dragging.enable(); rebindPopup(m); });
+  map.on('click', onMapClick);
+  toast('✓ Режим редактирования активен');
+}
+function exitAdmin() {
+  adminMode = false;
+  document.getElementById('admin-btn').classList.remove('active');
+  document.getElementById('admin-btn').textContent = '⚙ ADMIN';
+  document.getElementById('admin-panel').classList.remove('open');
+  document.body.classList.remove('admin-mode');
+  markers.forEach(m => { m._marker.dragging.disable(); rebindPopup(m); });
+  map.off('click', onMapClick);
+}
+
+function onMapClick(e) {
+  if (e.originalEvent.target.closest && e.originalEvent.target.closest('.leaflet-marker-icon')) return;
+  const {x, z} = fromLL(e.latlng);
+  document.getElementById('ap-x').value = Math.round(x);
+  document.getElementById('ap-z').value = Math.round(z);
+  toast(`📍 X: ${Math.round(x)}  Z: ${Math.round(z)}`);
+}
+
+function addMarkerFromForm() {
+  const name = document.getElementById('ap-name').value.trim();
+  const cat  = document.getElementById('ap-cat').value;
+  const x    = parseFloat(document.getElementById('ap-x').value);
+  const z    = parseFloat(document.getElementById('ap-z').value);
+  const sz   = document.getElementById('ap-sz').checked;
+  const szr  = parseFloat(document.getElementById('ap-sz-r').value) || 50;
+  if (!name) { toast('✗ Введи название'); return; }
+  if (isNaN(x) || isNaN(z)) { toast('✗ Кликни по карте для координат'); return; }
+  const obj = { id:'m'+(nextId++), text:name, cat, x, z, sz, szr };
+  addMarkerToMap(obj);
+  if (adminMode) { obj._marker.dragging.enable(); rebindPopup(obj); }
+  document.getElementById('ap-name').value = '';
+  document.getElementById('ap-x').value = '';
+  document.getElementById('ap-z').value = '';
+  document.getElementById('ap-sz').checked = false;
+  toast(`✓ ${name} добавлен`);
+}
+
+async function saveMarkers() {
+  const data = markers.map(({id,text,cat,x,z,sz,szr}) => ({id,text,cat,x,z,sz,szr}));
+  // Сохранить в localStorage (всегда)
+  localStorage.setItem('shelter_map_markers', JSON.stringify(data));
+  // Если есть токен — синхронизировать с VPS
+  if (mapAdminToken) {
+    try {
+      await fetch(API + '/markers', {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+mapAdminToken },
+        body: JSON.stringify({ markers: data })
+      });
+      toast('💾 Сохранено + синхронизировано с сервером!');
+      return;
+    } catch(e) {}
+  }
+  toast('💾 Сохранено (localStorage)');
+}
+
+function exportJSON() {
+  const data = markers.map(({id,text,cat,x,z,sz,szr}) => ({id,text,cat,x,z,sz,szr}));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download = 'shelter_markers.json'; a.click();
+  toast('📋 JSON экспортирован');
+}
+
+function resetToDefault() {
+  if (!confirm('Сбросить все изменения?')) return;
+  localStorage.removeItem('shelter_map_markers');
+  renderAll();
+  if (adminMode) markers.forEach(m => { m._marker.dragging.enable(); rebindPopup(m); });
+  toast('↺ Сброшено к дефолту');
+}
+
+// ════ TOAST ════
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ════ ЗАПУСК ════
+async function initMap() {
+  // Попробовать загрузить маркеры с VPS (если доступен)
+  try {
+    const serverMarkers = await fetch(API + '/markers').then(r => r.json());
+    if (Array.isArray(serverMarkers) && serverMarkers.length) {
+      // Если на сервере есть маркеры — использовать их вместо localStorage
+      window._serverMarkersLoaded = serverMarkers;
+    }
+  } catch(e) {}
+  renderAll();
+  renderVillages();
+}
+initMap();
 </script>
 </body>
 </html>
