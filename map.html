@@ -4,107 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Карта — Shelter PVE</title>
-  <!-- SEO -->
-  <meta name="description" content="Интерактивная карта сервера Shelter PVE. Трейдеры, крафт, опасные зоны, радиация и сейфзоны на карте Chernarus+.">
-  <meta name="keywords" content="DayZ сервер, PVE сервер DayZ, Chernarus, Shelter PVE, DayZ Russia">
-  <meta name="robots" content="index, follow">
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://alexdff-mun.github.io/Shelter/map.html">
-  <meta property="og:title" content="Карта Chernarus+ — Shelter PVE">
-  <meta property="og:description" content="Интерактивная карта сервера Shelter PVE. Трейдеры, крафт, опасные зоны, радиация и сейфзоны на карте Chernarus+.">
-  <meta property="og:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:locale" content="ru_RU">
-  <meta property="og:site_name" content="Shelter PVE">
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Карта Chernarus+ — Shelter PVE">
-  <meta name="twitter:description" content="Интерактивная карта сервера Shelter PVE. Трейдеры, крафт, опасные зоны, радиация и сейфзоны на карте Chernarus+.">
-  <meta name="twitter:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
+<meta name="description" content="Интерактивная карта сервера Shelter PVE.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Карта Chernarus+ — Shelter PVE">
+<meta property="og:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="images/icon-180.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --red:#cc1f1f;--khaki:#b7a98d;--bg:#080707;
-  --text:#d4c9b5;--text-dim:#6a6058;--rad:#7ec8a0;
-  --mono:'Share Tech Mono',monospace;
-}
+:root{--red:#cc1f1f;--khaki:#b7a98d;--bg:#080707;--text:#d4c9b5;--text-dim:#6a6058;--rad:#7ec8a0;--mono:'Share Tech Mono',monospace;}
 html,body{height:100%;overflow:hidden;background:var(--bg);}
 .topbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:52px;background:rgba(8,7,7,0.96);border-bottom:1px solid rgba(204,31,31,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;gap:0.8rem;}
 .topbar-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
 .topbar-logo img{height:28px;width:28px;object-fit:contain;}
 .topbar-logo-text{font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;letter-spacing:0.12em;color:var(--text);}
 .topbar-logo-text span{color:var(--red);}
-.topbar-back{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;white-space:nowrap;}
+.topbar-back{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.12em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
 .topbar-back:hover{color:var(--red);}
 .topbar-title{font-family:'Oswald',sans-serif;font-size:0.7rem;letter-spacing:0.2em;color:var(--text-dim);text-transform:uppercase;flex:1;text-align:center;}
-.filters{position:fixed;top:52px;left:0;right:0;z-index:900;background:rgba(8,7,7,0.92);border-bottom:1px solid rgba(204,31,31,0.1);backdrop-filter:blur(8px);padding:0.42rem 1rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:nowrap;overflow-x:auto;}
-.filter-btn{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.72rem;background:transparent;border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all 0.2s;white-space:nowrap;}
+.toolbar{position:fixed;top:52px;left:0;right:0;z-index:900;background:rgba(8,7,7,0.93);border-bottom:1px solid rgba(204,31,31,0.1);backdrop-filter:blur(8px);padding:0.38rem 1rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:nowrap;overflow-x:auto;}
+.toolbar::-webkit-scrollbar{display:none;}
+.filter-btn{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.72rem;background:transparent;border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
 .filter-btn:hover{border-color:rgba(204,31,31,0.3);color:var(--text);}
 .filter-btn.active{border-color:var(--c,var(--red));color:var(--c,var(--red));background:rgba(204,31,31,0.07);}
-#map{position:fixed;top:calc(52px + 35px);left:0;right:0;bottom:0;}
+.search-wrap{position:relative;margin-left:auto;flex-shrink:0;}
+.search-input{font-family:var(--mono);font-size:0.62rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text);padding:0.28rem 0.6rem 0.28rem 1.6rem;outline:none;width:160px;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.search-input:focus{border-color:rgba(204,31,31,0.35);width:200px;}
+.search-input::placeholder{color:var(--text-dim);}
+.search-icon{position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);font-size:0.65rem;color:var(--text-dim);pointer-events:none;}
+.search-results{position:absolute;top:calc(100% + 4px);right:0;width:240px;background:rgba(8,7,7,0.98);border:1px solid rgba(204,31,31,0.2);z-index:9999;max-height:200px;overflow-y:auto;display:none;}
+.search-results.show{display:block;}
+.sr-item{font-family:var(--mono);font-size:0.62rem;padding:0.45rem 0.8rem;color:var(--text-dim);cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:0.5rem;transition:background .15s;}
+.sr-item:hover{background:rgba(204,31,31,0.1);color:var(--text);}
+.admin-btn{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;padding:0.28rem 0.6rem;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(106,96,88,0.5);cursor:pointer;transition:all .2s;flex-shrink:0;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.admin-btn:hover{border-color:rgba(224,160,32,0.3);color:var(--text-dim);}
+.admin-btn.active{border-color:#e0a020;color:#e0a020;background:rgba(224,160,32,0.08);}
+#map{position:fixed;top:calc(52px + 38px);left:0;right:0;bottom:0;}
 .leaflet-container{background:#06080a!important;}
 .leaflet-control-zoom{border:1px solid rgba(204,31,31,0.25)!important;background:rgba(8,7,7,0.95)!important;}
 .leaflet-control-zoom a{background:rgba(8,7,7,0.95)!important;color:var(--khaki)!important;border-color:rgba(204,31,31,0.15)!important;font-family:var(--mono)!important;}
 .leaflet-control-zoom a:hover{color:var(--red)!important;background:rgba(204,31,31,0.1)!important;}
 .leaflet-control-attribution{display:none!important;}
-.leaflet-popup-content-wrapper{background:rgba(8,7,7,0.97)!important;border:1px solid rgba(204,31,31,0.3)!important;border-radius:0!important;color:var(--text)!important;box-shadow:0 0 24px rgba(204,31,31,0.15)!important;}
-.leaflet-popup-tip{background:rgba(8,7,7,0.97)!important;}
-.leaflet-popup-content{margin:12px 16px!important;min-width:160px;}
-.popup-title{font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:3px;}
-.popup-type{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;}
-.popup-sz{font-family:var(--mono);font-size:0.58rem;color:var(--rad);margin-top:3px;}
-.popup-coords{font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);border-top:1px solid rgba(255,255,255,0.05);padding-top:5px;margin-top:5px;}
-.popup-del{font-family:var(--mono);font-size:0.58rem;color:#cc1f1f;cursor:pointer;display:block;margin-top:8px;text-align:center;border:1px solid rgba(204,31,31,0.3);padding:3px;}
-.popup-del:hover{background:rgba(204,31,31,0.15);}
-.leaflet-popup-close-button{color:var(--text-dim)!important;}
+.leaflet-popup-content-wrapper{background:transparent!important;border:none!important;border-radius:0!important;box-shadow:none!important;padding:0!important;}
+.leaflet-popup-tip-container{display:none;}
+.leaflet-popup-content{margin:0!important;}
+.leaflet-popup-close-button{top:8px!important;right:8px!important;color:var(--text-dim)!important;z-index:10;}
 .leaflet-popup-close-button:hover{color:var(--red)!important;}
-
-/* ── ADMIN BUTTON ── */
-.admin-btn{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;padding:0.28rem 0.6rem;background:transparent;border:1px solid rgba(255,255,255,0.06);color:rgba(106,96,88,0.5);cursor:pointer;transition:all .2s;margin-left:auto;}
-.admin-btn:hover{border-color:rgba(204,31,31,0.25);color:var(--text-dim);}
-.admin-btn.active{border-color:#e0a020;color:#e0a020;background:rgba(224,160,32,0.08);}
-
-/* ── ADMIN PANEL ── */
-.admin-panel{
-  position:fixed;right:0;top:calc(52px+35px);bottom:0;width:280px;
-  background:rgba(6,5,5,0.97);border-left:1px solid rgba(204,31,31,0.2);
-  z-index:800;transform:translateX(100%);transition:transform .3s ease;
-  display:flex;flex-direction:column;overflow:hidden;
-}
+.popup-card{min-width:220px;max-width:260px;background:rgba(6,5,5,0.97);border:1px solid rgba(255,255,255,0.07);overflow:hidden;}
+.popup-header{padding:0.7rem 2rem 0.5rem 0.9rem;border-left:3px solid var(--pc,#cc1f1f);background:rgba(255,255,255,0.02);}
+.popup-cat{font-family:var(--mono);font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--pc,#cc1f1f);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.35rem;}
+.popup-name{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:600;color:var(--text);letter-spacing:0.05em;}
+.popup-body{padding:0.6rem 0.9rem;}
+.popup-desc{font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);line-height:1.5;margin-bottom:0.5rem;}
+.popup-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem;}
+.popup-tag{font-family:var(--mono);font-size:0.52rem;padding:0.15rem 0.4rem;border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);}
+.popup-tag.sz{color:var(--rad);border-color:rgba(126,200,160,0.3);}
+.popup-coords{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);opacity:0.6;border-top:1px solid rgba(255,255,255,0.04);padding-top:0.4rem;display:flex;justify-content:space-between;}
+.popup-footer{padding:0.4rem 0.9rem 0.6rem;border-top:1px solid rgba(255,255,255,0.04);}
+.popup-del{font-family:var(--mono);font-size:0.55rem;color:var(--red);cursor:pointer;background:rgba(204,31,31,0.08);border:1px solid rgba(204,31,31,0.2);padding:0.25rem 0.5rem;transition:all .2s;display:inline-block;}
+.popup-del:hover{background:rgba(204,31,31,0.2);}
+.city-label{background:transparent;border:none;pointer-events:none;}
+.city-label div{font-family:'Oswald',sans-serif;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;color:rgba(183,169,141,0.5);text-shadow:0 1px 3px rgba(0,0,0,0.9);white-space:nowrap;text-align:center;}
+.city-label.lg div{font-size:11px;color:rgba(183,169,141,0.75);}
+.city-label.md div{font-size:9px;}
+.city-label.sm div{font-size:7.5px;color:rgba(183,169,141,0.38);}
+.admin-panel{position:fixed;right:0;top:calc(52px + 38px);bottom:0;width:280px;background:rgba(6,5,5,0.97);border-left:1px solid rgba(204,31,31,0.2);z-index:800;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow:hidden;}
 .admin-panel.open{transform:translateX(0);}
 .ap-header{padding:1rem;border-bottom:1px solid rgba(255,255,255,0.05);}
 .ap-title{font-family:'Oswald',sans-serif;font-size:0.8rem;letter-spacing:0.2em;color:#e0a020;text-transform:uppercase;}
-.ap-hint{font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);margin-top:0.4rem;line-height:1.5;}
+.ap-hint{font-family:var(--mono);font-size:0.55rem;color:var(--text-dim);margin-top:0.4rem;line-height:1.5;}
 .ap-hint b{color:var(--text);}
 .ap-body{padding:1rem;flex:1;overflow-y:auto;}
 .ap-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.3rem;display:block;}
-.ap-input,.ap-select,.ap-textarea{
-  width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-  color:var(--text);font-family:var(--mono);font-size:0.7rem;
-  padding:0.4rem 0.6rem;margin-bottom:0.7rem;outline:none;
-}
-.ap-input:focus,.ap-select:focus,.ap-textarea:focus{border-color:rgba(204,31,31,0.4);}
+.ap-input,.ap-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text);font-family:var(--mono);font-size:0.7rem;padding:0.4rem 0.6rem;margin-bottom:0.7rem;outline:none;}
+.ap-input:focus,.ap-select:focus{border-color:rgba(204,31,31,0.4);}
 .ap-select option{background:#111;}
 .ap-row{display:flex;gap:0.5rem;}
 .ap-row .ap-input{flex:1;}
-.ap-btn{
-  width:100%;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;
-  text-transform:uppercase;padding:0.5rem;cursor:pointer;
-  clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
-  transition:all .2s;border:none;margin-bottom:0.5rem;
-}
+.ap-btn{width:100%;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.5rem;cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s;border:none;margin-bottom:0.5rem;}
 .ap-btn-add{background:rgba(204,31,31,0.15);color:var(--red);border:1px solid rgba(204,31,31,0.3);}
 .ap-btn-add:hover{background:rgba(204,31,31,0.25);}
 .ap-btn-save{background:rgba(126,200,160,0.15);color:var(--rad);border:1px solid rgba(126,200,160,0.3);}
 .ap-btn-save:hover{background:rgba(126,200,160,0.25);}
-.ap-btn-export{background:rgba(183,169,141,0.1);color:var(--khaki);border:1px solid rgba(183,169,141,0.2);}
-.ap-btn-export:hover{background:rgba(183,169,141,0.2);}
 .ap-btn-reset{background:transparent;color:rgba(106,96,88,0.6);border:1px solid rgba(106,96,88,0.2);font-size:0.55rem;}
 .ap-btn-reset:hover{color:var(--red);border-color:rgba(204,31,31,0.3);}
 .ap-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:0.8rem 0;}
@@ -113,27 +98,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 .ap-sz-label{font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);}
 .ap-toast{position:fixed;bottom:4rem;left:50%;transform:translateX(-50%);background:rgba(126,200,160,0.9);color:#080707;font-family:var(--mono);font-size:0.7rem;padding:0.5rem 1.2rem;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
 .ap-toast.show{opacity:1;}
-
-/* Admin mode cursor */
-.admin-mode .leaflet-container{cursor:crosshair!important;}
-
-/* Edit marker highlight */
-.marker-edit .leaflet-marker-icon{filter:brightness(1.3) drop-shadow(0 0 8px #e0a020)!important;}
-
+.ap-toast.err{background:rgba(204,31,31,0.9);}
 #coords{position:fixed;bottom:1rem;left:1rem;z-index:900;font-family:var(--mono);font-size:0.58rem;color:rgba(183,169,141,0.35);background:rgba(8,7,7,0.7);padding:0.3rem 0.6rem;pointer-events:none;}
-.legend-btn{position:fixed;bottom:1rem;right:290px;z-index:900;font-family:var(--mono);font-size:0.58rem;padding:0.4rem 0.8rem;background:rgba(8,7,7,0.92);border:1px solid rgba(204,31,31,0.2);color:var(--text-dim);cursor:pointer;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s;}
-.legend-btn:hover{color:var(--red);}
-.legend-btn.panel-closed{right:1rem;}
-.map-legend{position:fixed;bottom:1rem;right:290px;z-index:901;background:rgba(8,7,7,0.96);border:1px solid rgba(204,31,31,0.2);padding:0.9rem 1.1rem;min-width:175px;display:none;cursor:pointer;}
-.map-legend.show{display:block;}
-.map-legend.panel-closed{right:1rem;}
-.legend-title{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.2em;color:var(--red);margin-bottom:0.6rem;text-transform:uppercase;}
-.legend-item{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;font-family:var(--mono);font-size:0.6rem;color:var(--khaki);}
-.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.leg-ring{width:12px;height:12px;border-radius:50%;border:1.5px dashed;flex-shrink:0;}
-
-/* Login modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;display:flex;align-items:center;justify-content:center;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:flex;align-items:center;justify-content:center;}
 .modal-bg.hidden{display:none;}
 .modal{background:#0f0d0d;border:1px solid rgba(204,31,31,0.3);padding:2rem;min-width:280px;text-align:center;}
 .modal-title{font-family:'Oswald',sans-serif;font-size:1rem;letter-spacing:0.2em;color:#e0a020;margin-bottom:1rem;text-transform:uppercase;}
@@ -142,405 +109,113 @@ html,body{height:100%;overflow:hidden;background:var(--bg);}
 .modal-error{font-family:var(--mono);font-size:0.62rem;color:var(--red);min-height:1.2em;margin-bottom:0.6rem;}
 .modal-btn{width:100%;font-family:var(--mono);font-size:0.7rem;letter-spacing:0.15em;padding:0.6rem;background:rgba(204,31,31,0.15);border:1px solid rgba(204,31,31,0.3);color:var(--red);cursor:pointer;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
 .modal-btn:hover{background:rgba(204,31,31,0.25);}
-@media(max-width:750px){.topbar-title{display:none;}.filters{padding:0.35rem 0.5rem;gap:0.25rem;}.filters::-webkit-scrollbar{display:none;}.filter-btn{font-size:0.52rem;padding:0.28rem 0.55rem;flex-shrink:0;}.admin-btn{flex-shrink:0;}.admin-panel{width:100%;}.legend-btn,.map-legend{right:1rem!important;}}
+.admin-mode #map,.admin-mode .leaflet-container{cursor:crosshair!important;}
+@media(max-width:750px){.topbar-title{display:none;}.toolbar{padding:0.35rem 0.5rem;gap:0.25rem;}.filter-btn{font-size:0.52rem;padding:0.28rem 0.5rem;}.search-wrap{display:none;}.admin-panel{width:100%;}}
 </style>
-  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/icon-180.png">
 </head>
 <body>
-
-<!-- LOGIN MODAL -->
 <div class="modal-bg hidden" id="login-modal">
   <div class="modal">
-    <div class="modal-title">🔐 Доступ к редактору</div>
+    <div class="modal-title">&#128272; Доступ к редактору</div>
     <input type="password" id="pwd-input" placeholder="Пароль" onkeydown="if(event.key==='Enter')checkPwd()">
     <div class="modal-error" id="pwd-error"></div>
     <button class="modal-btn" onclick="checkPwd()">ВОЙТИ</button>
   </div>
 </div>
-
 <header class="topbar">
   <a href="index.html" class="topbar-logo">
     <img src="images/SHL_PVE.png" alt="Shelter PVE">
     <span class="topbar-logo-text">SHELTER <span>PVE</span></span>
   </a>
-  <div class="topbar-title">🗺 КАРТА — CHERNARUS+</div>
-  <a href="index.html" class="topbar-back">← НА ГЛАВНУЮ</a>
+  <div class="topbar-title">&#128506; КАРТА — CHERNARUS+</div>
+  <a href="index.html" class="topbar-back">&#8592; НА ГЛАВНУЮ</a>
 </header>
-
-<div class="filters">
+<div class="toolbar">
   <button class="filter-btn active" data-cat="all" style="--c:var(--text)">ВСЕ</button>
-  <button class="filter-btn" data-cat="trader" style="--c:#e0a020">🛒 ТРЕЙДЕРЫ</button>
-  <button class="filter-btn" data-cat="craft" style="--c:#5b9bd5">🔧 КРАФТ</button>
-  <button class="filter-btn" data-cat="danger" style="--c:var(--red)">💀 ОПАСНОСТЬ</button>
-  <button class="filter-btn" data-cat="radiation" style="--c:var(--rad)">☢ РАДИАЦИЯ</button>
-  <button class="filter-btn" data-cat="safezone" style="--c:#7ec8a0">🛡 СЕЙФЗОНЫ</button>
-  <button class="admin-btn" id="admin-btn" onclick="adminLogin()">⚙ ADMIN</button>
+  <button class="filter-btn" data-cat="trader" style="--c:#e0a020">&#128722; ТРЕЙДЕРЫ</button>
+  <button class="filter-btn" data-cat="craft" style="--c:#5b9bd5">&#128295; КРАФТ</button>
+  <button class="filter-btn" data-cat="danger" style="--c:var(--red)">&#128128; ОПАСНОСТЬ</button>
+  <button class="filter-btn" data-cat="radiation" style="--c:var(--rad)">&#9762; РАДИАЦИЯ</button>
+  <button class="filter-btn" data-cat="safezone" style="--c:#7ec8a0">&#128737; СЕЙФЗОНЫ</button>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input class="search-input" id="search-input" type="text" placeholder="Поиск по карте..." oninput="onSearch(this.value)" onblur="setTimeout(()=>hideSearch(),200)">
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <button class="admin-btn" id="admin-btn" onclick="adminLogin()">&#9881; ADMIN</button>
 </div>
-
 <div id="map"></div>
 <div id="coords">X: — / Z: —</div>
-
-<button class="legend-btn panel-closed" id="legend-btn" onclick="toggleLegend()">📋 ЛЕГЕНДА</button>
-<div class="map-legend panel-closed" id="map-legend" onclick="toggleLegend()">
-  <div class="legend-title">Легенда</div>
-  <div class="legend-item"><div class="leg-dot" style="background:#e0a020"></div>Трейдер</div>
-  <div class="legend-item"><div class="leg-dot" style="background:#5b9bd5"></div>Инженерный пост</div>
-  <div class="legend-item"><div class="leg-dot" style="background:#cc1f1f"></div>Опасная зона</div>
-  <div class="legend-item"><div class="leg-dot" style="background:#7ec8a0"></div>Радиация</div>
-  <div class="legend-item"><div class="leg-ring" style="border-color:#7ec8a0"></div>Сейфзона</div>
-</div>
-
-<!-- ADMIN PANEL -->
 <div class="admin-panel" id="admin-panel">
   <div class="ap-header">
-    <div class="ap-title">⚙ Редактор карты</div>
-    <div class="ap-hint">
-      <b>Клик по карте</b> — добавить точку<br>
-      <b>Перетащить маркер</b> — переместить<br>
-      <b>Клик по маркеру</b> — удалить/изменить
-    </div>
+    <div class="ap-title">&#9881; Редактор карты</div>
+    <div class="ap-hint"><b>Клик по карте</b> — задать координаты<br><b>Перетащить маркер</b> — переместить<br><b>Попап маркера</b> — удалить</div>
   </div>
   <div class="ap-body">
     <span class="ap-label">Название</span>
     <input class="ap-input" id="ap-name" placeholder="Лагерь выживших">
-
+    <span class="ap-label">Описание</span>
+    <input class="ap-input" id="ap-desc" placeholder="Краткое описание">
     <span class="ap-label">Категория</span>
     <select class="ap-select" id="ap-cat">
-      <option value="trader">🛒 Трейдер</option>
-      <option value="craft">🔧 Крафт</option>
-      <option value="danger">💀 Опасная зона</option>
-      <option value="radiation">☢ Радиация</option>
+      <option value="trader">&#128722; Трейдер</option>
+      <option value="craft">&#128295; Крафт</option>
+      <option value="danger">&#128128; Опасная зона</option>
+      <option value="radiation">&#9762; Радиация</option>
     </select>
-
     <span class="ap-label">Координаты (кликни по карте)</span>
     <div class="ap-row">
       <input class="ap-input" id="ap-x" placeholder="X" type="number">
       <input class="ap-input" id="ap-z" placeholder="Z" type="number">
     </div>
-
     <div class="ap-sz-toggle">
       <input type="checkbox" id="ap-sz">
-      <span class="ap-sz-label">Сейфзона (и радиус, м)</span>
+      <span class="ap-sz-label">Сейфзона (радиус, м)</span>
       <input class="ap-input" id="ap-sz-r" placeholder="90" type="number" style="width:70px;margin:0 0 0 auto">
     </div>
-
     <button class="ap-btn ap-btn-add" onclick="addMarkerFromForm()">+ ДОБАВИТЬ ТОЧКУ</button>
-
     <hr class="ap-divider">
-
-    <button class="ap-btn ap-btn-save" onclick="saveMarkers()">💾 СОХРАНИТЬ ВСЁ</button>
-    <button class="ap-btn ap-btn-export" onclick="exportJSON()">📋 ЭКСПОРТ JSON</button>
-    <button class="ap-btn ap-btn-reset" onclick="resetToDefault()">↺ СБРОСИТЬ К ДЕФОЛТУ</button>
+    <button class="ap-btn ap-btn-save" onclick="saveToServer()">&#128190; СОХРАНИТЬ НА СЕРВЕР</button>
+    <button class="ap-btn ap-btn-reset" onclick="resetMarkers()">&#8635; ПЕРЕЗАГРУЗИТЬ</button>
   </div>
 </div>
-
 <div class="ap-toast" id="ap-toast"></div>
-
 <script>
-// ════════════════════════════════════════
-//  ПАРОЛЬ АДМИНИСТРАТОРА
-//  Измени здесь свой пароль:
-const ADMIN_PASSWORD = 'shelter2024';
-// ════════════════════════════════════════
-
-const MAP_M = 15360;
-const HALF  = MAP_M / 2;
-const BOUNDS = [[-HALF, -HALF], [HALF, HALF]];
-
-// Категории
-const CATS = {
-  trader:    { icon:'🏕', color:'#e0a020', sub:'Trader' },
-  craft:     { icon:'🔧', color:'#5b9bd5', sub:'Крафт' },
-  danger:    { icon:'💀', color:'#cc1f1f', sub:'Опасная зона' },
-  radiation: { icon:'☢', color:'#7ec8a0', sub:'Радиационная зона' },
-};
-
-// Дефолтные маркеры (из MapSettings.json)
-const DEFAULT_MARKERS = [
-  { id:'m1', text:"Лагерь выживших",    cat:"trader",    x:7856,    z:10544,  sz:true,  szr:90  },
-  { id:'m2', text:"Терминал",           cat:"trader",    x:13859,   z:12789,  sz:true,  szr:108 },
-  { id:'m3', text:"Егерь",             cat:"trader",    x:1186,    z:6244,   sz:true,  szr:50  },
-  { id:'m4', text:"Инженерный пост",   cat:"craft",     x:3092.86, z:10827,  sz:true,  szr:50  },
-  { id:'m5', text:"Алькатрас",         cat:"danger",    x:2666,    z:1230,   sz:false, szr:0   },
-  { id:'m6', text:"Радар",             cat:"danger",    x:579,     z:13173,  sz:false, szr:0   },
-  { id:'m7', text:"Радиация",          cat:"radiation", x:8351,    z:12765,  sz:false, szr:0   },
-  { id:'m8', text:"Радиация (Павлово)",cat:"radiation", x:2072,    z:3215,   sz:false, szr:0   },
-];
-
-// ════ КАРТА ════
-const map = L.map('map', {
-  crs: L.CRS.Simple,
-  minZoom: -3, maxZoom: 3, zoomSnap: 0.25,
-  attributionControl: false,
-  maxBounds: [[-HALF-500,-HALF-500],[HALF+500,HALF+500]],
-  maxBoundsViscosity: 0.85
-});
-
-L.imageOverlay('images/map_chernarus.jpg', BOUNDS, { opacity:0.92 }).addTo(map);
+const API="http://85.198.71.246";
+const MAP_M=15360,HALF=MAP_M/2;
+const BOUNDS=[[-HALF,-HALF],[HALF,HALF]];
+const CATS={trader:{icon:"&#128517;",color:"#e0a020",label:"Трейдер"},craft:{icon:"&#128295;",color:"#5b9bd5",label:"Крафт"},danger:{icon:"&#128128;",color:"#cc1f1f",label:"Опасная зона"},radiation:{icon:"&#9762;",color:"#7ec8a0",label:"Радиационная зона"}};
+const CITIES=[["Черногорск",6500,2400,"lg"],["Электрозаводск",10500,2200,"lg"],["Балота",4200,2100,"sm"],["Зеленогорск",2400,7000,"md"],["Выбор",3900,10400,"md"],["Тиси",2800,14200,"sm"],["Североград",8200,13500,"md"],["Новодмитровск",11800,13200,"md"],["Красностав",12400,11500,"md"],["Светлоярск",14500,11300,"md"],["Березино",13500,7500,"md"],["Солничный",14200,5400,"sm"],["Камышово",12600,3800,"sm"],["Стары Собор",7200,9400,"sm"],["Новый Собор",7600,10300,"sm"],["Кабанино",5700,10200,"sm"],["Пустошка",5000,9000,"sm"],["Могилевка",7900,8200,"sm"],["Поляна",10200,8600,"sm"],["Горка",11200,10200,"sm"],["Гуглово",9400,9900,"sm"],["Лопатино",3900,8800,"sm"],["Рогово",4200,5500,"sm"],["Козловка",6200,4700,"sm"],["Погоревка",7100,5800,"sm"],["Павлово",2000,3000,"sm"]];
+const map=L.map("map",{crs:L.CRS.Simple,minZoom:-3,maxZoom:3,zoomSnap:0.25,attributionControl:false,maxBounds:[[-HALF-500,-HALF-500],[HALF+500,HALF+500]],maxBoundsViscosity:0.85});
+L.imageOverlay("images/map_chernarus.jpg",BOUNDS,{opacity:0.92}).addTo(map);
 map.fitBounds(BOUNDS);
-
-function toLL(x, z)  { return L.latLng(z - HALF, x - HALF); }
-function fromLL(latlng) { return { x: latlng.lng + HALF, z: latlng.lat + HALF }; }
-
-// ════ ИКОНКИ ════
-function makeIcon(cat) {
-  const {icon, color} = CATS[cat] || CATS.danger;
-  return L.divIcon({
-    html:`<div style="filter:drop-shadow(0 0 5px ${color});width:36px;height:44px">
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
-        <path d="M18 2C9.2 2 2 9.2 2 18c0 11 16 26 16 26S34 29 34 18C34 9.2 26.8 2 18 2z"
-          fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="1.5"/>
-        <circle cx="18" cy="18" r="11" fill="${color}" fill-opacity="0.25" stroke="${color}" stroke-width="1"/>
-        <text x="18" y="23" text-anchor="middle" font-size="13">${icon}</text>
-      </svg></div>`,
-    iconSize:[36,44], iconAnchor:[18,44], popupAnchor:[0,-46], className:''
-  });
-}
-
-// ════ СОСТОЯНИЕ ════
-let markers = [];      // { id, text, cat, x, z, sz, szr, _marker, _circle }
-let adminMode = false;
-let nextId = 100;
-
-function loadMarkers() {
-  try {
-    const saved = localStorage.getItem('shelter_map_markers');
-    return saved ? JSON.parse(saved) : DEFAULT_MARKERS;
-  } catch(e) { return DEFAULT_MARKERS; }
-}
-
-// ════ ОТРИСОВКА МАРКЕРОВ ════
-function renderAll() {
-  // Удалить старые
-  markers.forEach(m => {
-    if (m._marker) map.removeLayer(m._marker);
-    if (m._circle) map.removeLayer(m._circle);
-  });
-  markers = [];
-
-  const data = loadMarkers();
-  data.forEach(m => addMarkerToMap(m));
-}
-
-function addMarkerToMap(data) {
-  const cat = CATS[data.cat] || CATS.danger;
-  const ll  = toLL(data.x, data.z);
-
-  const leafletMarker = L.marker(ll, {
-    icon: makeIcon(data.cat),
-    draggable: false
-  });
-
-  const obj = { ...data, _marker: leafletMarker, _circle: null };
-  markers.push(obj);
-
-  // Сейфзона
-  if (data.sz && data.szr > 0) {
-    obj._circle = L.circle(ll, {
-      radius: data.szr, color:'#7ec8a0', fillColor:'#7ec8a0',
-      fillOpacity:0.08, weight:1.5, dashArray:'6,5'
-    }).addTo(map);
-  }
-
-  rebindPopup(obj);
-  leafletMarker.addTo(map);
-
-  // drag
-  leafletMarker.on('dragend', e => {
-    const pos = fromLL(e.target.getLatLng());
-    obj.x = Math.round(pos.x);
-    obj.z = Math.round(pos.z);
-    if (obj._circle) obj._circle.setLatLng(e.target.getLatLng());
-    rebindPopup(obj);
-    toast(`📍 Перемещено: X${obj.x} Z${obj.z}`);
-  });
-}
-
-function rebindPopup(obj) {
-  const cat = CATS[obj.cat] || CATS.danger;
-  const adminControls = adminMode ? `
-    <button class="popup-del" onclick="deleteMarker('${obj.id}')">🗑 Удалить точку</button>
-  ` : '';
-  obj._marker.bindPopup(`
-    <div class="popup-title">${obj.text}</div>
-    <div class="popup-type" style="color:${cat.color}">${cat.icon} ${cat.sub}</div>
-    ${obj.sz ? '<div class="popup-sz">🛡 Сейфзона активна</div>' : ''}
-    <div class="popup-coords">X: ${Math.round(obj.x)} / Z: ${Math.round(obj.z)}</div>
-    ${adminControls}
-  `, { maxWidth:210 });
-}
-
-function deleteMarker(id) {
-  const idx = markers.findIndex(m => m.id === id);
-  if (idx === -1) return;
-  const m = markers[idx];
-  map.removeLayer(m._marker);
-  if (m._circle) map.removeLayer(m._circle);
-  markers.splice(idx, 1);
-  map.closePopup();
-  toast('🗑 Маркер удалён');
-}
-
-// ════ ФИЛЬТРЫ ════
-let currentFilter = 'all';
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.cat;
-    markers.forEach(({_marker, _circle, cat}) => {
-      const show = currentFilter === 'all' || currentFilter === cat;
-      show ? _marker.addTo(map) : map.removeLayer(_marker);
-      if (_circle) { show || currentFilter === 'safezone' ? _circle.addTo(map) : map.removeLayer(_circle); }
-    });
-  });
-});
-
-// ════ КООРДИНАТЫ ════
-map.on('mousemove', e => {
-  const {x,z} = fromLL(e.latlng);
-  document.getElementById('coords').textContent = `X: ${x.toFixed(0)}  Z: ${z.toFixed(0)}`;
-});
-
-// ════ ЛЕГЕНДА ════
-function toggleLegend() {
-  const show = document.getElementById('map-legend').classList.toggle('show');
-  document.getElementById('legend-btn').style.display = show ? 'none' : 'block';
-}
-
-// ════ ADMIN LOGIN ════
-function adminLogin() {
-  if (adminMode) { exitAdmin(); return; }
-  document.getElementById('login-modal').classList.remove('hidden');
-  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
-}
-
-function checkPwd() {
-  const val = document.getElementById('pwd-input').value;
-  if (val === ADMIN_PASSWORD) {
-    document.getElementById('login-modal').classList.add('hidden');
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('pwd-error').textContent = '';
-    enterAdmin();
-  } else {
-    document.getElementById('pwd-error').textContent = '✗ Неверный пароль';
-    document.getElementById('pwd-input').value = '';
-  }
-}
-
-document.getElementById('login-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('login-modal')) {
-    document.getElementById('login-modal').classList.add('hidden');
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('pwd-error').textContent = '';
-  }
-});
-
-function enterAdmin() {
-  adminMode = true;
-  document.getElementById('admin-btn').classList.add('active');
-  document.getElementById('admin-btn').textContent = '⚙ ВЫЙТИ';
-  document.getElementById('admin-panel').classList.add('open');
-  document.getElementById('legend-btn').classList.remove('panel-closed');
-  document.getElementById('map-legend').classList.remove('panel-closed');
-  document.getElementById('map').classList.add('admin-mode');
-  // Включить перетаскивание
-  markers.forEach(m => { m._marker.dragging.enable(); rebindPopup(m); });
-  // Клик по карте = добавить точку
-  map.on('click', onMapClick);
-  toast('✓ Режим редактирования включён');
-}
-
-function exitAdmin() {
-  adminMode = false;
-  document.getElementById('admin-btn').classList.remove('active');
-  document.getElementById('admin-btn').textContent = '⚙ ADMIN';
-  document.getElementById('admin-panel').classList.remove('open');
-  document.getElementById('legend-btn').classList.add('panel-closed');
-  document.getElementById('map-legend').classList.add('panel-closed');
-  document.getElementById('map').classList.remove('admin-mode');
-  markers.forEach(m => { m._marker.dragging.disable(); rebindPopup(m); });
-  map.off('click', onMapClick);
-}
-
-// Клик по карте в режиме админа — заполняет координаты в форму
-function onMapClick(e) {
-  if (e.originalEvent.target.closest('.leaflet-marker-icon')) return;
-  const {x, z} = fromLL(e.latlng);
-  document.getElementById('ap-x').value = Math.round(x);
-  document.getElementById('ap-z').value = Math.round(z);
-  toast(`📍 X: ${Math.round(x)}  Z: ${Math.round(z)}`);
-}
-
-// ════ ДОБАВИТЬ МАРКЕР ════
-function addMarkerFromForm() {
-  const name = document.getElementById('ap-name').value.trim();
-  const cat  = document.getElementById('ap-cat').value;
-  const x    = parseFloat(document.getElementById('ap-x').value);
-  const z    = parseFloat(document.getElementById('ap-z').value);
-  const sz   = document.getElementById('ap-sz').checked;
-  const szr  = parseFloat(document.getElementById('ap-sz-r').value) || 50;
-
-  if (!name) { toast('✗ Введи название!'); return; }
-  if (isNaN(x) || isNaN(z)) { toast('✗ Кликни по карте чтобы задать координаты'); return; }
-
-  const newMarker = { id: 'm' + (nextId++), text:name, cat, x, z, sz, szr };
-  addMarkerToMap(newMarker);
-  if (adminMode) {
-    newMarker._marker.dragging.enable();
-    rebindPopup(newMarker);
-  }
-
-  document.getElementById('ap-name').value = '';
-  document.getElementById('ap-x').value = '';
-  document.getElementById('ap-z').value = '';
-  document.getElementById('ap-sz').checked = false;
-  toast(`✓ Добавлено: ${name}`);
-}
-
-// ════ СОХРАНИТЬ ════
-function saveMarkers() {
-  const data = markers.map(({id,text,cat,x,z,sz,szr}) => ({id,text,cat,x,z,sz,szr}));
-  localStorage.setItem('shelter_map_markers', JSON.stringify(data));
-  toast('💾 Сохранено в браузере!');
-}
-
-// ════ ЭКСПОРТ JSON ════
-function exportJSON() {
-  const data = markers.map(({id,text,cat,x,z,sz,szr}) => ({id,text,cat,x,z,sz,szr}));
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'shelter_markers.json';
-  a.click();
-  toast('📋 JSON экспортирован');
-}
-
-// ════ СБРОС ════
-function resetToDefault() {
-  if (!confirm('Сбросить все изменения к дефолту?')) return;
-  localStorage.removeItem('shelter_map_markers');
-  renderAll();
-  if (adminMode) {
-    markers.forEach(m => { m._marker.dragging.enable(); rebindPopup(m); });
-  }
-  toast('↺ Сброшено к дефолту');
-}
-
-// ════ TOAST ════
-function toast(msg) {
-  const el = document.getElementById('ap-toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2500);
-}
-
-// ════ ЗАПУСК ════
-renderAll();
+function toLL(x,z){return L.latLng(z-HALF,x-HALF);}
+function fromLL(ll){return{x:ll.lng+HALF,z:ll.lat+HALF};}
+CITIES.forEach(([name,x,z,size])=>{L.marker(toLL(x,z),{icon:L.divIcon({html:"<div>"+name+"</div>",className:"city-label "+size,iconAnchor:[60,8]}),interactive:false,zIndexOffset:-1000}).addTo(map);});
+function makeIcon(cat){const c=CATS[cat]||CATS.danger;return L.divIcon({html:"<div style='filter:drop-shadow(0 0 6px "+c.color+");width:36px;height:44px'><svg xmlns='http://www.w3.org/2000/svg' width='36' height='44' viewBox='0 0 36 44'><path d='M18 2C9.2 2 2 9.2 2 18c0 11 16 26 16 26S34 29 34 18C34 9.2 26.8 2 18 2z' fill='"+c.color+"' fill-opacity='0.25' stroke='"+c.color+"' stroke-width='1.5'/><circle cx='18' cy='18' r='10' fill='"+c.color+"' fill-opacity='0.2' stroke='"+c.color+"' stroke-width='1'/><text x='18' y='23' text-anchor='middle' font-size='13'>"+c.icon+"</text></svg></div>",iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-50],className:""});}
+function makePopup(obj,del){const c=CATS[obj.cat]||CATS.danger;const tags=obj.sz&&obj.szr>0?"<span class='popup-tag sz'>&#128737; Сейфзона "+obj.szr+"м</span>":"";return "<div class='popup-card' style='--pc:"+c.color+"'><div class='popup-header'><div class='popup-cat'>"+c.icon+" "+c.label+"</div><div class='popup-name'>"+obj.text+"</div></div><div class='popup-body'>"+(obj.desc?"<div class='popup-desc'>"+obj.desc+"</div>":"")+(tags?"<div class='popup-tags'>"+tags+"</div>":"")+"<div class='popup-coords'><span>X: "+Math.round(obj.x)+"</span><span>Z: "+Math.round(obj.z)+"</span></div></div>"+(del?"<div class='popup-footer'><span class='popup-del' onclick='deleteMarker(\""+obj.id+"\")'>&#128465; Удалить точку</span></div>":"")+"</div>";}
+let markers=[],adminMode=false,adminToken=sessionStorage.getItem("shelter_admin_token")||"",nextId=100,currentFilter="all";
+async function loadMarkers(){try{const r=await fetch(API+"/api/markers");return await r.json();}catch(e){return[];}}
+function renderAll(data){markers.forEach(m=>{if(m._marker)map.removeLayer(m._marker);if(m._circle)map.removeLayer(m._circle);});markers=[];data.forEach(m=>addMarkerToMap(m));}
+function addMarkerToMap(data){const ll=toLL(data.x,data.z);const lm=L.marker(ll,{icon:makeIcon(data.cat),draggable:false});const obj={...data,_marker:lm,_circle:null};markers.push(obj);if(data.sz&&data.szr>0){obj._circle=L.circle(ll,{radius:data.szr,color:"#7ec8a0",fillColor:"#7ec8a0",fillOpacity:0.07,weight:1.5,dashArray:"6,5"}).addTo(map);}lm.bindPopup(makePopup(obj,adminMode),{maxWidth:280});lm.addTo(map);lm.on("dragend",e=>{const pos=fromLL(e.target.getLatLng());obj.x=Math.round(pos.x);obj.z=Math.round(pos.z);if(obj._circle)obj._circle.setLatLng(e.target.getLatLng());lm.setPopupContent(makePopup(obj,adminMode));toast("X:"+obj.x+" Z:"+obj.z);});}
+function deleteMarker(id){const idx=markers.findIndex(m=>m.id===id);if(idx===-1)return;const m=markers[idx];map.removeLayer(m._marker);if(m._circle)map.removeLayer(m._circle);markers.splice(idx,1);map.closePopup();toast("&#128465; Маркер удалён");}
+document.querySelectorAll(".filter-btn").forEach(btn=>{btn.addEventListener("click",()=>{document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");currentFilter=btn.dataset.cat;markers.forEach(m=>{const show=currentFilter==="all"||currentFilter===m.cat||(currentFilter==="safezone"&&m.sz);show?m._marker.addTo(map):map.removeLayer(m._marker);if(m._circle){show?m._circle.addTo(map):map.removeLayer(m._circle);}});});});
+function onSearch(val){const q=val.trim().toLowerCase();const box=document.getElementById("search-results");if(!q){box.classList.remove("show");return;}const found=markers.filter(m=>m.text.toLowerCase().includes(q));if(!found.length){box.innerHTML="<div class='sr-item'>Ничего не найдено</div>";box.classList.add("show");return;}box.innerHTML=found.slice(0,8).map(m=>{const c=CATS[m.cat]||CATS.danger;return"<div class='sr-item' onclick='goToMarker(\""+m.id+"\")'>"+c.icon+" "+m.text+"</div>";}).join("");box.classList.add("show");}
+function hideSearch(){document.getElementById("search-results").classList.remove("show");document.getElementById("search-input").value="";}
+function goToMarker(id){const m=markers.find(m=>m.id===id);if(!m)return;hideSearch();map.setView(toLL(m.x,m.z),1,{animate:true});setTimeout(()=>m._marker.openPopup(),400);}
+map.on("mousemove",e=>{const{x,z}=fromLL(e.latlng);document.getElementById("coords").textContent="X: "+x.toFixed(0)+"  Z: "+z.toFixed(0);});
+function adminLogin(){if(adminMode){exitAdmin();return;}if(adminToken){verifyToken();return;}document.getElementById("login-modal").classList.remove("hidden");setTimeout(()=>document.getElementById("pwd-input").focus(),100);}
+async function verifyToken(){try{const r=await fetch(API+"/api/auth/check",{headers:{"Authorization":"Bearer "+adminToken}});const d=await r.json();if(d.ok)enterAdmin();else{adminToken="";sessionStorage.removeItem("shelter_admin_token");document.getElementById("login-modal").classList.remove("hidden");}}catch(e){document.getElementById("login-modal").classList.remove("hidden");}}
+async function checkPwd(){const val=document.getElementById("pwd-input").value;document.getElementById("pwd-error").textContent="";try{const r=await fetch(API+"/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:val})});const d=await r.json();if(d.ok){adminToken=d.token;sessionStorage.setItem("shelter_admin_token",adminToken);document.getElementById("login-modal").classList.add("hidden");document.getElementById("pwd-input").value="";enterAdmin();}else{document.getElementById("pwd-error").textContent="✗ Неверный пароль";document.getElementById("pwd-input").value="";}}catch(e){document.getElementById("pwd-error").textContent="✗ Ошибка соединения";}}
+document.getElementById("login-modal").addEventListener("click",e=>{if(e.target===document.getElementById("login-modal")){document.getElementById("login-modal").classList.add("hidden");document.getElementById("pwd-input").value="";document.getElementById("pwd-error").textContent="";}});
+function enterAdmin(){adminMode=true;document.getElementById("admin-btn").classList.add("active");document.getElementById("admin-btn").textContent="&#9881; ВЫЙТИ";document.getElementById("admin-panel").classList.add("open");document.getElementById("map").classList.add("admin-mode");markers.forEach(m=>{m._marker.dragging.enable();m._marker.setPopupContent(makePopup(m,true));});map.on("click",onMapClick);toast("&#10003; Режим редактирования включён");}
+function exitAdmin(){adminMode=false;document.getElementById("admin-btn").classList.remove("active");document.getElementById("admin-btn").textContent="&#9881; ADMIN";document.getElementById("admin-panel").classList.remove("open");document.getElementById("map").classList.remove("admin-mode");markers.forEach(m=>{m._marker.dragging.disable();m._marker.setPopupContent(makePopup(m,false));});map.off("click",onMapClick);}
+function onMapClick(e){if(e.originalEvent.target.closest(".leaflet-marker-icon"))return;const{x,z}=fromLL(e.latlng);document.getElementById("ap-x").value=Math.round(x);document.getElementById("ap-z").value=Math.round(z);toast("X:"+Math.round(x)+" Z:"+Math.round(z));}
+function addMarkerFromForm(){const name=document.getElementById("ap-name").value.trim();const desc=document.getElementById("ap-desc").value.trim();const cat=document.getElementById("ap-cat").value;const x=parseFloat(document.getElementById("ap-x").value);const z=parseFloat(document.getElementById("ap-z").value);const sz=document.getElementById("ap-sz").checked;const szr=parseFloat(document.getElementById("ap-sz-r").value)||50;if(!name){toast("&#10007; Введи название!");return;}if(isNaN(x)||isNaN(z)){toast("&#10007; Кликни по карте");return;}const newM={id:"m"+(nextId++),text:name,desc,cat,x,z,sz,szr};addMarkerToMap(newM);if(adminMode){const obj=markers[markers.length-1];obj._marker.dragging.enable();obj._marker.setPopupContent(makePopup(obj,true));}document.getElementById("ap-name").value="";document.getElementById("ap-desc").value="";document.getElementById("ap-x").value="";document.getElementById("ap-z").value="";document.getElementById("ap-sz").checked=false;toast("&#10003; Добавлено: "+name);}
+async function saveToServer(){const data=markers.map(({id,text,desc,cat,x,z,sz,szr})=>({id,text,desc:desc||"",cat,x,z,sz,szr}));try{const r=await fetch(API+"/api/markers",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+adminToken},body:JSON.stringify(data)});const d=await r.json();if(d.ok)toast("&#128190; Сохранено на сервере!");else toast("&#10007; Ошибка сохранения",true);}catch(e){toast("&#10007; Ошибка соединения",true);}}
+async function resetMarkers(){if(!confirm("Перезагрузить маркеры с сервера?"))return;const data=await loadMarkers();renderAll(data);if(adminMode)markers.forEach(m=>{m._marker.dragging.enable();m._marker.setPopupContent(makePopup(m,true));});toast("&#8635; Маркеры перезагружены");}
+function toast(msg,err){const el=document.getElementById("ap-toast");el.textContent=msg;el.classList.toggle("err",!!err);el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),2500);}
+loadMarkers().then(data=>renderAll(data));
 </script>
 </body>
 </html>
