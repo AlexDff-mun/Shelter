@@ -546,8 +546,18 @@ footer{background:var(--bg2);border-top:1px solid rgba(204,31,31,0.1);padding:1.
 
 
 /* ── скрыть старые desktop ссылки, оставить только статус и кнопку подключиться ── */
-.topbar-links .tl:not(.primary),
-.topbar-links .server-addr { display:none !important; }
+/* На мобиле: скрыть ссылки и Steam auth из topbar */
+@media(max-width:900px) {
+  .topbar-links .tl:not(.primary),
+  .topbar-links .server-addr { display:none !important; }
+  .topbar-links .steam-auth { display:none !important; }
+}
+/* На десктопе: показать ссылки, скрыть Steam из бургера */
+@media(min-width:901px) {
+  .topbar-links .tl:not(.primary),
+  .topbar-links .server-addr { display:none !important; }
+  .mob-steam-auth { display:none !important; }
+}
 
 /* ══════════════════════════════════════
    MOBILE LAYOUT FIXES
