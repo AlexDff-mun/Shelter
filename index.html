@@ -523,13 +523,12 @@ a { color: inherit; text-decoration: none; }
 /* Плашка онлайна */
 .hero__stats {
   margin-top: 60px;
-  display: flex;
+  display: inline-flex;
   align-items: stretch;
   gap: 0;
   border: 1px solid var(--border);
-  width: fit-content;
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
 }
 .hero__stat {
   padding: 16px 28px;
@@ -659,6 +658,7 @@ a { color: inherit; text-decoration: none; }
   gap: 0;
   margin-bottom: 40px;
   border-bottom: 1px solid var(--border);
+  width: 100%;
 }
 .news__tab {
   font-family: 'Rajdhani', sans-serif;
@@ -1321,6 +1321,8 @@ a { color: inherit; text-decoration: none; }
   width: 100px; height: 100px;
   margin: 0 auto 14px;
   position: relative;
+  background: #000;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
 }
 .team-card__photo {
   width: 100%; height: 100%;
@@ -1328,22 +1330,11 @@ a { color: inherit; text-decoration: none; }
   border: 2px solid var(--border);
   clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
   transition: border-color 0.3s, filter 0.3s;
-  filter: grayscale(0.3) brightness(0.72);
+  /* mix-blend-mode: multiply убирает светлый фон фото, оставляет чёрный */
+  mix-blend-mode: multiply;
+  filter: brightness(0.95);
 }
-.team-card:hover .team-card__photo { border-color: var(--red); filter: grayscale(0) brightness(0.88); }
-/* Тёмный overlay — скрывает неровный фон фото */
-.team-card__photo-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(8,7,7,0.1) 0%, rgba(8,7,7,0.55) 100%),
-    radial-gradient(ellipse at center, transparent 35%, rgba(8,7,7,0.65) 100%);
-  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.team-card:hover .team-card__photo-wrap::after { opacity: 0.5; }
+.team-card:hover .team-card__photo { border-color: var(--red); filter: brightness(1.05); }
 .team-card__name {
   font-family: 'Rajdhani', sans-serif;
   font-size: 15px;
@@ -1691,8 +1682,10 @@ a { color: inherit; text-decoration: none; }
     flex: 0 0 auto;
     padding: 12px 16px;
     text-align: center;
-    min-width: 80px;
+    min-width: 75px;
+    border-right: 1px solid var(--border);
   }
+  .hero__stat:last-child { border-right: none; }
   .hero__stat-val { font-size: 20px; }
   .hero__stat-label { font-size: 9px; }
   .hero__restart { flex: 0 0 auto; padding: 12px 16px; }
@@ -1731,12 +1724,18 @@ a { color: inherit; text-decoration: none; }
   /* Hero */
   .hero__bg-text { display: none; }
   .hero__actions { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .hero__stats { flex-direction: column; }
 
   /* Новости */
-  .news__tabs { overflow-x: auto; scrollbar-width: none; }
-  .news__tabs::-webkit-scrollbar { display: none; }
-  .news__tab { padding: 10px 12px; white-space: nowrap; font-size: 12px; }
+  .news__tabs { overflow-x: visible; width: 100%; }
+  .news__tab {
+    flex: 1;
+    padding: 10px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    justify-content: center;
+    text-align: center;
+  }
+  .news__tab-count { display: none; }
 
   /* CTA */
   .cta-final__actions { flex-direction: column; align-items: center; }
