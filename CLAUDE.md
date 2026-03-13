@@ -154,7 +154,7 @@ POST /api/ticket       { name, topic, message, contact } → Discord webhook
 ## ✅ ЗАДАЧИ (приоритет)
 
 ### 🔴 Критично
-- [ ] **Сменить пароль на VPS** — текущий `shelter2024` утёк в публичный репо, нужно сменить:
+- [ ] **Сменить пароль на VPS** — текущий `` утёк в публичный репо, нужно сменить:
   ```bash
   ssh root@85.198.71.246
   cd /var/www/shelter-api
