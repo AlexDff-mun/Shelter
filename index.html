@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -47,16 +46,7 @@ body {
   line-height: 1.6;
 }
 
-/* Зернистая текстура поверх всего */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.4;
-}
+/* grain removed */
 
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
@@ -346,18 +336,54 @@ a { color: inherit; text-decoration: none; }
 /* Большой фоновый текст */
 .hero__bg-text {
   position: absolute;
-  right: -20px;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(100px, 15vw, 200px);
+  font-size: clamp(140px, 22vw, 320px);
   font-weight: 700;
-  color: rgba(204,31,31,0.04);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
   user-select: none;
   line-height: 1;
+  /* Обводка вместо заливки — выглядит более тактично */
+  -webkit-text-stroke: 1px rgba(204,31,31,0.12);
+  color: transparent;
+  /* Маска — исчезает сверху и снизу */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero__logo-block {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero__logo-glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(204,31,31,0.35) 0%, rgba(204,31,31,0.12) 40%, transparent 70%);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+.hero__logo-img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 20px rgba(204,31,31,0.6));
 }
 
 .hero__content {
@@ -877,14 +903,6 @@ a { color: inherit; text-decoration: none; }
    СОБЫТИЯ
 ============================ */
 .events { background: var(--bg); overflow: hidden; position: relative; }
-.events::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: repeating-linear-gradient(to bottom, var(--red) 0, var(--red) 8px, transparent 8px, transparent 16px);
-  opacity: 0.4;
-}
 .events__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -983,28 +1001,19 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   position: relative;
   overflow: hidden;
+  background: var(--bg2);
 }
-.map-preview__img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  opacity: 0.6;
-  filter: sepia(0.3) brightness(0.8);
-  display: block;
-}
-.map-preview__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(8,7,7,0.6) 0%, transparent 50%, rgba(8,7,7,0.8) 100%);
+.map-preview__inner {
+  padding: 48px 40px;
   display: flex;
-  align-items: flex-end;
-  padding: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
 }
-.map-preview__content { flex: 1; }
 .map-preview__stats {
   display: flex;
-  gap: 32px;
-  margin-bottom: 24px;
+  gap: 48px;
 }
 .map-stat {
   text-align: center;
@@ -1030,87 +1039,183 @@ a { color: inherit; text-decoration: none; }
    ГАЛЕРЕЯ
 ============================ */
 .gallery { background: var(--bg2); overflow: hidden; }
-.gallery__slider {
-  margin-top: 48px;
+.gallery__slider { margin-top: 40px; }
+
+/* Главный слайд */
+.gallery__main {
   position: relative;
-}
-.gallery__track {
-  display: flex;
-  gap: 2px;
+  width: 100%;
+  aspect-ratio: 16/7;
   overflow: hidden;
-}
-.gallery__slide {
-  flex: 0 0 calc(33.333% - 2px);
-  aspect-ratio: 16/10;
-  overflow: hidden;
-  position: relative;
   cursor: pointer;
+  background: var(--bg3);
 }
-.gallery__slide img {
+.gallery__main img {
   width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform 0.5s, filter 0.3s;
-  filter: brightness(0.7) saturate(0.8);
+  display: block;
+  transition: transform 0.4s;
 }
-.gallery__slide:hover img { transform: scale(1.05); filter: brightness(0.9) saturate(1); }
-.gallery__slide-caption {
+.gallery__main:hover img { transform: scale(1.02); }
+.gallery__main-caption {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  padding: 16px;
-  background: linear-gradient(to top, rgba(8,7,7,0.9), transparent);
+  padding: 20px 24px;
+  background: linear-gradient(to top, rgba(8,7,7,0.85), transparent);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  letter-spacing: 0.2em;
   color: var(--text-dim);
   text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 0.3s;
 }
-.gallery__slide:hover .gallery__slide-caption { opacity: 1; }
-.gallery__counter {
+.gallery__fullscreen-btn {
   position: absolute;
   top: 16px; right: 16px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  width: 40px; height: 40px;
+  background: rgba(8,7,7,0.7);
+  border: 1px solid var(--border);
   color: var(--text-dim);
-  background: rgba(8,7,7,0.8);
-  padding: 4px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  z-index: 2;
+}
+.gallery__fullscreen-btn:hover { border-color: var(--red); color: var(--red); }
+.gallery__arrow {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px;
+  background: rgba(8,7,7,0.7);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  z-index: 2;
+}
+.gallery__arrow--left { left: 16px; }
+.gallery__arrow--right { right: 16px; }
+.gallery__arrow:hover { background: var(--red); border-color: var(--red); }
+
+/* Миниатюры */
+.gallery__thumbs {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.gallery__thumbs::-webkit-scrollbar { display: none; }
+.gallery__thumb {
+  flex: 0 0 calc(11.11% - 4px);
+  min-width: 80px;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+  position: relative;
+}
+.gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.gallery__thumb.active,
+.gallery__thumb:hover { opacity: 1; }
+.gallery__thumb.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
 }
 
-.gallery__controls {
+.gallery__counter-row {
+  margin-top: 12px;
+  text-align: right;
+}
+
+/* Лайтбокс */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
 }
-.gallery__nav {
-  display: flex;
-  gap: 8px;
-}
-.gallery__btn {
-  width: 40px; height: 40px;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--text-dim);
+.lightbox.open { opacity: 1; pointer-events: all; }
+.lightbox__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(4,3,3,0.95);
   cursor: pointer;
-  font-size: 16px;
+}
+.lightbox__img-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 92vw;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lightbox__img-wrap img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+  border: 1px solid var(--border);
+}
+.lightbox__caption {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 12px;
+}
+.lightbox__close {
+  position: fixed;
+  top: 20px; right: 24px;
+  z-index: 2;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 40px; height: 40px;
+  font-size: 18px;
+  cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.2s, color 0.2s;
 }
-.gallery__btn:hover { border-color: var(--red); color: var(--red); }
-.gallery__dots {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.gallery__dot {
-  width: 20px; height: 2px;
-  background: var(--border);
+.lightbox__close:hover { border-color: var(--red); color: var(--red); }
+.lightbox__arrow {
+  position: fixed;
+  top: 50%; transform: translateY(-50%);
+  z-index: 2;
+  background: rgba(8,7,7,0.8);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 52px; height: 52px;
+  font-size: 28px;
   cursor: pointer;
-  transition: background 0.2s, width 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
 }
-.gallery__dot.active { background: var(--red); width: 40px; }
+.lightbox__arrow--left { left: 20px; }
+.lightbox__arrow--right { right: 20px; }
+.lightbox__arrow:hover { background: var(--red); border-color: var(--red); }
+.lightbox__counter {
+  position: fixed;
+  bottom: 24px; left: 50%; transform: translateX(-50%);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  z-index: 2;
+}
 
 /* ============================
    ПОЧЕМУ МЫ
@@ -1311,8 +1416,8 @@ a { color: inherit; text-decoration: none; }
 }
 .footer__inner {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 40px;
+  grid-template-columns: 280px 1fr 220px;
+  gap: 48px;
   align-items: start;
 }
 .footer__brand {}
@@ -1377,7 +1482,7 @@ a { color: inherit; text-decoration: none; }
 }
 .footer__nav-links a:hover { color: var(--red); }
 
-.footer__socials { text-align: right; }
+.footer__socials {}
 .footer__socials-title {
   font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
@@ -1389,7 +1494,7 @@ a { color: inherit; text-decoration: none; }
 .footer__social-links {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
 }
 .footer__social-link {
@@ -1403,19 +1508,22 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
   color: var(--text-dim);
   transition: color 0.2s;
-  flex-direction: row-reverse;
 }
 .footer__social-link:hover { color: var(--red); }
 .footer__social-icon {
   width: 32px; height: 32px;
   border: 1px solid var(--border);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  transition: border-color 0.2s;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
 }
-.footer__social-link:hover .footer__social-icon { border-color: var(--red); }
+.footer__social-link:hover .footer__social-icon { border-color: var(--red); color: var(--red); }
 
 .footer__bottom {
   margin-top: 40px;
@@ -1570,9 +1678,7 @@ a { color: inherit; text-decoration: none; }
   .team-card { flex: 0 0 130px; }
 
   .footer__inner { grid-template-columns: 1fr; text-align: center; gap: 32px; }
-  .footer__socials { text-align: center; }
   .footer__social-links { align-items: center; }
-  .footer__social-link { flex-direction: row; }
   .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
 
   .gallery__slide { flex: 0 0 85%; }
@@ -1588,14 +1694,12 @@ a { color: inherit; text-decoration: none; }
   .news__tab { padding: 10px 16px; white-space: nowrap; }
 }
 </style>
-
 </head>
 <body>
 
 <!-- ============================
      НАВИГАЦИЯ
 ============================ -->
-
 <nav class="nav" id="nav">
   <div class="container">
     <div class="nav__inner">
@@ -1604,49 +1708,45 @@ a { color: inherit; text-decoration: none; }
         <span class="nav__logo-text">Shelter <em>PVE</em></span>
       </a>
 
-```
-  <ul class="nav__links">
-    <li><a href="map.html">Карта</a></li>
-    <li><a href="mechanics.html">Механики</a></li>
-    <li><a href="#rules">Правила</a></li>
-    <li><a href="#team">Команда</a></li>
-    <li><a href="faq.html">FAQ</a></li>
-    <li><a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a></li>
-    <li><a href="https://shelter-games.ru/products" target="_blank">Магазин</a></li>
-  </ul>
+      <ul class="nav__links">
+        <li><a href="map.html">Карта</a></li>
+        <li><a href="mechanics.html">Механики</a></li>
+        <li><a href="#rules">Правила</a></li>
+        <li><a href="#team">Команда</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a></li>
+        <li><a href="https://shelter-games.ru/products" target="_blank">Магазин</a></li>
+      </ul>
 
-  <div class="nav__actions">
-    <div class="nav__server">
-      <span id="nav-players">–/–</span> онлайн
+      <div class="nav__actions">
+        <div class="nav__server">
+          <span id="nav-players">–/–</span> онлайн
+        </div>
+
+        <!-- Не авторизован -->
+        <a href="https://shelter-dayz.ru/api/steam/login" class="nav__steam" id="nav-login-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38l2.96-6.1A3.5 3.5 0 0115.5 12a3.5 3.5 0 01-3.5 3.5 3.5 3.5 0 01-3.5-3.5H4.5C4.5 16.64 7.86 20 12 20s7.5-3.36 7.5-7.5S16.14 5 12 5a7.47 7.47 0 00-5.3 2.2l-4.38-1.8A12 12 0 0112 0z"/></svg>
+          Войти
+        </a>
+
+        <!-- Авторизован (скрыто по умолчанию) -->
+        <div class="nav__profile" id="nav-profile" style="display:none">
+          <img src="" alt="" class="nav__avatar" id="nav-avatar">
+          <span class="nav__username" id="nav-username"></span>
+          <button class="nav__logout" id="nav-logout">Выйти</button>
+        </div>
+
+        <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="nav__connect">⚡ Играть</a>
+
+        <button class="nav__burger" id="burger" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
-
-    <!-- Не авторизован -->
-    <a href="https://shelter-dayz.ru/api/steam/login" class="nav__steam" id="nav-login-btn">
-      <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38l2.96-6.1A3.5 3.5 0 0115.5 12a3.5 3.5 0 01-3.5 3.5 3.5 3.5 0 01-3.5-3.5H4.5C4.5 16.64 7.86 20 12 20s7.5-3.36 7.5-7.5S16.14 5 12 5a7.47 7.47 0 00-5.3 2.2l-4.38-1.8A12 12 0 0112 0z"/></svg>
-      Войти
-    </a>
-
-    <!-- Авторизован (скрыто по умолчанию) -->
-    <div class="nav__profile" id="nav-profile" style="display:none">
-      <img src="" alt="" class="nav__avatar" id="nav-avatar">
-      <span class="nav__username" id="nav-username"></span>
-      <button class="nav__logout" id="nav-logout">Выйти</button>
-    </div>
-
-    <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="nav__connect">⚡ Играть</a>
-
-    <button class="nav__burger" id="burger" aria-label="Меню">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</div>
-```
-
   </div>
 </nav>
 
 <!-- Мобильное меню -->
-
 <div class="nav__mobile" id="mobile-menu">
   <a href="map.html">Карта</a>
   <a href="mechanics.html">Механики</a>
@@ -1664,61 +1764,62 @@ a { color: inherit; text-decoration: none; }
 <!-- ============================
      HERO
 ============================ -->
-
 <section class="hero" id="hero">
   <div class="hero__grid"></div>
   <div class="hero__diag"></div>
   <div class="hero__bg-text">SURVIVE</div>
 
   <div class="container hero__content">
+    <div class="hero__logo-block">
+      <div class="hero__logo-glow"></div>
+      <img src="images/SHL_PVE.png" alt="Shelter PVE" class="hero__logo-img" onerror="this.style.display='none';this.parentElement.querySelector('.hero__logo-glow').style.display='none'">
+    </div>
+
     <div class="hero__eyebrow">
       <span class="hero__eyebrow-line"></span>
       <span class="hero__eyebrow-text">DayZ · PVE · Chernarus+</span>
     </div>
 
-```
-<h1 class="hero__title">
-  Shelter<br>
-  <span class="hero__title-accent">PVE</span>
-  <span class="hero__title-sub">Выживание без правил войны</span>
-</h1>
+    <h1 class="hero__title">
+      Shelter<br>
+      <span class="hero__title-accent">PVE</span>
+      <span class="hero__title-sub">Выживание без правил войны</span>
+    </h1>
 
-<p class="hero__desc">Кастомный DayZ сервер с трейдерами, крафтом, радиацией и боевыми дронами. Исследуй Chernarus+ без угрозы от других игроков.</p>
+    <p class="hero__desc">Кастомный DayZ сервер с трейдерами, крафтом, радиацией и боевыми дронами. Исследуй Chernarus+ без угрозы от других игроков.</p>
 
-<div class="hero__actions">
-  <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn-primary" id="connect-btn">
-    ⚡ Подключиться
-  </a>
-  <a href="mechanics.html" class="btn-secondary">Механики</a>
-  <button class="hero__copy-ip" id="copy-ip-btn" title="Скопировать IP">
-    📋 217.168.247.192:2312
-  </button>
-  <button class="btn-secondary" id="how-to-connect" style="padding: 13px 14px;">?</button>
-</div>
-
-<div class="hero__stats">
-  <div class="hero__stat">
-    <span class="hero__stat-val online" id="players-count">–/–</span>
-    <span class="hero__stat-label">Игроков онлайн</span>
-  </div>
-  <div class="hero__stat">
-    <span class="hero__stat-val">50</span>
-    <span class="hero__stat-label">Слотов</span>
-  </div>
-  <div class="hero__stat">
-    <span class="hero__stat-val">PVE</span>
-    <span class="hero__stat-label">Режим</span>
-  </div>
-  <div class="hero__restart">
-    <div class="hero__restart-icon"></div>
-    <div>
-      <span class="hero__restart-time" id="restart-timer">--:--</span>
-      <span class="hero__restart-label">до рестарта</span>
+    <div class="hero__actions">
+      <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn-primary" id="connect-btn">
+        ⚡ Подключиться
+      </a>
+      <a href="mechanics.html" class="btn-secondary">Механики</a>
+      <button class="hero__copy-ip" id="copy-ip-btn" title="Скопировать IP">
+        📋 217.168.247.192:2312
+      </button>
+      <button class="btn-secondary" id="how-to-connect" style="padding: 13px 14px;">?</button>
     </div>
-  </div>
-</div>
-```
 
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-val online" id="players-count">–/–</span>
+        <span class="hero__stat-label">Игроков онлайн</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-val">50</span>
+        <span class="hero__stat-label">Слотов</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-val">PVE</span>
+        <span class="hero__stat-label">Режим</span>
+      </div>
+      <div class="hero__restart">
+        <div class="hero__restart-icon"></div>
+        <div>
+          <span class="hero__restart-time" id="restart-timer">--:--</span>
+          <span class="hero__restart-label">до рестарта</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="hero__socials">
@@ -1738,568 +1839,533 @@ a { color: inherit; text-decoration: none; }
 <!-- ============================
      НОВОСТИ
 ============================ -->
-
 <section class="news section" id="news">
   <div class="container">
     <div class="section-label">Жизнь сервера</div>
     <h2 class="section-title">Новости & <span>Обновления</span></h2>
 
-```
-<div class="news__tabs">
-  <button class="news__tab active" data-tab="news">
-    📰 Новости
-    <span class="news__tab-count" id="count-news">0</span>
-  </button>
-  <button class="news__tab" data-tab="server_update">
-    📋 Изменения
-    <span class="news__tab-count" id="count-update">0</span>
-  </button>
-  <button class="news__tab" data-tab="mod_update">
-    🔧 Обновления модов
-    <span class="news__tab-count" id="count-mods">0</span>
-  </button>
-</div>
+    <div class="news__tabs">
+      <button class="news__tab active" data-tab="news">
+        📰 Новости
+        <span class="news__tab-count" id="count-news">0</span>
+      </button>
+      <button class="news__tab" data-tab="server_update">
+        📋 Изменения
+        <span class="news__tab-count" id="count-update">0</span>
+      </button>
+      <button class="news__tab" data-tab="mod_update">
+        🔧 Обновления модов
+        <span class="news__tab-count" id="count-mods">0</span>
+      </button>
+    </div>
 
-<div class="news__panel active" id="panel-news">
-  <div class="news__grid" id="grid-news">
-    <div class="news__empty">
-      <div class="news__empty-icon">📰</div>
-      <div class="news__empty-text">Новостей пока нет</div>
+    <div class="news__panel active" id="panel-news">
+      <div class="news__grid" id="grid-news">
+        <div class="news__empty">
+          <div class="news__empty-icon">📰</div>
+          <div class="news__empty-text">Новостей пока нет</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="news__panel" id="panel-server_update">
-  <div class="news__grid" id="grid-update">
-    <div class="news__empty">
-      <div class="news__empty-icon">📋</div>
-      <div class="news__empty-text">Изменений пока нет</div>
+    <div class="news__panel" id="panel-server_update">
+      <div class="news__grid" id="grid-update">
+        <div class="news__empty">
+          <div class="news__empty-icon">📋</div>
+          <div class="news__empty-text">Изменений пока нет</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<div class="news__panel" id="panel-mod_update">
-  <div class="news__grid" id="grid-mods">
-    <div class="news__empty">
-      <div class="news__empty-icon">🔧</div>
-      <div class="news__empty-text">Обновлений модов пока нет</div>
+    <div class="news__panel" id="panel-mod_update">
+      <div class="news__grid" id="grid-mods">
+        <div class="news__empty">
+          <div class="news__empty-icon">🔧</div>
+          <div class="news__empty-text">Обновлений модов пока нет</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-```
-
   </div>
 </section>
 
 <!-- ============================
      О СЕРВЕРЕ
 ============================ -->
-
 <section class="features section" id="features">
   <div class="features__bg"></div>
   <div class="container">
     <div class="section-label">Исследование мира</div>
     <h2 class="section-title">Мир, который <span>вознаграждает</span></h2>
 
-```
-<div class="features__grid">
-  <div class="feature-card">
-    <div class="feature-card__num">// 01</div>
-    <span class="feature-card__icon">👕</span>
-    <h3 class="feature-card__title">Одежда</h3>
-    <p class="feature-card__desc">Шкафы, комоды, гардеробы — одежда там, где ей место. Никакого лута на земле.</p>
-    <div class="feature-card__corner">01</div>
-  </div>
-  <div class="feature-card">
-    <div class="feature-card__num">// 02</div>
-    <span class="feature-card__icon">🧰</span>
-    <h3 class="feature-card__title">Снаряжение</h3>
-    <p class="feature-card__desc">Контейнеры, ящики, тайники — инструменты спрятаны. Внимательность вознаграждается.</p>
-    <div class="feature-card__corner">02</div>
-  </div>
-  <div class="feature-card">
-    <div class="feature-card__num">// 03</div>
-    <span class="feature-card__icon">🥫</span>
-    <h3 class="feature-card__title">Провизия</h3>
-    <p class="feature-card__desc">Холодильники и продуктовые хранилища — источник питания для настоящего выживальщика.</p>
-    <div class="feature-card__corner">03</div>
-  </div>
-  <div class="feature-card">
-    <div class="feature-card__num">// 04</div>
-    <span class="feature-card__icon">📦</span>
-    <h3 class="feature-card__title">Тайники</h3>
-    <p class="feature-card__desc">Сундуки, рюкзаки, схроны — для тех, кто ищет. Лучшее не лежит на виду.</p>
-    <div class="feature-card__corner">04</div>
-  </div>
-</div>
-```
-
+    <div class="features__grid">
+      <div class="feature-card">
+        <div class="feature-card__num">// 01</div>
+        <span class="feature-card__icon">👕</span>
+        <h3 class="feature-card__title">Одежда</h3>
+        <p class="feature-card__desc">Шкафы, комоды, гардеробы — одежда там, где ей место. Никакого лута на земле.</p>
+        <div class="feature-card__corner">01</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__num">// 02</div>
+        <span class="feature-card__icon">🧰</span>
+        <h3 class="feature-card__title">Снаряжение</h3>
+        <p class="feature-card__desc">Контейнеры, ящики, тайники — инструменты спрятаны. Внимательность вознаграждается.</p>
+        <div class="feature-card__corner">02</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__num">// 03</div>
+        <span class="feature-card__icon">🥫</span>
+        <h3 class="feature-card__title">Провизия</h3>
+        <p class="feature-card__desc">Холодильники и продуктовые хранилища — источник питания для настоящего выживальщика.</p>
+        <div class="feature-card__corner">03</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__num">// 04</div>
+        <span class="feature-card__icon">📦</span>
+        <h3 class="feature-card__title">Тайники</h3>
+        <p class="feature-card__desc">Сундуки, рюкзаки, схроны — для тех, кто ищет. Лучшее не лежит на виду.</p>
+        <div class="feature-card__corner">04</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ============================
      МЕХАНИКИ
 ============================ -->
-
 <section class="mechanics section" id="mechanics">
   <div class="container">
     <div class="section-label">Производство</div>
     <h2 class="section-title">Механики <span>и крафт</span></h2>
 
-```
-<div class="mechanics__grid">
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">🚁</div>
-    <h3 class="mechanic-card__title">Боевые дроны</h3>
-    <p class="mechanic-card__desc">На военках патрулируют автономные дроны — засекают и преследуют. Зачистка требует тактики.</p>
-    <span class="mechanic-card__tag">Высокий риск</span>
-  </div>
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">☢️</div>
-    <h3 class="mechanic-card__title">Радиационные зоны</h3>
-    <p class="mechanic-card__desc">Вместо хим-зон — радиация. Лучший лут только внутри. Дозиметр и антирад обязательны.</p>
-    <span class="mechanic-card__tag">Дозиметр must</span>
-  </div>
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">🛒</div>
-    <h3 class="mechanic-card__title">Три трейдера</h3>
-    <p class="mechanic-card__desc">Лагерь выживших, Терминал, Егерь — каждый со своим ассортиментом и атмосферой.</p>
-    <span class="mechanic-card__tag">Торговля</span>
-  </div>
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">🔧</div>
-    <h3 class="mechanic-card__title">Верстак и крафт</h3>
-    <p class="mechanic-card__desc">Инженерный пост с верстаком — создавай предметы которых нет в луте. Рецепты, компоненты, уникальный результат.</p>
-    <span class="mechanic-card__tag">Уникальные предметы</span>
-  </div>
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">🏚️</div>
-    <h3 class="mechanic-card__title">Аванпосты</h3>
-    <p class="mechanic-card__desc">Укреплённые точки с AI-охраной по всей карте. Высокий риск — высокая награда.</p>
-    <span class="mechanic-card__tag">AI охрана</span>
-  </div>
-  <div class="mechanic-card">
-    <div class="mechanic-card__icon">🌿</div>
-    <h3 class="mechanic-card__title">Фермерство</h3>
-    <p class="mechanic-card__desc">Выращивай урожай, добывай руду. Пассивный доход и ресурсная база для крафта.</p>
-    <span class="mechanic-card__tag">Пассивный ресурс</span>
-  </div>
-</div>
+    <div class="mechanics__grid">
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">🚁</div>
+        <h3 class="mechanic-card__title">Боевые дроны</h3>
+        <p class="mechanic-card__desc">На военках патрулируют автономные дроны — засекают и преследуют. Зачистка требует тактики.</p>
+        <span class="mechanic-card__tag">Высокий риск</span>
+      </div>
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">☢️</div>
+        <h3 class="mechanic-card__title">Радиационные зоны</h3>
+        <p class="mechanic-card__desc">Вместо хим-зон — радиация. Лучший лут только внутри. Дозиметр и антирад обязательны.</p>
+        <span class="mechanic-card__tag">Дозиметр must</span>
+      </div>
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">🛒</div>
+        <h3 class="mechanic-card__title">Три трейдера</h3>
+        <p class="mechanic-card__desc">Лагерь выживших, Терминал, Егерь — каждый со своим ассортиментом и атмосферой.</p>
+        <span class="mechanic-card__tag">Торговля</span>
+      </div>
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">🔧</div>
+        <h3 class="mechanic-card__title">Верстак и крафт</h3>
+        <p class="mechanic-card__desc">Инженерный пост с верстаком — создавай предметы которых нет в луте. Рецепты, компоненты, уникальный результат.</p>
+        <span class="mechanic-card__tag">Уникальные предметы</span>
+      </div>
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">🏚️</div>
+        <h3 class="mechanic-card__title">Аванпосты</h3>
+        <p class="mechanic-card__desc">Укреплённые точки с AI-охраной по всей карте. Высокий риск — высокая награда.</p>
+        <span class="mechanic-card__tag">AI охрана</span>
+      </div>
+      <div class="mechanic-card">
+        <div class="mechanic-card__icon">🌿</div>
+        <h3 class="mechanic-card__title">Фермерство</h3>
+        <p class="mechanic-card__desc">Выращивай урожай, добывай руду. Пассивный доход и ресурсная база для крафта.</p>
+        <span class="mechanic-card__tag">Пассивный ресурс</span>
+      </div>
+    </div>
 
-<div class="mechanics__cta">
-  <a href="mechanics.html" class="btn-secondary">⚙ Все механики сервера →</a>
-</div>
-```
-
+    <div class="mechanics__cta">
+      <a href="mechanics.html" class="btn-secondary">⚙ Все механики сервера →</a>
+    </div>
   </div>
 </section>
 
 <!-- ============================
      СОБЫТИЯ
 ============================ -->
-
 <section class="events section">
   <div class="container">
     <div class="section-label">Динамический контент</div>
     <h2 class="section-title">Живые события — <span>адреналин и добыча</span></h2>
 
-```
-<div class="events__grid">
-  <div class="event-card">
-    <div class="event-card__icon">🚁</div>
-    <h3 class="event-card__title">Хеликраши</h3>
-    <p class="event-card__desc">Смотри, как падает сбитый вертолёт — и будь первым у обломков.</p>
-  </div>
-  <div class="event-card">
-    <div class="event-card__icon">🛸</div>
-    <h3 class="event-card__title">Дроны</h3>
-    <p class="event-card__desc">Враждебные или союзные? Идентифицируй угрозу и действуй первым.</p>
-  </div>
-  <div class="event-card">
-    <div class="event-card__icon">⛺</div>
-    <h3 class="event-card__title">Охотничьи лагеря</h3>
-    <p class="event-card__desc">Заброшенные стоянки с неожиданным лутом — всегда есть шанс.</p>
-  </div>
-  <div class="event-card">
-    <div class="event-card__icon">🏴</div>
-    <h3 class="event-card__title">Аванпосты</h3>
-    <p class="event-card__desc">Точки интереса, которые нужно зачистить. Тактика решает всё.</p>
-  </div>
-  <div class="event-card">
-    <div class="event-card__icon">🌾</div>
-    <h3 class="event-card__title">Фермерство</h3>
-    <p class="event-card__desc">Выращивай еду — обеспечь базу продовольствием надолго.</p>
-  </div>
-  <div class="event-card">
-    <div class="event-card__icon">⛏️</div>
-    <h3 class="event-card__title">Добыча руды</h3>
-    <p class="event-card__desc">Карьеры и металл — ресурсная база для системы крафта.</p>
-  </div>
-</div>
-```
-
+    <div class="events__grid">
+      <div class="event-card">
+        <div class="event-card__icon">🚁</div>
+        <h3 class="event-card__title">Хеликраши</h3>
+        <p class="event-card__desc">Смотри, как падает сбитый вертолёт — и будь первым у обломков.</p>
+      </div>
+      <div class="event-card">
+        <div class="event-card__icon">🛸</div>
+        <h3 class="event-card__title">Дроны</h3>
+        <p class="event-card__desc">Враждебные или союзные? Идентифицируй угрозу и действуй первым.</p>
+      </div>
+      <div class="event-card">
+        <div class="event-card__icon">⛺</div>
+        <h3 class="event-card__title">Охотничьи лагеря</h3>
+        <p class="event-card__desc">Заброшенные стоянки с неожиданным лутом — всегда есть шанс.</p>
+      </div>
+      <div class="event-card">
+        <div class="event-card__icon">🏴</div>
+        <h3 class="event-card__title">Аванпосты</h3>
+        <p class="event-card__desc">Точки интереса, которые нужно зачистить. Тактика решает всё.</p>
+      </div>
+      <div class="event-card">
+        <div class="event-card__icon">🌾</div>
+        <h3 class="event-card__title">Фермерство</h3>
+        <p class="event-card__desc">Выращивай еду — обеспечь базу продовольствием надолго.</p>
+      </div>
+      <div class="event-card">
+        <div class="event-card__icon">⛏️</div>
+        <h3 class="event-card__title">Добыча руды</h3>
+        <p class="event-card__desc">Карьеры и металл — ресурсная база для системы крафта.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ============================
      ОПАСНЫЕ ЗОНЫ
 ============================ -->
-
 <section class="danger section">
   <div class="container">
     <div class="section-label">Зоны повышенного риска</div>
     <h2 class="section-title">Опасность — <span>это возможность</span></h2>
 
-```
-<div class="danger__grid">
-  <div class="danger-card danger-card--rad">
-    <h3 class="danger-card__title">☢️ Радиационные зоны</h3>
-    <ul>
-      <li>Редкие ресурсы, которых нет нигде больше</li>
-      <li>Секреты только для подготовленных</li>
-      <li>Дозиметр и противогаз — обязательны</li>
-    </ul>
-  </div>
-  <div class="danger-card danger-card--bot">
-    <h3 class="danger-card__title">⚠️ Зоны с ботами</h3>
-    <ul>
-      <li>Территории повышенного риска</li>
-      <li>Интенсивные перестрелки — будь готов</li>
-      <li>Ценная добыча достаётся победителю</li>
-    </ul>
-  </div>
-  <div class="danger-card danger-card--zombie">
-    <div class="danger-card__icon">🧟</div>
-    <div>
-      <h3 class="danger-card__title">Заражённые — всегда рядом</h3>
-      <p style="font-size:14px; color:var(--text-dim); line-height:1.6">Используй перчатки при обыске, чтобы избежать заражения и порезов. Небрежность стоит жизни.</p>
+    <div class="danger__grid">
+      <div class="danger-card danger-card--rad">
+        <h3 class="danger-card__title">☢️ Радиационные зоны</h3>
+        <ul>
+          <li>Редкие ресурсы, которых нет нигде больше</li>
+          <li>Секреты только для подготовленных</li>
+          <li>Дозиметр и противогаз — обязательны</li>
+        </ul>
+      </div>
+      <div class="danger-card danger-card--bot">
+        <h3 class="danger-card__title">⚠️ Зоны с ботами</h3>
+        <ul>
+          <li>Территории повышенного риска</li>
+          <li>Интенсивные перестрелки — будь готов</li>
+          <li>Ценная добыча достаётся победителю</li>
+        </ul>
+      </div>
+      <div class="danger-card danger-card--zombie">
+        <div class="danger-card__icon">🧟</div>
+        <div>
+          <h3 class="danger-card__title">Заражённые — всегда рядом</h3>
+          <p style="font-size:14px; color:var(--text-dim); line-height:1.6">Используй перчатки при обыске, чтобы избежать заражения и порезов. Небрежность стоит жизни.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-```
-
   </div>
 </section>
 
 <!-- ============================
      КАРТА
 ============================ -->
-
 <section class="map-section section">
   <div class="container">
     <div class="section-label">Навигация</div>
     <h2 class="section-title">Карта <span>сервера</span></h2>
 
-```
-<div class="map-preview">
-  <img src="images/gallery/01_prostor.jpg" alt="Карта Chernarus" class="map-preview__img" id="map-bg">
-  <div class="map-preview__overlay">
-    <div class="map-preview__content">
-      <div class="map-preview__stats">
-        <div class="map-stat">
-          <span class="map-stat__val">3</span>
-          <span class="map-stat__label">Трейдера</span>
+    <div class="map-preview">
+      <div class="map-preview__inner">
+        <div class="map-preview__stats">
+          <div class="map-stat">
+            <span class="map-stat__val">3</span>
+            <span class="map-stat__label">Трейдера</span>
+          </div>
+          <div class="map-stat">
+            <span class="map-stat__val">2</span>
+            <span class="map-stat__label">Рад. зоны</span>
+          </div>
+          <div class="map-stat">
+            <span class="map-stat__val">4</span>
+            <span class="map-stat__label">Аванпоста</span>
+          </div>
+          <div class="map-stat">
+            <span class="map-stat__val">∞</span>
+            <span class="map-stat__label">Крашсайты</span>
+          </div>
         </div>
-        <div class="map-stat">
-          <span class="map-stat__val">2</span>
-          <span class="map-stat__label">Рад. зоны</span>
-        </div>
-        <div class="map-stat">
-          <span class="map-stat__val">4</span>
-          <span class="map-stat__label">Аванпоста</span>
-        </div>
-        <div class="map-stat">
-          <span class="map-stat__val">∞</span>
-          <span class="map-stat__label">Крашсайты</span>
-        </div>
+        <a href="map.html" class="btn-primary">🗺 Открыть интерактивную карту</a>
       </div>
-      <a href="map.html" class="btn-primary">🗺 Открыть интерактивную карту</a>
     </div>
-  </div>
-</div>
-```
-
   </div>
 </section>
 
 <!-- ============================
      ГАЛЕРЕЯ
 ============================ -->
-
 <section class="gallery section">
   <div class="container">
     <div class="section-label">Атмосфера</div>
     <h2 class="section-title">Скриншоты <span>сервера</span></h2>
-  </div>
 
-  <div class="container">
     <div class="gallery__slider">
-      <div class="gallery__track" id="gallery-track">
-        <div class="gallery__slide">
-          <img src="images/gallery/01_prostor.jpg" alt="Просторы Chernarus" loading="lazy">
-          <div class="gallery__slide-caption">Просторы Chernarus</div>
+      <!-- Главный слайд -->
+      <div class="gallery__main" id="gallery-main">
+        <img src="images/gallery/01_prostor.jpg" alt="Просторы Chernarus" id="gallery-main-img">
+        <div class="gallery__main-caption" id="gallery-main-caption">Просторы Chernarus</div>
+        <button class="gallery__fullscreen-btn" id="gallery-fullscreen" title="Открыть на весь экран">⛶</button>
+        <button class="gallery__arrow gallery__arrow--left" id="gallery-prev">‹</button>
+        <button class="gallery__arrow gallery__arrow--right" id="gallery-next">›</button>
+      </div>
+
+      <!-- Миниатюры -->
+      <div class="gallery__thumbs" id="gallery-thumbs">
+        <div class="gallery__thumb active" data-idx="0" data-src="images/gallery/01_prostor.jpg" data-caption="Просторы Chernarus">
+          <img src="images/gallery/01_prostor.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/02_rassvet.jpg" alt="Рассвет" loading="lazy">
-          <div class="gallery__slide-caption">Рассвет на сервере</div>
+        <div class="gallery__thumb" data-idx="1" data-src="images/gallery/02_rassvet.jpg" data-caption="Рассвет на сервере">
+          <img src="images/gallery/02_rassvet.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/03_nochnoy_patrul.jpg" alt="Ночной патруль" loading="lazy">
-          <div class="gallery__slide-caption">Ночной патруль</div>
+        <div class="gallery__thumb" data-idx="2" data-src="images/gallery/03_nochnoy_patrul.jpg" data-caption="Ночной патруль">
+          <img src="images/gallery/03_nochnoy_patrul.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/04_gorodskie_ruiny.jpg" alt="Городские руины" loading="lazy">
-          <div class="gallery__slide-caption">Городские руины</div>
+        <div class="gallery__thumb" data-idx="3" data-src="images/gallery/04_gorodskie_ruiny.jpg" data-caption="Городские руины">
+          <img src="images/gallery/04_gorodskie_ruiny.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/05_zakat.jpg" alt="Закат" loading="lazy">
-          <div class="gallery__slide-caption">Закат над лесом</div>
+        <div class="gallery__thumb" data-idx="4" data-src="images/gallery/05_zakat.jpg" data-caption="Закат над лесом">
+          <img src="images/gallery/05_zakat.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/06_ohota.jpg" alt="Охота" loading="lazy">
-          <div class="gallery__slide-caption">Охотничий лагерь</div>
+        <div class="gallery__thumb" data-idx="5" data-src="images/gallery/06_ohota.jpg" data-caption="Охотничий лагерь">
+          <img src="images/gallery/06_ohota.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/07_avanpost.jpg" alt="Аванпост" loading="lazy">
-          <div class="gallery__slide-caption">Аванпост</div>
+        <div class="gallery__thumb" data-idx="6" data-src="images/gallery/07_avanpost.jpg" data-caption="Аванпост">
+          <img src="images/gallery/07_avanpost.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/08_lesnye_dali.jpg" alt="Лес" loading="lazy">
-          <div class="gallery__slide-caption">Лесные дали</div>
+        <div class="gallery__thumb" data-idx="7" data-src="images/gallery/08_lesnye_dali.jpg" data-caption="Лесные дали">
+          <img src="images/gallery/08_lesnye_dali.jpg" alt="" loading="lazy">
         </div>
-        <div class="gallery__slide">
-          <img src="images/gallery/09_snaryazhenie.jpg" alt="Снаряжение" loading="lazy">
-          <div class="gallery__slide-caption">Снаряжение выживших</div>
+        <div class="gallery__thumb" data-idx="8" data-src="images/gallery/09_snaryazhenie.jpg" data-caption="Снаряжение выживших">
+          <img src="images/gallery/09_snaryazhenie.jpg" alt="" loading="lazy">
         </div>
       </div>
 
-```
-  <div class="gallery__controls">
-    <div class="gallery__nav">
-      <button class="gallery__btn" id="gallery-prev">‹</button>
-      <button class="gallery__btn" id="gallery-next">›</button>
+      <div class="gallery__counter-row">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)">
+          <span id="gallery-current">01</span> / 09
+        </span>
+      </div>
     </div>
-    <div class="gallery__dots" id="gallery-dots"></div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim)">
-      <span id="gallery-current">01</span> / <span id="gallery-total">09</span>
-    </div>
-  </div>
-</div>
-```
-
   </div>
 </section>
+
+<!-- Лайтбокс -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox__overlay" id="lightbox-overlay"></div>
+  <button class="lightbox__close" id="lightbox-close">✕</button>
+  <button class="lightbox__arrow lightbox__arrow--left" id="lightbox-prev">‹</button>
+  <button class="lightbox__arrow lightbox__arrow--right" id="lightbox-next">›</button>
+  <div class="lightbox__img-wrap">
+    <img src="" alt="" id="lightbox-img">
+    <div class="lightbox__caption" id="lightbox-caption"></div>
+  </div>
+  <div class="lightbox__counter">
+    <span id="lightbox-current">01</span> / 09
+  </div>
+</div>
 
 <!-- ============================
      ПОЧЕМУ МЫ
 ============================ -->
-
 <section class="why section">
   <div class="container">
     <div class="section-label">Для кого этот сервер</div>
     <h2 class="section-title">Почему <span>Shelter PVE</span></h2>
 
-```
-<div class="why__grid">
-  <div class="why-card">
-    <div class="why-card__num">01</div>
-    <div class="why-card__icon">⚙️</div>
-    <h3 class="why-card__title">Глубокий геймплей</h3>
-    <p class="why-card__desc">Кастомный крафт, уникальные трейдеры, дроны, радиация — каждая сессия непохожа на предыдущую. Здесь есть чем заняться и через 100 часов.</p>
-  </div>
-  <div class="why-card">
-    <div class="why-card__num">02</div>
-    <div class="why-card__icon">🤝</div>
-    <h3 class="why-card__title">Без токсичности</h3>
-    <p class="why-card__desc">PVE формат — никто не убьёт тебя при выходе из базы. Мы строим сообщество где помогают, а не грифят. Это другой DayZ.</p>
-  </div>
-  <div class="why-card">
-    <div class="why-card__num">03</div>
-    <div class="why-card__icon">🗺️</div>
-    <h3 class="why-card__title">Живой мир</h3>
-    <p class="why-card__desc">Аванпосты, охотничьи лагеря, крашсайты вертолётов, радиационные зоны — карта Chernarus+ постоянно удивляет. Ищи, исследуй, находи.</p>
-  </div>
-  <div class="why-card">
-    <div class="why-card__num">04</div>
-    <div class="why-card__icon">🛡️</div>
-    <h3 class="why-card__title">Активная администрация</h3>
-    <p class="why-card__desc">Тикеты обрабатываются быстро, ивенты проводятся регулярно, сервер развивается. Мы здесь не только чтобы запустить — а чтобы поддерживать.</p>
-  </div>
-</div>
-```
-
+    <div class="why__grid">
+      <div class="why-card">
+        <div class="why-card__num">01</div>
+        <div class="why-card__icon">⚙️</div>
+        <h3 class="why-card__title">Глубокий геймплей</h3>
+        <p class="why-card__desc">Кастомный крафт, уникальные трейдеры, дроны, радиация — каждая сессия непохожа на предыдущую. Здесь есть чем заняться и через 100 часов.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__num">02</div>
+        <div class="why-card__icon">🤝</div>
+        <h3 class="why-card__title">Без токсичности</h3>
+        <p class="why-card__desc">PVE формат — никто не убьёт тебя при выходе из базы. Мы строим сообщество где помогают, а не грифят. Это другой DayZ.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__num">03</div>
+        <div class="why-card__icon">🗺️</div>
+        <h3 class="why-card__title">Живой мир</h3>
+        <p class="why-card__desc">Аванпосты, охотничьи лагеря, крашсайты вертолётов, радиационные зоны — карта Chernarus+ постоянно удивляет. Ищи, исследуй, находи.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__num">04</div>
+        <div class="why-card__icon">🛡️</div>
+        <h3 class="why-card__title">Активная администрация</h3>
+        <p class="why-card__desc">Тикеты обрабатываются быстро, ивенты проводятся регулярно, сервер развивается. Мы здесь не только чтобы запустить — а чтобы поддерживать.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ============================
      ПРАВИЛА
 ============================ -->
-
 <section class="rules section" id="rules">
   <div class="container">
     <div class="section-label">Кодекс выживших</div>
     <h2 class="section-title">Правила <span>сервера</span></h2>
 
-```
-<div class="rules__grid">
-  <div class="rule-card">
-    <h3 class="rule-card__title">⚔ PVE — Главное</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Убийство, грабёж, рейды баз</span>
+    <div class="rules__grid">
+      <div class="rule-card">
+        <h3 class="rule-card__title">⚔ PVE — Главное</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Убийство, грабёж, рейды баз</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Порча чужого имущества</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Связывание и гриф в любой форме</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3 class="rule-card__title">🖥 Читы и баги</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Читы, макросы, сторонние программы</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Использование багов и эксплойтов</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
+          <span class="rule-text">Намеренная перегрузка сервера</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3 class="rule-card__title">🗣 Поведение</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--warn">ВАРН</span>
+          <span class="rule-text">Оскорбления, хамство, троллинг</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">БАН</span>
+          <span class="rule-text">Дискриминация и пропаганда</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--ban">БАН</span>
+          <span class="rule-text">Реклама и распространение лжи</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3 class="rule-card__title">🎫 Тикеты</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Тикет из игры — <strong>Ctrl+9</strong></span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Жалобы — только с видеозаписью</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Восстановление — только в день потери</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3 class="rule-card__title">🚗 Транспорт</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Брошенный ТС эвакуируется через <strong>4 ч</strong></span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--warn">ВАРН</span>
+          <span class="rule-text">Транспорт на дорогах и проездах</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Незапертый ТС — ответственность игрока</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3 class="rule-card__title">📋 Общее</h3>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Вход = согласие с правилами</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Решения администрации <strong>окончательны</strong></span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-badge rule-badge--info">INFO</span>
+          <span class="rule-text">Правила могут меняться без уведомления</span>
+        </div>
+      </div>
     </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Порча чужого имущества</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Связывание и гриф в любой форме</span>
-    </div>
-  </div>
-  <div class="rule-card">
-    <h3 class="rule-card__title">🖥 Читы и баги</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Читы, макросы, сторонние программы</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Использование багов и эксплойтов</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">ПЕРМ БАН</span>
-      <span class="rule-text">Намеренная перегрузка сервера</span>
-    </div>
-  </div>
-  <div class="rule-card">
-    <h3 class="rule-card__title">🗣 Поведение</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--warn">ВАРН</span>
-      <span class="rule-text">Оскорбления, хамство, троллинг</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">БАН</span>
-      <span class="rule-text">Дискриминация и пропаганда</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--ban">БАН</span>
-      <span class="rule-text">Реклама и распространение лжи</span>
-    </div>
-  </div>
-  <div class="rule-card">
-    <h3 class="rule-card__title">🎫 Тикеты</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Тикет из игры — <strong>Ctrl+9</strong></span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Жалобы — только с видеозаписью</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Восстановление — только в день потери</span>
-    </div>
-  </div>
-  <div class="rule-card">
-    <h3 class="rule-card__title">🚗 Транспорт</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Брошенный ТС эвакуируется через <strong>4 ч</strong></span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--warn">ВАРН</span>
-      <span class="rule-text">Транспорт на дорогах и проездах</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Незапертый ТС — ответственность игрока</span>
-    </div>
-  </div>
-  <div class="rule-card">
-    <h3 class="rule-card__title">📋 Общее</h3>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Вход = согласие с правилами</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Решения администрации <strong>окончательны</strong></span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-badge rule-badge--info">INFO</span>
-      <span class="rule-text">Правила могут меняться без уведомления</span>
-    </div>
-  </div>
-</div>
 
-<div class="rules__cta">
-  <a href="rules.html" class="btn-secondary">📄 Читать полные правила →</a>
-</div>
-```
-
+    <div class="rules__cta">
+      <a href="rules.html" class="btn-secondary">📄 Читать полные правила →</a>
+    </div>
   </div>
 </section>
 
 <!-- ============================
      КОМАНДА
 ============================ -->
-
 <section class="team section" id="team">
   <div class="container">
     <div class="section-label">Команда</div>
     <h2 class="section-title">Администрация <span>сервера</span></h2>
 
-```
-<div class="team__grid">
-  <div class="team-card">
-    <div class="team-card__photo-wrap">
-      <img src="images/admins/Bad_Johnny.jpg" alt="Bad_Johnny" class="team-card__photo">
+    <div class="team__grid">
+      <div class="team-card">
+        <div class="team-card__photo-wrap">
+          <img src="images/admins/Bad_Johnny.jpg" alt="Bad_Johnny" class="team-card__photo">
+        </div>
+        <div class="team-card__name">Bad_Johnny</div>
+        <div class="team-card__role">Владелец</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo-wrap">
+          <img src="images/admins/Gyrza.jpg" alt="Gyrza" class="team-card__photo">
+        </div>
+        <div class="team-card__name">Gyrza</div>
+        <div class="team-card__role">Владелец</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo-wrap">
+          <img src="images/admins/Molchan.jpg" alt="Molchan" class="team-card__photo">
+        </div>
+        <div class="team-card__name">Molchan</div>
+        <div class="team-card__role">Владелец</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo-wrap">
+          <img src="images/admins/Gambit.jpg" alt="Gambit" class="team-card__photo">
+        </div>
+        <div class="team-card__name">Gambit</div>
+        <div class="team-card__role">Мод / Администратор</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo-wrap">
+          <img src="images/admins/42Pensa.jpg" alt="_42Pensa_" class="team-card__photo">
+        </div>
+        <div class="team-card__name">_42Pensa_</div>
+        <div class="team-card__role">Мод / Администратор</div>
+      </div>
     </div>
-    <div class="team-card__name">Bad_Johnny</div>
-    <div class="team-card__role">Владелец</div>
-  </div>
-  <div class="team-card">
-    <div class="team-card__photo-wrap">
-      <img src="images/admins/Gyrza.jpg" alt="Gyrza" class="team-card__photo">
-    </div>
-    <div class="team-card__name">Gyrza</div>
-    <div class="team-card__role">Владелец</div>
-  </div>
-  <div class="team-card">
-    <div class="team-card__photo-wrap">
-      <img src="images/admins/Molchan.jpg" alt="Molchan" class="team-card__photo">
-    </div>
-    <div class="team-card__name">Molchan</div>
-    <div class="team-card__role">Владелец</div>
-  </div>
-  <div class="team-card">
-    <div class="team-card__photo-wrap">
-      <img src="images/admins/Gambit.jpg" alt="Gambit" class="team-card__photo">
-    </div>
-    <div class="team-card__name">Gambit</div>
-    <div class="team-card__role">Мод / Администратор</div>
-  </div>
-  <div class="team-card">
-    <div class="team-card__photo-wrap">
-      <img src="images/admins/42Pensa.jpg" alt="_42Pensa_" class="team-card__photo">
-    </div>
-    <div class="team-card__name">_42Pensa_</div>
-    <div class="team-card__role">Мод / Администратор</div>
-  </div>
-</div>
 
-<p class="team__contact">
-  Есть вопрос или проблема? Пиши в <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> — команда всегда на связи
-</p>
-```
-
+    <p class="team__contact">
+      Есть вопрос или проблема? Пиши в <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> — команда всегда на связи
+    </p>
   </div>
 </section>
 
 <!-- ============================
      CTA ФИНАЛ
 ============================ -->
-
 <section class="cta-final section">
   <div class="cta-final__bg"></div>
   <div class="container">
@@ -2317,7 +2383,6 @@ a { color: inherit; text-decoration: none; }
 <!-- ============================
      FOOTER
 ============================ -->
-
 <footer class="footer">
   <div class="container">
     <div class="footer__inner">
@@ -2330,69 +2395,64 @@ a { color: inherit; text-decoration: none; }
         <button class="footer__ip" id="footer-copy-ip">📋 217.168.247.192:2312</button>
       </div>
 
-```
-  <nav class="footer__nav">
-    <div class="footer__nav-title">Навигация</div>
-    <ul class="footer__nav-links">
-      <li><a href="map.html">Карта</a></li>
-      <li><a href="mechanics.html">Механики</a></li>
-      <li><a href="craft.html">Крафт</a></li>
-      <li><a href="rules.html">Правила</a></li>
-      <li><a href="faq.html">FAQ</a></li>
-      <li><a href="admin.html">Админ-панель</a></li>
-    </ul>
-  </nav>
+      <nav class="footer__nav">
+        <div class="footer__nav-title">Навигация</div>
+        <ul class="footer__nav-links">
+          <li><a href="map.html">Карта</a></li>
+          <li><a href="mechanics.html">Механики</a></li>
+          <li><a href="craft.html">Крафт</a></li>
+          <li><a href="rules.html">Правила</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="admin.html">Админ-панель</a></li>
+        </ul>
+      </nav>
 
-  <div class="footer__socials">
-    <div class="footer__socials-title">Сообщество</div>
-    <div class="footer__social-links">
-      <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="footer__social-link">
-        Discord
-        <span class="footer__social-icon">💬</span>
-      </a>
-      <a href="https://t.me/ShelterPVE" target="_blank" class="footer__social-link">
-        Telegram
-        <span class="footer__social-icon">✈️</span>
-      </a>
-      <a href="https://shelter-games.ru/products" target="_blank" class="footer__social-link">
-        Магазин
-        <span class="footer__social-icon">🛒</span>
-      </a>
-      <a href="https://wargm.ru/server/66288" target="_blank" class="footer__social-link">
-        WARGM
-        <span class="footer__social-icon">🎮</span>
-      </a>
-      <a href="https://www.battlemetrics.com/servers/dayz/37659741" target="_blank" class="footer__social-link">
-        BattleMetrics
-        <span class="footer__social-icon">📊</span>
-      </a>
+      <div class="footer__socials">
+        <div class="footer__socials-title">Сообщество</div>
+        <div class="footer__social-links">
+          <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon footer__social-icon--dc">DC</span>
+            Discord
+          </a>
+          <a href="https://t.me/ShelterPVE" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon footer__social-icon--tg">TG</span>
+            Telegram
+          </a>
+          <a href="https://shelter-games.ru/products" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon footer__social-icon--shop">★</span>
+            Магазин
+          </a>
+          <a href="https://wargm.ru/server/66288" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon footer__social-icon--wg">WG</span>
+            WARGM
+          </a>
+          <a href="https://www.battlemetrics.com/servers/dayz/37659741" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon footer__social-icon--bm">BM</span>
+            BattleMetrics
+          </a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="footer__bottom">
-  <div class="footer__copy">© 2025 Shelter PVE. Все права защищены.</div>
-  <div class="footer__links">
-    <a href="rules.html">Правила</a>
-    <a href="faq.html">FAQ</a>
-    <a href="https://discord.gg/4EWuqwfBu" target="_blank">Поддержка</a>
-  </div>
-</div>
-```
-
+    <div class="footer__bottom">
+      <div class="footer__copy">© 2025 Shelter PVE. Все права защищены.</div>
+      <div class="footer__links">
+        <a href="rules.html">Правила</a>
+        <a href="faq.html">FAQ</a>
+        <a href="https://discord.gg/4EWuqwfBu" target="_blank">Поддержка</a>
+      </div>
+    </div>
   </div>
 </footer>
 
 <!-- ============================
      ТОСТ
 ============================ -->
-
 <div class="toast" id="toast"></div>
 
 <!-- ============================
      МОДАЛКА "Как подключиться"
 ============================ -->
-
 <div class="modal-overlay" id="modal-how">
   <div class="modal">
     <button class="modal__close" id="modal-close">✕</button>
@@ -2419,7 +2479,6 @@ a { color: inherit; text-decoration: none; }
 <!-- ============================
      JAVASCRIPT
 ============================ -->
-
 <script>
 const API = 'https://shelter-dayz.ru/api';
 
@@ -2603,53 +2662,97 @@ document.querySelectorAll('.news__tab').forEach(tab => {
 
 // ---- Галерея ----
 (function() {
-  const track = document.getElementById('gallery-track');
-  const dotsEl = document.getElementById('gallery-dots');
+  const thumbs = document.querySelectorAll('.gallery__thumb');
+  const mainImg = document.getElementById('gallery-main-img');
+  const mainCaption = document.getElementById('gallery-main-caption');
   const currentEl = document.getElementById('gallery-current');
-  const slides = track.querySelectorAll('.gallery__slide');
-  const total = slides.length;
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-caption');
+  const lbCurrent = document.getElementById('lightbox-current');
   let current = 0;
-  let perView = window.innerWidth < 768 ? 1 : 3;
 
-  document.getElementById('gallery-total').textContent = String(total).padStart(2, '0');
-
-  // Создать точки
-  const numDots = Math.ceil(total / perView);
-  for (let i = 0; i < numDots; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'gallery__dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => goTo(i * perView));
-    dotsEl.appendChild(dot);
-  }
+  const slides = Array.from(thumbs).map(t => ({
+    src: t.dataset.src,
+    caption: t.dataset.caption
+  }));
 
   function goTo(idx) {
-    current = Math.max(0, Math.min(idx, total - perView));
-    const slideW = slides[0].offsetWidth + 2;
-    track.style.transform = `translateX(-${current * slideW}px)`;
-    track.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
-    currentEl.textContent = String(current + 1).padStart(2, '0');
-    dotsEl.querySelectorAll('.gallery__dot').forEach((d, i) => {
-      d.classList.toggle('active', i === Math.floor(current / perView));
-    });
+    current = (idx + slides.length) % slides.length;
+    mainImg.style.opacity = '0';
+    setTimeout(() => {
+      mainImg.src = slides[current].src;
+      mainImg.onload = () => { mainImg.style.opacity = '1'; };
+      mainCaption.textContent = slides[current].caption;
+      currentEl.textContent = String(current + 1).padStart(2, '0');
+      thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+      // Прокрутить thumb в видимость
+      thumbs[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }, 150);
   }
 
-  document.getElementById('gallery-prev')?.addEventListener('click', () => goTo(current - perView));
-  document.getElementById('gallery-next')?.addEventListener('click', () => goTo(current + perView));
+  mainImg.style.transition = 'opacity 0.15s';
 
-  // Свайп
+  // Клики по миниатюрам
+  thumbs.forEach((t, i) => t.addEventListener('click', () => goTo(i)));
+
+  // Стрелки слайдера
+  document.getElementById('gallery-prev')?.addEventListener('click', () => goTo(current - 1));
+  document.getElementById('gallery-next')?.addEventListener('click', () => goTo(current + 1));
+
+  // Свайп на главном слайде
   let startX = 0;
-  track.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
-  track.addEventListener('touchend', e => {
+  const mainEl = document.getElementById('gallery-main');
+  mainEl.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
+  mainEl.addEventListener('touchend', e => {
     const diff = startX - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
   });
 
-  window.addEventListener('resize', () => {
-    perView = window.innerWidth < 768 ? 1 : 3;
-    goTo(0);
+  // Лайтбокс — открыть
+  function openLightbox(idx) {
+    current = idx;
+    lbImg.src = slides[current].src;
+    lbCaption.textContent = slides[current].caption;
+    lbCurrent.textContent = String(current + 1).padStart(2, '0');
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function lbGoTo(idx) {
+    current = (idx + slides.length) % slides.length;
+    lbImg.style.opacity = '0';
+    setTimeout(() => {
+      lbImg.src = slides[current].src;
+      lbImg.onload = () => { lbImg.style.opacity = '1'; };
+      lbCaption.textContent = slides[current].caption;
+      lbCurrent.textContent = String(current + 1).padStart(2, '0');
+    }, 150);
+  }
+  lbImg.style.transition = 'opacity 0.15s';
+
+  document.getElementById('gallery-fullscreen')?.addEventListener('click', () => openLightbox(current));
+  mainEl.addEventListener('click', e => {
+    if (!e.target.closest('.gallery__arrow') && !e.target.closest('.gallery__fullscreen-btn')) openLightbox(current);
+  });
+  document.getElementById('lightbox-close')?.addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-overlay')?.addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-prev')?.addEventListener('click', () => lbGoTo(current - 1));
+  document.getElementById('lightbox-next')?.addEventListener('click', () => lbGoTo(current + 1));
+
+  // Клавиши
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') lbGoTo(current - 1);
+    if (e.key === 'ArrowRight') lbGoTo(current + 1);
+    if (e.key === 'Escape') closeLightbox();
   });
 })();
 </script>
-
 </body>
 </html>
