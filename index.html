@@ -380,6 +380,10 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
 }
+/* Если логотип не грузится — скрыть весь блок */
+.hero__logo-block:has(img[style*="display: none"]) {
+  display: none;
+}
 .hero__logo-glow {
   position: absolute;
   inset: -30px;
@@ -525,6 +529,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   width: fit-content;
   overflow: hidden;
+  max-width: 100%;
 }
 .hero__stat {
   padding: 16px 28px;
@@ -1323,9 +1328,22 @@ a { color: inherit; text-decoration: none; }
   border: 2px solid var(--border);
   clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
   transition: border-color 0.3s, filter 0.3s;
-  filter: grayscale(0.3);
+  filter: grayscale(0.3) brightness(0.72);
 }
-.team-card:hover .team-card__photo { border-color: var(--red); filter: grayscale(0); }
+.team-card:hover .team-card__photo { border-color: var(--red); filter: grayscale(0) brightness(0.88); }
+/* Тёмный overlay — скрывает неровный фон фото */
+.team-card__photo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(8,7,7,0.1) 0%, rgba(8,7,7,0.55) 100%),
+    radial-gradient(ellipse at center, transparent 35%, rgba(8,7,7,0.65) 100%);
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.team-card:hover .team-card__photo-wrap::after { opacity: 0.5; }
 .team-card__name {
   font-family: 'Rajdhani', sans-serif;
   font-size: 15px;
@@ -1659,9 +1677,26 @@ a { color: inherit; text-decoration: none; }
   .hero__logo-block { width: 130px; height: 130px; }
   .hero__logo-img { width: 120px; height: 120px; }
   .hero__title { font-size: clamp(42px, 11vw, 72px); }
-  .hero__stats { flex-direction: column; gap: 0; width: 100%; }
-  .hero__stat { padding: 12px 20px; text-align: center; }
-  .hero__restart { padding: 12px 20px; justify-content: center; }
+  .hero__stats {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    width: 100%;
+    max-width: 100%;
+  }
+  .hero__stats::-webkit-scrollbar { display: none; }
+  .hero__stat {
+    flex: 0 0 auto;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 80px;
+  }
+  .hero__stat-val { font-size: 20px; }
+  .hero__stat-label { font-size: 9px; }
+  .hero__restart { flex: 0 0 auto; padding: 12px 16px; }
+  .hero__restart-time { font-size: 16px; }
 
   /* Секции */
   .features__grid { grid-template-columns: 1fr; }
@@ -1685,6 +1720,11 @@ a { color: inherit; text-decoration: none; }
   .footer__social-links { align-items: center; }
   .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
   .footer__ip { display: inline-block; }
+
+  /* Скрыть декоративные элементы */
+  .hero__scroll { display: none; }
+  .hero__socials { display: none; }
+  .hero__bg-text { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -1694,8 +1734,9 @@ a { color: inherit; text-decoration: none; }
   .hero__stats { flex-direction: column; }
 
   /* Новости */
-  .news__tabs { overflow-x: auto; }
-  .news__tab { padding: 10px 16px; white-space: nowrap; }
+  .news__tabs { overflow-x: auto; scrollbar-width: none; }
+  .news__tabs::-webkit-scrollbar { display: none; }
+  .news__tab { padding: 10px 12px; white-space: nowrap; font-size: 12px; }
 
   /* CTA */
   .cta-final__actions { flex-direction: column; align-items: center; }
@@ -1765,7 +1806,7 @@ a { color: inherit; text-decoration: none; }
   <a href="https://t.me/ShelterPVE" target="_blank">Telegram</a>
   <a href="https://shelter-games.ru/products" target="_blank">Магазин</a>
   <div class="nav__mobile-divider"></div>
-  <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" style="color:var(--ember)">⚡ Подключиться</a>
+  <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" style="color:var(--ember)">Подключиться</a>
 </div>
 
 <!-- ============================
@@ -1797,7 +1838,7 @@ a { color: inherit; text-decoration: none; }
 
     <div class="hero__actions">
       <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn-primary" id="connect-btn">
-        ⚡ Подключиться
+        Подключиться
       </a>
       <a href="mechanics.html" class="btn-secondary">Механики</a>
       <button class="hero__copy-ip" id="copy-ip-btn" title="Скопировать IP">
@@ -1853,15 +1894,15 @@ a { color: inherit; text-decoration: none; }
 
     <div class="news__tabs">
       <button class="news__tab active" data-tab="news">
-        📰 Новости
+        Новости
         <span class="news__tab-count" id="count-news">0</span>
       </button>
       <button class="news__tab" data-tab="server_update">
-        📋 Изменения
+        Изменения
         <span class="news__tab-count" id="count-update">0</span>
       </button>
       <button class="news__tab" data-tab="mod_update">
-        🔧 Обновления модов
+        Обновления модов
         <span class="news__tab-count" id="count-mods">0</span>
       </button>
     </div>
@@ -2348,9 +2389,9 @@ a { color: inherit; text-decoration: none; }
     <p class="cta-final__sub">Присоединяйся к Shelter PVE — сервер ждёт тебя</p>
     <div class="cta-final__actions">
       <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="btn-primary">⚡ Зайти на сервер</a>
-      <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="btn-secondary">💬 Discord</a>
-      <a href="https://shelter-games.ru/products" target="_blank" class="btn-secondary">🛒 Магазин</a>
-      <a href="https://t.me/ShelterPVE" target="_blank" class="btn-secondary">✈️ Telegram</a>
+      <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="btn-secondary">Discord</a>
+      <a href="https://shelter-games.ru/products" target="_blank" class="btn-secondary">Магазин</a>
+      <a href="https://t.me/ShelterPVE" target="_blank" class="btn-secondary">Telegram</a>
     </div>
   </div>
 </section>
