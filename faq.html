@@ -24,68 +24,127 @@
   <meta name="twitter:description" content="Ответы на частые вопросы об игре на сервере Shelter PVE. Правила, система тикетов, механики сервера.">
   <meta name="twitter:image" content="https://alexdff-mun.github.io/Shelter/images/og-preview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --red:#cc1f1f; --red-dark:#8b1010; --ember:#e05a1a;
+  --red:#cc1f1f; --ember:#e05a1a;
   --khaki:#b7a98d; --khaki-dark:#7a6a53;
-  --bg:#080707; --bg2:#0f0d0d; --bg3:#161212;
-  --text:#d4c9b5; --text-dim:#6a6058; --rad:#7ec8a0;
+  --bg:#080707; --bg2:#0d0c0b; --bg3:#121110;
+  --text:#d4c9b5; --text-dim:#7a7060; --text-muted:#3a3430;
+  --rad:#7ec8a0; --gold:#e0a020; --blue:#5b9bd5;
+  --border:rgba(183,169,141,0.12);
+  --border-hot:rgba(204,31,31,0.35);
   --mono:'Share Tech Mono',monospace;
 }
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;font-size:16px;}
 body{
   background:var(--bg);
   color:var(--text);
   font-family:'Exo 2',sans-serif;
+  font-weight:400;
   min-height:100vh;
   overflow-x:hidden;
+  line-height:1.6;
 }
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
 
-/* ── NOISE OVERLAY ── */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;
+/* ============================
+   НАВИГАЦИЯ
+============================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  transition:background 0.4s,backdrop-filter 0.4s;
 }
-
-/* ── TOPBAR ── */
-.topbar{
-  position:sticky;top:0;z-index:100;
-  height:56px;
+.nav.scrolled{
   background:rgba(8,7,7,0.92);
-  border-bottom:1px solid rgba(204,31,31,0.15);
-  backdrop-filter:blur(12px);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav__inner{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 2rem;
-  gap:1rem;
+  height:68px;gap:24px;
 }
-.topbar-logo{
-  display:flex;align-items:center;gap:0.7rem;
-  text-decoration:none;
+.nav__logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.nav__logo img{width:36px;height:36px;object-fit:contain;}
+.nav__logo-text{
+  font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;
 }
-.topbar-logo img{height:32px;width:32px;object-fit:contain;}
-.topbar-logo-text{
-  font-family:'Oswald',sans-serif;
-  font-size:1rem;font-weight:600;
-  letter-spacing:0.12em;color:var(--text);
+.nav__logo-text em{font-style:normal;color:var(--red);}
+.nav__links{display:flex;align-items:center;gap:4px;list-style:none;}
+.nav__links a{
+  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text-dim);padding:6px 12px;transition:color 0.2s;position:relative;
 }
-.topbar-logo-text span{color:var(--red);}
-.topbar-back{
-  font-family:var(--mono);font-size:0.65rem;
-  letter-spacing:0.15em;color:var(--text-dim);
-  text-decoration:none;
-  display:flex;align-items:center;gap:0.4rem;
-  transition:color 0.2s;
+.nav__links a:hover{color:var(--text);}
+.nav__links a.active{color:var(--red);}
+.nav__links a::after{
+  content:'';position:absolute;bottom:0;left:12px;right:12px;
+  height:1px;background:var(--red);transform:scaleX(0);transition:transform 0.2s;
 }
-.topbar-back:hover{color:var(--red);}
+.nav__links a:hover::after,.nav__links a.active::after{transform:scaleX(1);}
+.nav__actions{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.nav__server{
+  font-family:'Share Tech Mono',monospace;font-size:12px;
+  color:var(--text-dim);padding:6px 12px;border:1px solid var(--border);white-space:nowrap;
+}
+.nav__server span{color:var(--rad);margin-right:4px;}
+.nav__connect{
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;padding:8px 20px;
+  background:var(--red);color:#fff;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:background 0.2s,transform 0.2s;white-space:nowrap;
+}
+.nav__connect:hover{background:#a01818;transform:translateY(-1px);}
+.nav__steam{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:0.06em;padding:7px 14px;border:1px solid var(--border);
+  color:var(--text-dim);transition:border-color 0.2s,color 0.2s;
+}
+.nav__steam:hover{border-color:var(--khaki);color:var(--text);}
+.nav__steam svg{width:16px;height:16px;fill:currentColor;}
+.nav__profile{display:flex;align-items:center;gap:8px;}
+.nav__avatar{width:32px;height:32px;border-radius:2px;border:1px solid var(--border);object-fit:cover;}
+.nav__username{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--khaki);}
+.nav__logout{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;
+  color:var(--text-dim);border:1px solid var(--border);padding:4px 10px;
+  cursor:pointer;background:none;transition:color 0.2s,border-color 0.2s;
+}
+.nav__logout:hover{color:#e02020;border-color:#e02020;}
+.nav__burger{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  padding:8px;background:none;border:none;
+}
+.nav__burger span{display:block;width:24px;height:2px;background:var(--text);transition:transform 0.3s,opacity 0.3s;}
+.nav__burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav__burger.open span:nth-child(2){opacity:0;}
+.nav__burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav__mobile{
+  display:none;position:fixed;inset:0;background:rgba(8,7,7,0.97);
+  backdrop-filter:blur(20px);z-index:999;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.nav__mobile.open{display:flex;opacity:1;pointer-events:all;}
+.nav__mobile a{
+  font-family:'Oswald',sans-serif;font-size:28px;font-weight:500;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);
+  padding:8px 24px;transition:color 0.2s;
+}
+.nav__mobile a:hover{color:var(--red);}
+.nav__mobile-divider{width:40px;height:1px;background:var(--border);margin:8px 0;}
 
 /* ── HERO ── */
 .faq-hero{
   position:relative;
-  padding:5rem 2rem 3rem;
+  padding:7rem 2rem 3rem;
   text-align:center;
   overflow:hidden;
 }
@@ -299,20 +358,52 @@ body::before{
 }
 
 /* ── FOOTER ── */
-.faq-footer{
-  text-align:center;
-  padding:2rem;
-  border-top:1px solid rgba(204,31,31,0.08);
-  color:var(--text-dim);font-size:0.8rem;
-}
-.faq-footer a{color:var(--red);text-decoration:none;}
+.footer{background:var(--bg);border-top:1px solid var(--border);padding:48px 0 32px;}
+.footer__inner{display:grid;grid-template-columns:280px 1fr 220px;gap:48px;align-items:start;}
+.footer__logo{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.footer__logo img{width:32px;}
+.footer__logo-text{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.footer__logo-text em{font-style:normal;color:var(--red);}
+.footer__tagline{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:20px;}
+.footer__ip{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--khaki);border:1px solid var(--border);padding:8px 14px;display:inline-block;cursor:pointer;background:none;transition:border-color 0.2s;}
+.footer__ip:hover{border-color:var(--khaki);}
+.footer__nav{text-align:center;}
+.footer__nav-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:16px;}
+.footer__nav-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer__nav-links a{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);transition:color 0.2s;}
+.footer__nav-links a:hover{color:var(--red);}
+.footer__socials-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:16px;}
+.footer__social-links{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
+.footer__social-link{display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);transition:color 0.2s;}
+.footer__social-link:hover{color:var(--red);}
+.footer__social-icon{width:32px;height:32px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.05em;color:var(--text-dim);flex-shrink:0;transition:border-color 0.2s,color 0.2s;}
+.footer__social-link:hover .footer__social-icon{border-color:var(--red);color:var(--red);}
+.footer__bottom{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.footer__copy{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;}
+.footer__links{display:flex;gap:20px;}
+.footer__links a{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;transition:color 0.2s;}
+.footer__links a:hover{color:var(--red);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border);padding:12px 24px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:0.15em;color:var(--text);text-transform:uppercase;z-index:9998;transition:transform 0.3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast--success{border-color:var(--rad);color:var(--rad);}
 
 /* ── MOBILE ── */
+@media(max-width:768px){
+  .nav__links{display:none;}
+  .nav__server{display:none;}
+  .nav__steam{display:none;}
+  .nav__connect{display:none;}
+  .nav__burger{display:flex;}
+  .footer__inner{grid-template-columns:1fr;text-align:center;gap:32px;}
+  .footer__social-links{align-items:center;}
+  .footer__bottom{flex-direction:column;gap:12px;text-align:center;}
+}
 @media(max-width:600px){
-  .faq-hero{padding:3.5rem 1.2rem 2rem;}
+  .faq-hero{padding:5.5rem 1.2rem 2rem;}
   .faq-container{padding:1.5rem 1rem 4rem;}
   .faq-q-text{font-size:0.95rem;}
-  .topbar{padding:0 1rem;}
 }
 
 /* ── CONTACT FORM ── */
@@ -361,14 +452,62 @@ body::before{
 </head>
 <body>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <a href="index.html" class="topbar-logo">
-    <img src="images/SHL_PVE.png" alt="Shelter PVE">
-    <span class="topbar-logo-text">SHELTER <span>PVE</span></span>
-  </a>
-  <a href="index.html" class="topbar-back">← НА ГЛАВНУЮ</a>
-</header>
+<!-- ============================
+     НАВИГАЦИЯ
+============================ -->
+<nav class="nav" id="nav">
+  <div class="container" style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">
+        <img src="images/SHL_PVE.png" alt="Shelter PVE">
+        <span class="nav__logo-text">Shelter <em>PVE</em></span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="map.html">Карта</a></li>
+        <li><a href="mechanics.html">Механики</a></li>
+        <li><a href="rules.html">Правила</a></li>
+        <li><a href="index.html#team">Команда</a></li>
+        <li><a href="faq.html" class="active">FAQ</a></li>
+        <li><a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a></li>
+        <li><a href="https://shelter-games.ru/products" target="_blank">Магазин</a></li>
+      </ul>
+      <div class="nav__actions">
+        <div class="nav__server">
+          <span id="nav-players">–/–</span> онлайн
+        </div>
+        <a href="https://shelter-dayz.ru/api/steam/login" class="nav__steam" id="nav-login-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38l2.96-6.1A3.5 3.5 0 0115.5 12a3.5 3.5 0 01-3.5 3.5 3.5 3.5 0 01-3.5-3.5H4.5C4.5 16.64 7.86 20 12 20s7.5-3.36 7.5-7.5S16.14 5 12 5a7.47 7.47 0 00-5.3 2.2l-4.38-1.8A12 12 0 0112 0z"/></svg>
+          Войти
+        </a>
+        <div class="nav__profile" id="nav-profile" style="display:none">
+          <img src="" alt="" class="nav__avatar" id="nav-avatar">
+          <span class="nav__username" id="nav-username"></span>
+          <button class="nav__logout" id="nav-logout">Выйти</button>
+        </div>
+        <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" class="nav__connect">⚡ Играть</a>
+        <button class="nav__burger" id="burger" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Мобильное меню -->
+<div class="nav__mobile" id="mobile-menu">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта</a>
+  <a href="mechanics.html">Механики</a>
+  <a href="rules.html">Правила</a>
+  <a href="index.html#team">Команда</a>
+  <a href="faq.html">FAQ</a>
+  <div class="nav__mobile-divider"></div>
+  <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a>
+  <a href="https://t.me/ShelterPVE" target="_blank">Telegram</a>
+  <a href="https://shelter-games.ru/products" target="_blank">Магазин</a>
+  <div class="nav__mobile-divider"></div>
+  <a href="steam://run/221100/en/+connect 217.168.247.192:2312/" style="color:var(--ember)">Подключиться</a>
+</div>
 
 <!-- HERO -->
 <div class="faq-hero">
@@ -669,11 +808,137 @@ body::before{
   </div>
 </div></div>
 
-<div class="faq-footer">
-  Остались вопросы? — <a href="https://discord.gg/4EWuqwfBu" target="_blank">Discord</a> · <a href="https://t.me/ShelterPVE" target="_blank">Telegram</a> · <a href="index.html">На главную</a>
-</div>
+<!-- ============================
+     FOOTER
+============================ -->
+<footer class="footer">
+  <div class="container" style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="footer__logo">
+          <img src="images/SHL_PVE.png" alt="Shelter PVE">
+          <span class="footer__logo-text">Shelter <em>PVE</em></span>
+        </div>
+        <div class="footer__tagline">DayZ · PVE · Chernarus+</div>
+        <button class="footer__ip" id="footer-copy-ip">📋 217.168.247.192:2312</button>
+      </div>
+      <nav class="footer__nav">
+        <div class="footer__nav-title">Навигация</div>
+        <ul class="footer__nav-links">
+          <li><a href="map.html">Карта</a></li>
+          <li><a href="mechanics.html">Механики</a></li>
+          <li><a href="craft.html">Крафт</a></li>
+          <li><a href="rules.html">Правила</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+      <div class="footer__socials">
+        <div class="footer__socials-title">Сообщество</div>
+        <div class="footer__social-links">
+          <a href="https://discord.gg/4EWuqwfBu" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon">DC</span>Discord
+          </a>
+          <a href="https://t.me/ShelterPVE" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon">TG</span>Telegram
+          </a>
+          <a href="https://shelter-games.ru/products" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon">★</span>Магазин
+          </a>
+          <a href="https://wargm.ru/server/66288" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon">WG</span>WARGM
+          </a>
+          <a href="https://www.battlemetrics.com/servers/dayz/37659741" target="_blank" class="footer__social-link">
+            <span class="footer__social-icon">BM</span>BattleMetrics
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="footer__copy">© 2025 Shelter PVE. Все права защищены.</div>
+      <div class="footer__links">
+        <a href="rules.html">Правила</a>
+        <a href="faq.html">FAQ</a>
+        <a href="https://discord.gg/4EWuqwfBu" target="_blank">Поддержка</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
 
 <script>
+// ---- Навигация прокрутка ----
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ---- Бургер меню ----
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobile-menu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+mobileMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// ---- Копировать IP ----
+document.getElementById('footer-copy-ip')?.addEventListener('click', () => {
+  navigator.clipboard.writeText('217.168.247.192:2312').then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'IP скопирован ✓';
+    t.className = 'toast show toast--success';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+  });
+});
+
+// ---- Онлайн сервера ----
+async function fetchServer() {
+  try {
+    const r = await fetch('https://shelter-dayz.ru/api/server');
+    const d = await r.json();
+    const str = d.online ? `${d.players}/${d.maxPlayers}` : '–/–';
+    document.getElementById('nav-players').textContent = str;
+  } catch {}
+}
+fetchServer();
+setInterval(fetchServer, 60000);
+
+// ---- Steam авторизация ----
+function checkAuth() {
+  const token = sessionStorage.getItem('shelter_token');
+  if (!token) return;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.steamName) {
+      document.getElementById('nav-login-btn').style.display = 'none';
+      const profile = document.getElementById('nav-profile');
+      profile.style.display = 'flex';
+      document.getElementById('nav-username').textContent = payload.steamName;
+      if (payload.steamAvatar) document.getElementById('nav-avatar').src = payload.steamAvatar;
+    }
+  } catch {}
+}
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('token')) {
+  sessionStorage.setItem('shelter_token', urlParams.get('token'));
+  history.replaceState({}, '', window.location.pathname);
+}
+checkAuth();
+document.getElementById('nav-logout')?.addEventListener('click', () => {
+  sessionStorage.removeItem('shelter_token');
+  document.getElementById('nav-login-btn').style.display = '';
+  document.getElementById('nav-profile').style.display = 'none';
+});
+
 // ── ACCORDION ──
 document.querySelectorAll('.faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
